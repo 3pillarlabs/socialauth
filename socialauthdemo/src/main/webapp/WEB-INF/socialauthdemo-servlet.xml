@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<context:component-scan base-package="com.threepillar.labs.socialauthsample" />
+	<mvc:annotation-driven />
+	<import resource="properties.xml" />
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+					<property name="viewClass"
+						value="org.springframework.web.servlet.view.JstlView"></property>
+					<property name="prefix" value="/WEB-INF/views/"></property>
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	 <bean id="socialAuthConfig" class="org.brickred.socialauth.SocialAuthConfig">
+		<property name="applicationProperties"><ref bean="socialAuthProperties"/></property>
+	</bean>
+	
+	<bean id="socialAuthManager" class="org.brickred.socialauth.spring.bean.SpringSocialAuthManager" scope="session">
+		<aop:scoped-proxy/>
+	</bean>
+	
+	<bean id="socialAuthTemplate" class="org.brickred.socialauth.spring.bean.SocialAuthTemplate" scope="session">
+		<aop:scoped-proxy/>
+	</bean>
+	
+	<bean id="socialAuthWebController" class="org.brickred.socialauth.spring.controller.SocialAuthWebController">
+		<constructor-arg value="http://opensource.brickred.com/socialauthdemo" />
+		<constructor-arg value="authSuccess.do" />
+		<constructor-arg value="accessDeniedAction.do" />
+	</bean>
+</beans>
