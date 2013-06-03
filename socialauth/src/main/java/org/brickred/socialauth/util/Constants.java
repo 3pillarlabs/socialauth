@@ -176,6 +176,11 @@ public interface Constants {
 	 * runkeeper
 	 */
 	public static final String RUNKEEPER = "runkeeper";
+	
+	/**
+	 * instagram
+	 */
+	public static final String INSTAGRAM = "instagram";
 
 	/**
 	 * access token parameter name
