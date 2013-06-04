@@ -42,7 +42,7 @@ public class ProviderSupport {
 	/**
 	 * 
 	 * @param strategy
-	 *            OAuth stragtegy object
+	 *            OAuth strategy object
 	 */
 	public ProviderSupport(final OAuthStrategyBase strategy) {
 		this.authenticationStrategy = strategy;

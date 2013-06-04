@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 Authors: Konstantinos Psychas
 ===========================================================================
-*/
+ */
 
 package org.brickred.socialauth.provider;
 
@@ -72,6 +72,11 @@ public class InstagramImpl extends AbstractProvider {
 	private Profile userProfile;
 	private OAuthStrategyBase authenticationStrategy;//OAuth2 strategy
 
+	// check http://instagram.com/developer/authentication/ to see supported permissions
+	private static final String[] AllPerms = new String[] { "basic",
+		"comments",	"relationships", "likes"  };
+	private static final String[] AuthPerms = new String[] { "basic" };
+
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
@@ -81,14 +86,42 @@ public class InstagramImpl extends AbstractProvider {
 	}
 
 	public InstagramImpl(final OAuthConfig providerConfig) throws Exception{
+
 		config = providerConfig;
-		/* scope should include relationships */
+		if (config.getCustomPermissions() != null) {
+			scope = Permission.CUSTOM;
+		}
 		authenticationStrategy = new OAuth2(config, ENDPOINTS);
+		authenticationStrategy.setPermission(scope);
+		authenticationStrategy.setScope(getScope());
+
 		/* no need to set access token name, default access_token */
 		config.setAuthenticationUrl(ENDPOINTS
 				.get(Constants.OAUTH_AUTHORIZATION_URL));
 		config.setAccessTokenUrl(ENDPOINTS
 				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+	}
+
+	private String getScope() {
+		StringBuffer result = new StringBuffer();
+		String arr[];
+		if (Permission.AUTHENTICATE_ONLY.equals(scope)) {
+			arr = AuthPerms;
+		} else if (Permission.CUSTOM.equals(scope)
+				&& config.getCustomPermissions() != null) {
+			arr = config.getCustomPermissions().split(",");
+		} else {
+			arr = AllPerms;
+		}
+		result.append(arr[0]);
+		for (int i = 1; i < arr.length; i++) {
+			result.append(",").append(arr[i]);
+		}
+		String pluginScopes = getPluginsScope(config);
+		if (pluginScopes != null) {
+			result.append(",").append(pluginScopes);
+		}
+		return result.toString();
 	}
 
 	@Override
@@ -224,8 +257,10 @@ public class InstagramImpl extends AbstractProvider {
 
 	@Override
 	public void setPermission(final Permission p) {
-		LOG.debug("Permission requested : " + p.toString());
+		LOG.debug("Permission requested: " + p.toString());
 		this.scope = p;
+		authenticationStrategy.setPermission(this.scope);
+		authenticationStrategy.setScope(getScope());
 	}
 
 	@Override
@@ -248,7 +283,7 @@ public class InstagramImpl extends AbstractProvider {
 			throws Exception {
 		return doVerifyResponse(requestParams);
 	}
-	
+
 	private Profile doVerifyResponse(final Map<String, String> requestParams)
 			throws Exception {
 		LOG.info("Verifying the authentication response from provider");
@@ -275,6 +310,7 @@ public class InstagramImpl extends AbstractProvider {
 	@Override
 	protected List<String> getPluginsList() {
 		List<String> list = new ArrayList<String>();
+		list.add("org.brickred.socialauth.plugin.instagram.FeedPluginImpl");
 		if (config.getRegisteredPlugins() != null
 				&& config.getRegisteredPlugins().length > 0) {
 			list.addAll(Arrays.asList(config.getRegisteredPlugins()));

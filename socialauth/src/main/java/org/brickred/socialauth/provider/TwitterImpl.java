@@ -183,7 +183,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		if (serviceResponse.getStatus() != 200) {
 			throw new SocialAuthException(
 					"Failed to retrieve the user profile from  " + url
-							+ ". Staus :" + serviceResponse.getStatus());
+							+ ". Status :" + serviceResponse.getStatus());
 		}
 		String result;
 		try {
@@ -253,7 +253,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		}
 		if (serviceResponse.getStatus() != 200) {
 			throw new SocialAuthException("Failed to update status on " + url
-					+ ". Staus :" + serviceResponse.getStatus());
+					+ ". Status :" + serviceResponse.getStatus());
 		}
 	}
 
