@@ -61,6 +61,10 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 		this.providerSupport = providerSupport;
 	}
 
+	@Override
+	/**
+	 * The message field of the feeds includes the urls of the images
+	 */
 	public List<Feed> getFeeds() throws Exception {
 		List<Feed> list = new ArrayList<Feed>();
 		try {
@@ -73,6 +77,11 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 			for (int i = 0; i < data.length(); i++) {
 				Feed feed = new Feed();
 				JSONObject obj = data.getJSONObject(i);
+				if (obj.has("images")) {
+					JSONObject iobj = obj.getJSONObject("images");
+					if (iobj.has("low_resolution"))
+						feed.setMessage(iobj.getJSONObject("low_resolution").optString("url"));
+				}
 				if (obj.has("user")) {
 					JSONObject iobj = obj.getJSONObject("user");
 					if (iobj.has("full_name")) {

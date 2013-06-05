@@ -66,7 +66,6 @@ public class InstagramImpl extends AbstractProvider {
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(InstagramImpl.class);
 
-	private Permission scope;
 	private OAuthConfig config;
 	private AccessGrant accessGrant;
 	private Profile userProfile;
@@ -88,13 +87,13 @@ public class InstagramImpl extends AbstractProvider {
 	public InstagramImpl(final OAuthConfig providerConfig) throws Exception{
 
 		config = providerConfig;
-		if (config.getCustomPermissions() != null) {
-			scope = Permission.CUSTOM;
-		}
-		authenticationStrategy = new OAuth2(config, ENDPOINTS);
-		authenticationStrategy.setPermission(scope);
-		authenticationStrategy.setScope(getScope());
 
+		authenticationStrategy = new OAuth2(config, ENDPOINTS);
+		
+		if (config.getCustomPermissions() != null) {
+			authenticationStrategy.setPermission(Permission.CUSTOM);
+			authenticationStrategy.setScope(getScope(Permission.CUSTOM));
+		}
 		/* no need to set access token name, default access_token */
 		config.setAuthenticationUrl(ENDPOINTS
 				.get(Constants.OAUTH_AUTHORIZATION_URL));
@@ -102,7 +101,7 @@ public class InstagramImpl extends AbstractProvider {
 				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
-	private String getScope() {
+	private String getScope(Permission scope) {
 		StringBuffer result = new StringBuffer();
 		String arr[];
 		if (Permission.AUTHENTICATE_ONLY.equals(scope)) {
@@ -205,12 +204,13 @@ public class InstagramImpl extends AbstractProvider {
 	@Override
 	public Profile getUserProfile() throws Exception {
 		if (userProfile == null && accessGrant != null) {
-			getProfile();
+			userProfile = getProfile();
 		}
-		return userProfile;
+		//avoid returning null or throw exception
+		return (userProfile == null)? new Profile() : userProfile;
 	}
 
-	private void getProfile() throws Exception {
+	private Profile getProfile() throws Exception {
 		LOG.debug("Obtaining user profile");
 		Response response;
 		try {
@@ -239,7 +239,11 @@ public class InstagramImpl extends AbstractProvider {
 			}
 			p.setProfileImageURL(data.optString("profile_picture"));
 			p.setProviderId(getProviderId());
-			this.userProfile = p;
+			return p;
+		} else {
+			throw new SocialAuthException(
+					"Failed to retrieve the user profile from " + PROFILE_URL 
+					+ ". Server response " + response.getStatus());
 		}
 	}
 
@@ -258,9 +262,9 @@ public class InstagramImpl extends AbstractProvider {
 	@Override
 	public void setPermission(final Permission p) {
 		LOG.debug("Permission requested: " + p.toString());
-		this.scope = p;
-		authenticationStrategy.setPermission(this.scope);
-		authenticationStrategy.setScope(getScope());
+		//this.scope = p;
+		authenticationStrategy.setPermission(p);
+		authenticationStrategy.setScope(getScope(p));
 	}
 
 	@Override
