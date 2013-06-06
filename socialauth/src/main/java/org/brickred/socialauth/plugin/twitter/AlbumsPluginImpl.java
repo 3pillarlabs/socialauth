@@ -52,7 +52,7 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 	private static final long serialVersionUID = -4810906169491380470L;
 	private static final String FEED_URL = "https://api.twitter.com/1.1/statuses/home_timeline.json?include_entities=true&count=100";
 	private final Log LOG = LogFactory.getLog(this.getClass());
-	private static HashMap<String, List<Photo>> photo_data = new HashMap<String, List<Photo>>();
+	private HashMap<String, List<Photo>> photo_data = new HashMap<String, List<Photo>>();
 
 	private ProviderSupport providerSupport;
 

@@ -56,7 +56,7 @@ import org.w3c.dom.NodeList;
 public class FeedPluginImpl implements FeedPlugin, Serializable {
 
 	private static final long serialVersionUID = 497690659988355485L;
-	private static final String FEED_URL = "http://api.linkedin.com/v1/people/~/network/updates?count=250";
+	private static final String FEED_URL = "http://api.linkedin.com/v1/people/~/network/updates";
 	private static final Map<String, String> UPDATE_TYPES;
 	private final Log LOG = LogFactory.getLog(this.getClass());
 

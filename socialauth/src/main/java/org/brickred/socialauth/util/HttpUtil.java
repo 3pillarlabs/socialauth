@@ -28,8 +28,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -47,8 +47,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -75,24 +78,79 @@ public class HttpUtil {
 	private static Proxy proxyObj = null;
 	private static int timeoutValue = 0;
 	static {
-		SSLContext ctx;
+
+		boolean isAndroidFroyo = false;
+
+		// Checking if working with android then get the android version
 		try {
-			ctx = SSLContext.getInstance("TLS");
-			ctx.init(new KeyManager[0],
-					new TrustManager[] { new DefaultTrustManager() },
-					new SecureRandom());
-			SSLContext.setDefault(ctx);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
-		} catch (NoClassDefFoundError e) {
-			LOG.warn("SSLContext is not supported by your applicaiton server."
-					+ e.getMessage());
-			e.printStackTrace();
-		} catch (Exception e) {
-			LOG.warn("Error while createing SSLContext");
-			e.printStackTrace();
+			Class clazz = Class.forName("android.os.Build$VERSION");
+			Field field = clazz.getField("SDK_INT");
+			if (field.getInt(null) < 10) {
+				isAndroidFroyo = true;
+			}
+		} catch (Exception exception) {
+
+		}
+
+		SSLContext ctx;
+
+		// if android version 2.2 or less then add this configuration
+		if (isAndroidFroyo) {
+			try {
+				ctx = SSLContext.getInstance("TLS");
+				ctx.init(null, new TrustManager[] { new X509TrustManager() {
+					@Override
+					public void checkClientTrusted(
+							final X509Certificate[] chain, final String authType) {
+					}
+
+					@Override
+					public void checkServerTrusted(
+							final X509Certificate[] chain, final String authType) {
+					}
+
+					@Override
+					public X509Certificate[] getAcceptedIssuers() {
+						return new X509Certificate[] {};
+					}
+				} }, null);
+				HttpsURLConnection.setDefaultSSLSocketFactory(ctx
+						.getSocketFactory());
+				HttpsURLConnection
+						.setDefaultHostnameVerifier(new HostnameVerifier() {
+
+							@Override
+							public boolean verify(final String arg0,
+									final SSLSession arg1) {
+								return true;
+							}
+
+						});
+			} catch (Exception e) {
+				LOG.warn("SSLContext is not supported by your android application."
+						+ e.getMessage());
+			}
+		} else {
+			// if java application or android version greater than 2.2 then add
+			// this configuration
+			try {
+				ctx = SSLContext.getInstance("TLS");
+				ctx.init(new KeyManager[0],
+						new TrustManager[] { new DefaultTrustManager() },
+						new SecureRandom());
+				SSLContext.setDefault(ctx);
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			} catch (KeyManagementException e) {
+				e.printStackTrace();
+			} catch (NoClassDefFoundError e) {
+				LOG.warn("SSLContext is not supported by your applicaiton server."
+						+ e.getMessage());
+				e.printStackTrace();
+			} catch (Exception e) {
+				LOG.warn("Error while createing SSLContext");
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -108,11 +166,11 @@ public class HttpUtil {
 	 * @param header
 	 *            Header parameters
 	 * @return Response Object
-	 * @throws Exception
+	 * @throws SocialAuthException
 	 */
 	public static Response doHttpRequest(final String urlStr,
 			final String requestMethod, final String body,
-			final Map<String, String> header) throws Exception {
+			final Map<String, String> header) throws SocialAuthException {
 		HttpURLConnection conn;
 		try {
 
@@ -146,14 +204,18 @@ public class HttpUtil {
 			}
 
 			// If use POST or PUT must use this
-			OutputStreamWriter wr = null;
+			OutputStream os = null;
+			// OutputStreamWriter wr = null;
 			if (body != null) {
 				if (requestMethod != null
 						&& !MethodType.GET.toString().equals(requestMethod)
 						&& !MethodType.DELETE.toString().equals(requestMethod)) {
-					wr = new OutputStreamWriter(conn.getOutputStream());
-					wr.write(body);
-					wr.flush();
+					os = conn.getOutputStream();
+					DataOutputStream out = new DataOutputStream(os);
+					// wr = new OutputStreamWriter(conn.getOutputStream());
+					// wr.write(body);
+					out.write(body.getBytes("UTF-8"));
+					out.flush();
 				}
 			}
 			conn.connect();
@@ -181,12 +243,13 @@ public class HttpUtil {
 	 * @param fileParamName
 	 *            Image Filename parameter. It requires in some provider.
 	 * @return Response object
-	 * @throws Exception
+	 * @throws SocialAuthException
 	 */
 	public static Response doHttpRequest(final String urlStr,
 			final String requestMethod, final Map<String, String> params,
 			final Map<String, String> header, final InputStream inputStream,
-			final String fileName, final String fileParamName) throws Exception {
+			final String fileName, final String fileParamName)
+			throws SocialAuthException {
 		HttpURLConnection conn;
 		try {
 
@@ -260,10 +323,11 @@ public class HttpUtil {
 						Map.Entry<String, String> entry = entries.next();
 						write(out, boundary + "\r\n");
 						write(out, "Content-Disposition: form-data; name=\""
-								+ entry.getKey() + "\"\r\n");
-						write(out,
-								"Content-Type: text/plain; charset=UTF-8\r\n\r\n");
-						write(out, entry.getValue());
+								+ entry.getKey() + "\"\r\n\r\n");
+						// write(out,
+						// "Content-Type: text/plain;charset=UTF-8 \r\n\r\n");
+						LOG.debug(entry.getValue());
+						out.write(entry.getValue().getBytes("UTF-8"));
 						write(out, "\r\n");
 					}
 

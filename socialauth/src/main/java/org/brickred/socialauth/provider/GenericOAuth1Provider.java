@@ -37,6 +37,7 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
 import org.brickred.socialauth.oauthstrategy.OAuth1;
@@ -101,10 +102,11 @@ public class GenericOAuth1Provider extends AbstractProvider {
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		accessToken = accessGrant;
 		isVerify = true;
 		authenticationStrategy.setAccessGrant(accessGrant);

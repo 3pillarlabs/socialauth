@@ -39,6 +39,7 @@ import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ProviderStateException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
@@ -93,8 +94,12 @@ public class OpenIdImpl extends AbstractProvider implements AuthProvider,
 
 	@Override
 	public void setAccessGrant(final AccessGrant accessGrant)
-			throws ConsumerException {
-		manager = new ConsumerManager();
+			throws AccessTokenExpireException {
+		try {
+			manager = new ConsumerManager();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		discovered = null;
 		this.accessGrant = accessGrant;
 	}

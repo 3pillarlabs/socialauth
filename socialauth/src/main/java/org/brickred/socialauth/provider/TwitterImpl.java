@@ -42,6 +42,7 @@ import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
@@ -106,13 +107,30 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	 */
 	public TwitterImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
+		if (config.getRequestTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
+					config.getRequestTokenUrl());
+		} else {
+			config.setRequestTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_REQUEST_TOKEN_URL));
+		}
+
+		if (config.getAuthenticationUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
+					config.getAuthenticationUrl());
+		} else {
+			config.setAuthenticationUrl(ENDPOINTS
+					.get(Constants.OAUTH_AUTHORIZATION_URL));
+		}
+
+		if (config.getAccessTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+					config.getAccessTokenUrl());
+		} else {
+			config.setAccessTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
 		authenticationStrategy = new OAuth1(config, ENDPOINTS);
-		config.setRequestTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		config.setAuthenticationUrl(ENDPOINTS
-				.get(Constants.OAUTH_AUTHORIZATION_URL));
-		config.setAccessTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
 	/**
@@ -120,10 +138,11 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		accessToken = accessGrant;
 		isVerify = true;
 		authenticationStrategy.setAccessGrant(accessGrant);
@@ -241,8 +260,14 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
+		String message = msg;
+		if (message.length() > 140) {
+			LOG.debug("Truncating message up to 140 characters");
+			message = message.substring(0, 140);
+		}
+
 		String url = UPDATE_STATUS_URL
-				+ URLEncoder.encode(msg, Constants.ENCODING);
+				+ URLEncoder.encode(message, Constants.ENCODING);
 		Response serviceResponse = null;
 		try {
 			serviceResponse = authenticationStrategy.executeFeed(url,

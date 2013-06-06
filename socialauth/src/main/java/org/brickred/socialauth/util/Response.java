@@ -108,4 +108,25 @@ public class Response {
 		}
 		return sb.toString();
 	}
+
+	public String getErrorStreamAsString(final String encoding)
+			throws Exception {
+		String line = null;
+		BufferedReader reader = null;
+		StringBuffer sb = new StringBuffer();
+
+		if (Constants.GZIP_CONTENT_ENCODING.equals(_connection
+				.getHeaderField(Constants.CONTENT_ENCODING_HEADER))) {
+			reader = new BufferedReader(
+					new InputStreamReader(new GZIPInputStream(
+							_connection.getErrorStream()), encoding));
+		} else {
+			reader = new BufferedReader(new InputStreamReader(
+					_connection.getErrorStream(), encoding));
+		}
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+		return sb.toString();
+	}
 }

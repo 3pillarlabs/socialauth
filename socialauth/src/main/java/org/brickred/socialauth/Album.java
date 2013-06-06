@@ -24,6 +24,7 @@
  */
 package org.brickred.socialauth;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -32,7 +33,10 @@ import java.util.List;
  * @author tarun.nagpal
  * 
  */
-public class Album {
+public class Album implements Serializable {
+
+	private static final long serialVersionUID = 4987858003739130638L;
+
 	private String id;
 	private String name;
 	private String link;

@@ -106,9 +106,31 @@ public class OAuth2 implements OAuthStrategyBase {
 	public AccessGrant verifyResponse(final Map<String, String> requestParams,
 			final String methodType) throws Exception {
 		LOG.info("Verifying the authentication response from provider");
+
+		if (requestParams.get("access_token") != null) {
+			LOG.debug("Creating Access Grant");
+			String accessToken = requestParams.get("access_token");
+			Integer expires = null;
+			if (requestParams.get(Constants.EXPIRES) != null) {
+				expires = new Integer(requestParams.get(Constants.EXPIRES));
+			}
+			accessGrant = new AccessGrant();
+			accessGrant.setKey(accessToken);
+			accessGrant.setAttribute(Constants.EXPIRES, expires);
+			if (permission != null) {
+				accessGrant.setPermission(permission);
+			} else {
+				accessGrant.setPermission(Permission.ALL);
+			}
+			accessGrant.setProviderId(providerId);
+			LOG.debug(accessGrant);
+			return accessGrant;
+		}
+
 		if (!providerState) {
 			throw new ProviderStateException();
 		}
+
 		String code = requestParams.get("code");
 		if (code == null || code.length() == 0) {
 			throw new SocialAuthException("Verification code is null");
@@ -122,10 +144,12 @@ public class OAuth2 implements OAuthStrategyBase {
 			acode = code;
 		}
 		StringBuffer sb = new StringBuffer();
-		sb.append(endpoints.get(Constants.OAUTH_ACCESS_TOKEN_URL));
-		char separator = endpoints.get(Constants.OAUTH_ACCESS_TOKEN_URL)
-				.indexOf('?') == -1 ? '?' : '&';
-		sb.append(separator);
+		if (MethodType.GET.toString().equals(methodType)) {
+			sb.append(endpoints.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+			char separator = endpoints.get(Constants.OAUTH_ACCESS_TOKEN_URL)
+					.indexOf('?') == -1 ? '?' : '&';
+			sb.append(separator);
+		}
 		sb.append("client_id=").append(oauth.getConfig().get_consumerKey());
 		sb.append("&redirect_uri=").append(this.successUrl);
 		sb.append("&client_secret=").append(
@@ -133,11 +157,20 @@ public class OAuth2 implements OAuthStrategyBase {
 		sb.append("&code=").append(acode);
 		sb.append("&grant_type=authorization_code");
 
-		String authURL = sb.toString();
-		LOG.debug("URL for Access Token request : " + authURL);
 		Response response;
+		String authURL = null;
 		try {
-			response = HttpUtil.doHttpRequest(authURL, methodType, null, null);
+			if (MethodType.GET.toString().equals(methodType)) {
+				authURL = sb.toString();
+				LOG.debug("URL for Access Token request : " + authURL);
+				response = HttpUtil.doHttpRequest(authURL, methodType, null,
+						null);
+			} else {
+				authURL = endpoints.get(Constants.OAUTH_ACCESS_TOKEN_URL);
+				LOG.debug("URL for Access Token request : " + authURL);
+				response = HttpUtil.doHttpRequest(authURL, methodType,
+						sb.toString(), null);
+			}
 		} catch (Exception e) {
 			throw new SocialAuthException("Error in url : " + authURL, e);
 		}
@@ -160,6 +193,8 @@ public class OAuth2 implements OAuthStrategyBase {
 					if (kv[0].equals("access_token")) {
 						accessToken = kv[1];
 					} else if (kv[0].equals("expires")) {
+						expires = Integer.valueOf(kv[1]);
+					} else if (kv[0].equals("expires_in")) {
 						expires = Integer.valueOf(kv[1]);
 					} else {
 						attributes.put(kv[0], kv[1]);

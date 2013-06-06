@@ -67,6 +67,7 @@ public class SocialAuthConfig implements Serializable {
 	private static final Log LOG = LogFactory.getLog(SocialAuthConfig.class);
 	private static SocialAuthConfig DEFAULT = new SocialAuthConfig();
 	private boolean isConfigLoaded;
+	private String tokensFilepath = null;
 
 	/**
 	 * Returns the instance of SocialAuthConfig
@@ -105,6 +106,8 @@ public class SocialAuthConfig implements Serializable {
 				org.brickred.socialauth.provider.MendeleyImpl.class);
 		providersImplMap.put(Constants.RUNKEEPER,
 				org.brickred.socialauth.provider.RunkeeperImpl.class);
+		providersImplMap.put(Constants.GOOGLE_PLUS,
+				org.brickred.socialauth.provider.GooglePlusImpl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");
@@ -119,6 +122,7 @@ public class SocialAuthConfig implements Serializable {
 		domainMap.put(Constants.YAMMER, "www.yammer.com");
 		domainMap.put(Constants.MENDELEY, "api.mendeley.com");
 		domainMap.put(Constants.RUNKEEPER, "runkeeper.com");
+		domainMap.put(Constants.GOOGLE_PLUS, "googleapis.com");
 
 		providersConfig = new HashMap<String, OAuthConfig>();
 
@@ -283,12 +287,16 @@ public class SocialAuthConfig implements Serializable {
 		config.setId(providerId);
 		LOG.debug("Adding provider configuration :" + config);
 		providersConfig.put(providerId, config);
-		if (!providersImplMap.containsKey(providerId)) {
-			if (config.getProviderImplClass() != null) {
-				providersImplMap.put(providerId, config.getProviderImplClass());
-				domainMap.put(providerId, providerId);
-			}
+		if (config.getProviderImplClass() != null) {
+			providersImplMap.put(providerId, config.getProviderImplClass());
+			domainMap.put(providerId, providerId);
 		}
+		if (!providersImplMap.containsKey(providerId)) {
+			throw new SocialAuthException("Provider Impl class not found");
+		} else if (config.getProviderImplClass() == null) {
+			config.setProviderImplClass(providersImplMap.get(providerId));
+		}
+		configSetup = true;
 	}
 
 	private void loadProvidersConfig() {
@@ -369,6 +377,10 @@ public class SocialAuthConfig implements Serializable {
 						+ " is not available");
 			}
 		}
+		if (applicationProperties.getProperty("tokens.filepath") != null) {
+			tokensFilepath = applicationProperties
+					.getProperty("tokens.filepath");
+		}
 		configSetup = true;
 	}
 
@@ -378,9 +390,11 @@ public class SocialAuthConfig implements Serializable {
 	 * @param id
 	 *            the provider id
 	 * @return the configuration of given provider
-	 * @throws Exception
+	 * @throws SocialAuthException
+	 * @throws SocialAuthConfigurationException
 	 */
-	public OAuthConfig getProviderConfig(final String id) throws Exception {
+	public OAuthConfig getProviderConfig(final String id)
+			throws SocialAuthException, SocialAuthConfigurationException {
 		OAuthConfig config = providersConfig.get(id);
 		if (config == null) {
 			try {
@@ -436,5 +450,9 @@ public class SocialAuthConfig implements Serializable {
 			}
 			HttpUtil.setProxyConfig(proxyHost, port);
 		}
+	}
+
+	public String getTokensFilepath() {
+		return tokensFilepath;
 	}
 }

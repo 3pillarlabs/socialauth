@@ -38,6 +38,7 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.oauthstrategy.OAuth1;
@@ -107,11 +108,42 @@ public class LinkedInImpl extends AbstractProvider {
 		if (config.getCustomPermissions() != null) {
 			scope = Permission.CUSTOM;
 		}
+
+		if (config.getRequestTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
+					config.getRequestTokenUrl());
+		} else {
+			config.setRequestTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_REQUEST_TOKEN_URL));
+		}
+
+		if (config.getAuthenticationUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
+					config.getAuthenticationUrl());
+		} else {
+			config.setAuthenticationUrl(ENDPOINTS
+					.get(Constants.OAUTH_AUTHORIZATION_URL));
+		}
+
+		if (config.getAccessTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+					config.getAccessTokenUrl());
+		} else {
+			config.setAccessTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
+
 		String perms = getScope();
 		if (perms != null) {
 			String rURL = ENDPOINTS.get(Constants.OAUTH_REQUEST_TOKEN_URL);
-			rURL += "?scope=" + perms;
+			if (!rURL.contains("scope=")) {
+				rURL += "?scope=" + perms;
+			} else {
+				rURL = rURL.substring(0, rURL.indexOf('?'));
+				rURL += "?scope=" + perms;
+			}
 			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL, rURL);
+			config.setRequestTokenUrl(rURL);
 
 		}
 		authenticationStrategy = new OAuth1(config, ENDPOINTS);
@@ -128,10 +160,11 @@ public class LinkedInImpl extends AbstractProvider {
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		this.accessToken = accessGrant;
 		authenticationStrategy.setAccessGrant(accessGrant);
 	}
@@ -241,14 +274,16 @@ public class LinkedInImpl extends AbstractProvider {
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
+		String message = msg;
 		if (msg.length() > 700) {
-			throw new ServerDataException(
-					"Status cannot be more than 700 characters.");
+			LOG.warn("Message length can not be greater than 700 characters. So truncating it to 700 chars");
+			message = msg.substring(0, 700);
 		}
-		LOG.info("Updating status " + msg + " on " + UPDATE_STATUS_URL);
+		// message = URLEncoder.encode(message, Constants.ENCODING);
+		LOG.info("Updating status " + message + " on " + UPDATE_STATUS_URL);
 		Map<String, String> headerParams = new HashMap<String, String>();
-		headerParams.put("Content-Type", "text/xml");
-		String msgBody = String.format(STATUS_BODY, msg);
+		headerParams.put("Content-Type", "text/xml;charset=UTF-8");
+		String msgBody = String.format(STATUS_BODY, message);
 		Response serviceResponse = null;
 		try {
 			serviceResponse = authenticationStrategy.executeFeed(

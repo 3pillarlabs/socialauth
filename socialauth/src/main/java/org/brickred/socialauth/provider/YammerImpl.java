@@ -43,6 +43,7 @@ import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ProviderStateException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthConfigurationException;
@@ -101,10 +102,11 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		this.accessGrant = accessGrant;
 		accessToken = accessGrant.getKey();
 		isVerify = true;

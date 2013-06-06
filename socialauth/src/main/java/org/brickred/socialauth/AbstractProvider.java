@@ -31,8 +31,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.plugin.Plugin;
+import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.ProviderSupport;
 
@@ -47,7 +49,7 @@ public abstract class AbstractProvider implements AuthProvider, Serializable {
 
 	private static final long serialVersionUID = -7827145708317886744L;
 
-	private Map<Class<? extends Plugin>, Class<? extends Plugin>> pluginsMap;
+	private final Map<Class<? extends Plugin>, Class<? extends Plugin>> pluginsMap;
 
 	private final Log LOG = LogFactory.getLog(this.getClass());
 
@@ -94,6 +96,13 @@ public abstract class AbstractProvider implements AuthProvider, Serializable {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void refreshToken(AccessGrant accessGrant)
+			throws SocialAuthException {
+		throw new SocialAuthException("Not implemented for given provider");
+
 	}
 
 	/**
