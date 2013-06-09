@@ -207,7 +207,7 @@ public class InstagramImpl extends AbstractProvider {
 			userProfile = getProfile();
 		}
 		//avoid returning null or throw exception
-		return (userProfile == null)? new Profile() : userProfile;
+		return (userProfile == null) ? new Profile() : userProfile;
 	}
 
 	private Profile getProfile() throws Exception {
@@ -299,8 +299,9 @@ public class InstagramImpl extends AbstractProvider {
 		accessGrant = authenticationStrategy.verifyResponse(requestParams);
 		if (accessGrant != null) {
 			LOG.debug("Obtaining user profile");
-			getProfile();
-			return this.userProfile;
+			this.userProfile = getProfile();
+			//avoid returning null or throw exception
+			return (userProfile == null) ? new Profile() : userProfile;
 		} else {
 			throw new SocialAuthException("Access token not found");
 		}
