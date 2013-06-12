@@ -76,6 +76,11 @@ public class Contact implements Serializable {
 	String emailHash;
 
 	/**
+	 * profile image URL
+	 */
+	private String profileImageURL;
+
+	/**
 	 * Retrieves the first name
 	 * 
 	 * @return String the first name
@@ -228,6 +233,25 @@ public class Contact implements Serializable {
 	}
 
 	/**
+	 * Retrieves the profile image URL
+	 * 
+	 * @return String the profileImageURL
+	 */
+	public String getProfileImageURL() {
+		return profileImageURL;
+	}
+
+	/**
+	 * Updates the profile image URL
+	 * 
+	 * @param profileImageURL
+	 *            profile image URL of user
+	 */
+	public void setProfileImageURL(final String profileImageURL) {
+		this.profileImageURL = profileImageURL;
+	}
+
+	/**
 	 * Retrieves the profile info as a string
 	 * 
 	 * @return String
@@ -242,7 +266,8 @@ public class Contact implements Serializable {
 		result.append(" lastName: " + lastName + NEW_LINE);
 		result.append(" displayName: " + displayName + NEW_LINE);
 		result.append(" id: " + id + NEW_LINE);
-		result.append("profileUrl: " + profileUrl + NEW_LINE);
+		result.append(" profileUrl: " + profileUrl + NEW_LINE);
+		result.append(" profileImageURL: " + profileImageURL + NEW_LINE);
 		result.append("emailHash: " + emailHash + NEW_LINE);
 		result.append(" otherEmails: ");
 		if (otherEmails != null) {
