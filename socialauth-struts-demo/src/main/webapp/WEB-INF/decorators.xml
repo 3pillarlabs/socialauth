@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/decorators">
+	<excludes>
+		<pattern>/styles/*</pattern>
+		<pattern>/scripts/*</pattern>
+		<pattern>/images/*</pattern>
+		<pattern>/jsp/statusSuccess.jsp</pattern>
+	</excludes>
+	<decorator name="basic-theme" page="basic-theme.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+</decorators>
