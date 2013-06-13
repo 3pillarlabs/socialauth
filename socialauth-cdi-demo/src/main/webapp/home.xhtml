@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+   <ui:composition template="layout/template.xhtml">
+
+	<ui:define name="mainForm">
+
+		    <div id="main">
+		        <div id="sidebar">
+		            <h1><a href="http://www.brickred.com/"><img alt="" src="images/logo.png" style="border: 0px" /></a></h1>
+		        </div>
+		        
+		        <div id="text" >
+		         <h:form>
+				       	<table cellpadding="10" cellspacing="10" align="center">
+				       		<tr><td colspan="6"><h3 align="center">${msg['label.welcome']}</h3></td></tr>
+							<tr><td colspan="6"><p align="center">${msg['label.pleaseClick']}</p></td></tr>
+							<tr>
+								<td>
+									<h:commandLink id="facebook" name="facebook"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/facebook_icon.png"/>
+									</h:commandLink>
+									
+					            </td>
+					            <td>
+						            <h:commandLink id="twitter" name="twitter"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/twitter_icon.png"/>
+									</h:commandLink>
+								</td>
+						
+								<td>
+								     <h:commandLink id="google" name="google"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/gmail-icon.jpg"/>
+									</h:commandLink>
+						        </td>
+								<td>
+								     <h:commandLink id="yahoo" name="yahoo"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/yahoomail_icon.jpg"/>
+									</h:commandLink>
+						        </td>
+						
+								<td>
+								    <h:commandLink id="hotmail" name="hotmail"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/hotmail.jpeg"/>
+									</h:commandLink>
+						
+				                </td>
+				                <td>
+				                   	<h:commandLink id="linkedin" name="linkedin"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/linkedin.gif"/>
+									</h:commandLink>
+						
+				                </td> 
+				                <td>
+				                 	<h:commandLink id="foursquare" name="foursquare"  action="#{socialauth.login}" 
+						                  actionListener="#{socialauthenticator.updateId}">
+										<h:graphicImage value="/images/foursquare.jpeg"/>
+									</h:commandLink>
+						
+				                </td>
+					                   
+							</tr>
+				</table>
+				</h:form>
+							
+				<h:form id="my" name="my" >
+					<table cellpadding="10" cellspacing="10" align="center">
+					<tr>
+							<td class="showBold">${msg['label.openid']}</td>
+							<td>
+								<h:inputText value="#{socialauthenticator.openID}" id="idfield" required="true" requiredMessage="Please enter valid input" />
+							</td><td>
+								<h:commandButton id="openid" name="openid"  action="#{socialauth.login}" 
+				                   value="Openid" actionListener="#{socialauthenticator.updateId}"/>
+				             </td>
+				    		        
+						</tr>
+						<tr>
+							<td colspan="2" style="text-align:center;color:red">
+								<h:messages/>
+							</td>
+							<td>&nbsp;</td>
+						</tr>
+				    </table>
+					
+				</h:form>
+	
+					
+		           	<br />
+			        <br />
+			        <br />
+			        <br />
+			        <br />
+			        <br />
+			        <br />
+			        <br />
+			        <br />
+		            
+		             <p class="additional">
+		             	${msg['msg.footerMsg1']}
+		            </p>
+
+		            
+		        </div>
+		    </div>
+    </ui:define>
+    </ui:composition>
+</html>
+
