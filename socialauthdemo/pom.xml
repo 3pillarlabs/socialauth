@@ -15,12 +15,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
@@ -78,24 +72,9 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20090211</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openid4java</groupId>
-			<artifactId>openid4java-consumer</artifactId>
-			<version>0.9.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.brickred</groupId>
-			<artifactId>socialauth</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.brickred</groupId>
 			<artifactId>socialauth-spring</artifactId>
-			<version>2.0</version>
+			<version>[2.3,)</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -123,6 +102,14 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1-beta-1</version>
+				<configuration>
+					<warName>socialauthdemo</warName>
 				</configuration>
 			</plugin>
 		</plugins>
