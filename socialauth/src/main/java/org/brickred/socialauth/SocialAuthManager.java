@@ -34,6 +34,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.SocialAuthConfigurationException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.SocialAuthManagerStateException;
@@ -54,9 +55,9 @@ public class SocialAuthManager implements Serializable {
 	private AuthProvider authProvider;
 	private String providerId;
 	private String currentProviderId;
-	private Map<String, AuthProvider> providersMap;
+	private final Map<String, AuthProvider> providersMap;
 	private SocialAuthConfig socialAuthConfig;
-	private Map<String, Permission> permissionsMap;
+	private final Map<String, Permission> permissionsMap;
 
 	public SocialAuthManager() {
 		providersMap = new HashMap<String, AuthProvider>();
@@ -189,6 +190,37 @@ public class SocialAuthManager implements Serializable {
 	}
 
 	/**
+	 * Generates access token and creates a object of AccessGrant
+	 * 
+	 * @param providerId
+	 *            the provider id
+	 * @param authCode
+	 *            auth code for generating access token
+	 * @param redirectURL
+	 *            return url which is given while registering app with provider
+	 *            to generate client id and secret
+	 * @return the AccessGrant object
+	 * @throws Exception
+	 */
+	public AccessGrant createAccessGrant(final String providerId,
+			final String authCode, final String redirectURL) throws Exception {
+		this.providerId = providerId;
+		if (socialAuthConfig == null) {
+			throw new SocialAuthConfigurationException(
+					"SocialAuth configuration is null.");
+		}
+		getAuthenticationUrl(providerId, redirectURL);
+		if (providersMap.get(providerId) != null) {
+			authProvider = providersMap.get(providerId);
+		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("code", authCode);
+		connect(map);
+		LOG.debug("Access Grant Object :: " + authProvider.getAccessGrant());
+		return authProvider.getAccessGrant();
+	}
+
+	/**
 	 * It disconnects with provider
 	 * 
 	 * @param id
@@ -211,10 +243,12 @@ public class SocialAuthManager implements Serializable {
 	 * 
 	 * @param accessGrant
 	 *            the access grant object which contains
-	 * @return the auth provider
+	 * @return the AuthProvider
 	 * @throws Exception
 	 */
-	public AuthProvider connect(final AccessGrant accessGrant) throws Exception {
+	public AuthProvider connect(final AccessGrant accessGrant)
+			throws SocialAuthConfigurationException,
+			AccessTokenExpireException, SocialAuthException {
 		if (accessGrant.getProviderId() == null || accessGrant.getKey() == null) {
 			throw new SocialAuthException("access grant is not valid");
 		}
@@ -222,6 +256,31 @@ public class SocialAuthManager implements Serializable {
 				+ ", from given access grant");
 		AuthProvider provider = getProviderInstance(accessGrant.getProviderId());
 		provider.setAccessGrant(accessGrant);
+		authProvider = provider;
+		currentProviderId = accessGrant.getProviderId();
+		providersMap.put(currentProviderId, authProvider);
+		return provider;
+	}
+
+	/**
+	 * Makes a call for a provider to get RefreshToken and returns object of
+	 * that provider
+	 * 
+	 * @param accessGrant
+	 *            AccessGrant object which contains access token
+	 * @return the provider object
+	 * @throws SocialAuthConfigurationException
+	 * @throws SocialAuthException
+	 */
+	public AuthProvider refreshToken(final AccessGrant accessGrant)
+			throws SocialAuthConfigurationException, SocialAuthException {
+		if (accessGrant.getProviderId() == null || accessGrant.getKey() == null) {
+			throw new SocialAuthException("access grant is not valid");
+		}
+		LOG.debug("Connecting provider : " + accessGrant.getProviderId()
+				+ ", from given access grant");
+		AuthProvider provider = getProviderInstance(accessGrant.getProviderId());
+		provider.refreshToken(accessGrant);
 		authProvider = provider;
 		currentProviderId = accessGrant.getProviderId();
 		providersMap.put(currentProviderId, authProvider);
@@ -253,7 +312,8 @@ public class SocialAuthManager implements Serializable {
 		return providersMap.get(providerId);
 	}
 
-	private AuthProvider getProviderInstance(final String id) throws Exception {
+	private AuthProvider getProviderInstance(final String id)
+			throws SocialAuthConfigurationException, SocialAuthException {
 		OAuthConfig config = socialAuthConfig.getProviderConfig(id);
 		Class<?> obj = config.getProviderImplClass();
 		AuthProvider provider;
@@ -263,7 +323,11 @@ public class SocialAuthManager implements Serializable {
 		} catch (NoSuchMethodException me) {
 			LOG.warn(obj.getName() + " does not implement a constructor "
 					+ obj.getName() + "(Poperties props)");
-			provider = (AuthProvider) obj.newInstance();
+			try {
+				provider = (AuthProvider) obj.newInstance();
+			} catch (Exception e) {
+				throw new SocialAuthConfigurationException(e);
+			}
 		} catch (Exception e) {
 			throw new SocialAuthConfigurationException(e);
 		}

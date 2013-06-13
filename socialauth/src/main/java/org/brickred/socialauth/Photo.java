@@ -24,6 +24,7 @@
  */
 package org.brickred.socialauth;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -32,7 +33,10 @@ import java.util.Map;
  * @author tarun.nagpal
  * 
  */
-public class Photo {
+public class Photo implements Serializable {
+
+	private static final long serialVersionUID = 327011969016300722L;
+
 	private String id;
 	private String title;
 	private String largeImage;

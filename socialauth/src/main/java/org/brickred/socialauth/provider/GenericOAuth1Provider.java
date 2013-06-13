@@ -37,6 +37,7 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
 import org.brickred.socialauth.oauthstrategy.OAuth1;
@@ -101,10 +102,11 @@ public class GenericOAuth1Provider extends AbstractProvider {
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		accessToken = accessGrant;
 		isVerify = true;
 		authenticationStrategy.setAccessGrant(accessGrant);
@@ -221,7 +223,7 @@ public class GenericOAuth1Provider extends AbstractProvider {
 	 * <code>api()</code> method instead to update user status.
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for GenericOauth1Provider");
 		throw new SocialAuthException(
 				"Update Status is not implemented for GenericOauth1Provider");

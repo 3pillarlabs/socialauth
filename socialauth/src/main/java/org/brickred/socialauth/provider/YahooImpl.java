@@ -40,6 +40,7 @@ import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.oauthstrategy.OAuth1;
@@ -99,13 +100,30 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 	 */
 	public YahooImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
+		if (config.getRequestTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
+					config.getRequestTokenUrl());
+		} else {
+			config.setRequestTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_REQUEST_TOKEN_URL));
+		}
+
+		if (config.getAuthenticationUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
+					config.getAuthenticationUrl());
+		} else {
+			config.setAuthenticationUrl(ENDPOINTS
+					.get(Constants.OAUTH_AUTHORIZATION_URL));
+		}
+
+		if (config.getAccessTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+					config.getAccessTokenUrl());
+		} else {
+			config.setAccessTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
 		authenticationStrategy = new OAuth1(config, ENDPOINTS);
-		config.setRequestTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		config.setAuthenticationUrl(ENDPOINTS
-				.get(Constants.OAUTH_AUTHORIZATION_URL));
-		config.setAccessTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
 	/**
@@ -113,10 +131,11 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		accessToken = accessGrant;
 		authenticationStrategy.setAccessGrant(accessGrant);
 	}
@@ -367,7 +386,7 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
@@ -392,7 +411,7 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 		LOG.debug("Status Updated and return status code is : "
 				+ serviceResponse.getStatus());
 		// return 204
-
+		return serviceResponse;
 	}
 
 	/**

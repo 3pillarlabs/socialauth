@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+    <f:metadata>  
+       		<f:event type="preRenderView" listener="#{socialauthenticator.verify}" />  
+    </f:metadata>  
+</h:head>
+
+<ui:composition template="layout/template.xhtml">
+
+	<ui:define name="mainForm">
+	   
+    <div id="main">
+        <div id="sidebar">
+           <h1><a href="http://www.brickred.com/"><img alt="" src="images/logo.png" style="border: 0px" /></a></h1>
+        </div>
+		 <div id="text" >
+	       	<h2 align="center">${msg['msg.authenticationSuccessfull']}</h2>
+			<br/>
+			<div align="center">
+				<h:form>
+					<h:commandLink action="#{socialauthenticator.mainPage}" value="Back" actionListener="socialauth.logout" />
+				</h:form>
+			</div>
+			<br />
+			<h3 align="center">${msg['label.profileInfo']}</h3>
+			<ui:fragment rendered="${not empty socialauth.profile}" >
+				<table cellspacing="1" border="0" bgcolor="e5e5e5" width="60%" align="center">
+					<tr class="sectiontableheader">
+						<th>${msg['label.field']}</th>
+						<th>${msg['label.value']}Value</th>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg['label.email']}:</td>
+						<td>${socialauth.profile.email}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg['label.firstName']}:</td>
+						<td>${socialauth.profile.firstName}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg['label.lastName']}:</td>
+						<td>${socialauth.profile.lastName}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg['label.country']}:</td>
+						<td>${socialauth.profile.country}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg['label.language']}:</td>
+						<td>${socialauth.profile.language}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg['label.fullName']}:</td>
+						<td>${socialauth.profile.fullName}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg['label.displayName']}:</td>
+						<td>${socialauth.profile.displayName}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg['label.dob']}:</td>
+						<td>${socialauth.profile.dob}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg['label.gender']}:</td>
+						<td>${socialauth.profile.gender}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg['label.location']}:</td>
+						<td>${socialauth.profile.location}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+					<td>${msg['label.profileImage']}:</td>
+					<td>
+						<ui:fragment rendered="${socialauth.profile.profileImageURL != null}">
+							<img src="${socialauth.profile.profileImageURL}"/>
+						</ui:fragment>
+					</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg['label.updateStatus']}:</td>
+						<td>
+							<!--input type="button" value="Click to Update Status" onclick="updateStatus();" id="btnUpdateStatus"/-->		
+							
+							<h:panelGrid>
+									 <h:form prependId="false"> 
+										<h:inputHidden id="statusMessage"/>
+										<h:commandButton value="Click to Update Status" id="btnUpdateStatus" 
+											actionListener="#{socialAuthUpdateStatus.updateStatus}" onclick="return preUpdateStatus();">
+												<f:ajax execute="statusMessage" render="statusPanel" onevent="processEvent" onerror="processError"/>
+										</h:commandButton> 
+										
+			 							<h:panelGroup id="statusPanel" >
+			                                    <h:outputText value="#{socialAuthUpdateStatus.status}" style="color:red"/>
+			                            </h:panelGroup>
+                            		</h:form>
+                            </h:panelGrid>
+						</td>
+					</tr>
+					
+			</table>
+			<h3 align="center">${msg['label.contactDet']}</h3>
+			
+			<table cellspacing="4" border="0" bgcolor="e5e5e5" align="center" width="60%">
+				<tr class="sectiontableheader">
+					<th width="15%">${msg['label.fullName']}</th>
+					<th>${msg['label.email']}</th>
+					<th>${msg['label.profileURL']}</th>
+				</tr>
+					<ui:fragment rendered="${not empty socialauth.contactList}">
+						<ui:repeat value="#{socialauth.contactList}" var="contact">
+							<tr class="sectiontableentry1">
+								<td>${contact.firstName}</td>
+								<td>${contact.email}</td>
+								<td><a href="${contact.profileUrl}" target="_new">${contact.profileUrl}</a></td>
+							</tr>
+						</ui:repeat>
+					</ui:fragment>	
+					
+					<ui:fragment rendered="${empty socialauth.contactList}">
+						<tr>
+							<td colspan="4">
+	
+								${msg['msg.noContactAvailable']}
+	
+							</td>
+						</tr>
+					</ui:fragment>
+			</table>
+			
+		</ui:fragment>
+		
+		
+            <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+             <p class="additional">
+                ${msg['msg.footerMsg1']}
+            </p>
+        </div>
+	</div>
+    
+  		<script>
+				function disableUpdateStatusButton(){
+					var btn = document.getElementById('btnUpdateStatus');
+		        	btn.disabled=true;
+				}
+				function enableUpdateStatusButton(){
+					var btn = document.getElementById('btnUpdateStatus');
+		        	btn.disabled=false;
+				}
+
+		    	function preUpdateStatus(){
+		    		disableUpdateStatusButton();
+		    		var msg = prompt("Enter your status here:");
+			        if(msg == null || msg.length == 0){
+			        	enableUpdateStatusButton();
+			        	return false;
+			        }
+			        document.getElementById('statusMessage').value=msg;
+		    	}
+
+		    	function processEvent(e){
+			    		var status= e.status
+			    		if(status=='complete'){
+			    			enableUpdateStatusButton();
+			    		}
+			    	}
+
+		    	function processError(e){
+			    	 alert("A error has been occured.")
+			    	 enableUpdateStatusButton();
+			    	}
+		    	
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

@@ -504,9 +504,9 @@ public class OAuthConsumer implements Serializable, Constants {
 	/**
 	 * Generates Authorization header. The OAuth Protocol Parameters are sent in
 	 * the Authorization header. Parameter names and values are encoded. For
-	 * each parameter, the name is immediately followed by an ‘=’ character
+	 * each parameter, the name is immediately followed by an '=' character
 	 * (ASCII code 61), a '"' character (ASCII code 34), the parameter value
-	 * (MAY be empty), and another '"’ character (ASCII code 34).Parameters are
+	 * (MAY be empty), and another '"' character (ASCII code 34).Parameters are
 	 * separated by a comma character (ASCII code 44).
 	 * 
 	 * @param params

@@ -105,8 +105,10 @@ public class SocialAuthConfig implements Serializable {
 				org.brickred.socialauth.provider.MendeleyImpl.class);
 		providersImplMap.put(Constants.RUNKEEPER,
 				org.brickred.socialauth.provider.RunkeeperImpl.class);
+		providersImplMap.put(Constants.GOOGLE_PLUS,
+				org.brickred.socialauth.provider.GooglePlusImpl.class);
 		providersImplMap.put(Constants.INSTAGRAM,
-				org.brickred.socialauth.provider.RunkeeperImpl.class);
+				org.brickred.socialauth.provider.InstagramImpl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");
@@ -121,8 +123,8 @@ public class SocialAuthConfig implements Serializable {
 		domainMap.put(Constants.YAMMER, "www.yammer.com");
 		domainMap.put(Constants.MENDELEY, "api.mendeley.com");
 		domainMap.put(Constants.RUNKEEPER, "runkeeper.com");
+		domainMap.put(Constants.GOOGLE_PLUS, "googleapis.com");
 		domainMap.put(Constants.INSTAGRAM, "api.instagram.com");
-
 
 		providersConfig = new HashMap<String, OAuthConfig>();
 
@@ -287,12 +289,16 @@ public class SocialAuthConfig implements Serializable {
 		config.setId(providerId);
 		LOG.debug("Adding provider configuration :" + config);
 		providersConfig.put(providerId, config);
-		if (!providersImplMap.containsKey(providerId)) {
-			if (config.getProviderImplClass() != null) {
-				providersImplMap.put(providerId, config.getProviderImplClass());
-				domainMap.put(providerId, providerId);
-			}
+		if (config.getProviderImplClass() != null) {
+			providersImplMap.put(providerId, config.getProviderImplClass());
+			domainMap.put(providerId, providerId);
 		}
+		if (!providersImplMap.containsKey(providerId)) {
+			throw new SocialAuthException("Provider Impl class not found");
+		} else if (config.getProviderImplClass() == null) {
+			config.setProviderImplClass(providersImplMap.get(providerId));
+		}
+		configSetup = true;
 	}
 
 	private void loadProvidersConfig() {
@@ -382,9 +388,11 @@ public class SocialAuthConfig implements Serializable {
 	 * @param id
 	 *            the provider id
 	 * @return the configuration of given provider
-	 * @throws Exception
+	 * @throws SocialAuthException
+	 * @throws SocialAuthConfigurationException
 	 */
-	public OAuthConfig getProviderConfig(final String id) throws Exception {
+	public OAuthConfig getProviderConfig(final String id)
+			throws SocialAuthException, SocialAuthConfigurationException {
 		OAuthConfig config = providersConfig.get(id);
 		if (config == null) {
 			try {
@@ -441,4 +449,5 @@ public class SocialAuthConfig implements Serializable {
 			HttpUtil.setProxyConfig(proxyHost, port);
 		}
 	}
+
 }

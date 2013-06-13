@@ -42,6 +42,7 @@ import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
@@ -66,11 +67,11 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		Serializable {
 
 	private static final long serialVersionUID = 1908393649053616794L;
-	private static final String PROFILE_URL = "http://api.twitter.com/1/users/show.json?screen_name=";
-	private static final String CONTACTS_URL = "http://api.twitter.com/1/friends/ids.json?screen_name=%1$s&cursor=-1";
-	private static final String LOOKUP_URL = "http://api.twitter.com/1/users/lookup.json?user_id=";
-	private static final String UPDATE_STATUS_URL = "http://api.twitter.com/1/statuses/update.json?status=";
-	private static final String IMAGE_UPLOAD_URL = "https://upload.twitter.com/1/statuses/update_with_media.json";
+	private static final String PROFILE_URL = "http://api.twitter.com/1.1/users/show.json?screen_name=";
+	private static final String CONTACTS_URL = "http://api.twitter.com/1.1/friends/ids.json?screen_name=%1$s&cursor=-1";
+	private static final String LOOKUP_URL = "http://api.twitter.com/1.1/users/lookup.json?user_id=";
+	private static final String UPDATE_STATUS_URL = "http://api.twitter.com/1.1/statuses/update.json?status=";
+	private static final String IMAGE_UPLOAD_URL = "https://api.twitter.com/1.1/statuses/update_with_media.json";
 
 	private static final String PROPERTY_DOMAIN = "twitter.com";
 	private static final Map<String, String> ENDPOINTS;
@@ -89,7 +90,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-				"http://api.twitter.com/oauth/request_token");
+				"https://api.twitter.com/oauth/request_token");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
 				"https://api.twitter.com/oauth/authenticate");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
@@ -106,13 +107,30 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	 */
 	public TwitterImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
+		if (config.getRequestTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
+					config.getRequestTokenUrl());
+		} else {
+			config.setRequestTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_REQUEST_TOKEN_URL));
+		}
+
+		if (config.getAuthenticationUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
+					config.getAuthenticationUrl());
+		} else {
+			config.setAuthenticationUrl(ENDPOINTS
+					.get(Constants.OAUTH_AUTHORIZATION_URL));
+		}
+
+		if (config.getAccessTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+					config.getAccessTokenUrl());
+		} else {
+			config.setAccessTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
 		authenticationStrategy = new OAuth1(config, ENDPOINTS);
-		config.setRequestTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		config.setAuthenticationUrl(ENDPOINTS
-				.get(Constants.OAUTH_AUTHORIZATION_URL));
-		config.setAccessTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
 	/**
@@ -120,10 +138,11 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		accessToken = accessGrant;
 		isVerify = true;
 		authenticationStrategy.setAccessGrant(accessGrant);
@@ -232,7 +251,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.info("Updatting status " + msg);
 		if (!isVerify) {
 			throw new SocialAuthException(
@@ -241,8 +260,14 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
+		String message = msg;
+		if (message.length() > 140) {
+			LOG.debug("Truncating message up to 140 characters");
+			message = message.substring(0, 140);
+		}
+
 		String url = UPDATE_STATUS_URL
-				+ URLEncoder.encode(msg, Constants.ENCODING);
+				+ URLEncoder.encode(message, Constants.ENCODING);
 		Response serviceResponse = null;
 		try {
 			serviceResponse = authenticationStrategy.executeFeed(url,
@@ -255,6 +280,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 			throw new SocialAuthException("Failed to update status on " + url
 					+ ". Status :" + serviceResponse.getStatus());
 		}
+		return serviceResponse;
 	}
 
 	/**
@@ -367,6 +393,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 					cont.setProfileUrl("http://" + PROPERTY_DOMAIN + "/"
 							+ jobj.getString("screen_name"));
 				}
+				cont.setProfileImageURL(jobj.optString("profile_image_url"));
 				if (jobj.has("id_str")) {
 					cont.setId(jobj.getString("id_str"));
 				}

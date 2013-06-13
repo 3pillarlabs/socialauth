@@ -1,6 +1,6 @@
 /*
  ===========================================================================
- Copyright (c) 2013 National Technical University of Athens
+ Copyright (c) 2013 3PillarGlobal
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,9 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 
- Authors: Dimitri Nicolopoulos
+ Authors: Dimitri Nicolopoulos / National Technical University of Athens
  ===========================================================================
  */
-
 
 package org.brickred.socialauth.plugin.instagram;
 
@@ -71,6 +70,7 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 			Response response = providerSupport.api(FEED_URL);
 			String respStr = response
 					.getResponseBodyAsString(Constants.ENCODING);
+			LOG.debug("Feed Json response :: " + respStr);
 			JSONObject resp = new JSONObject(respStr);
 			JSONArray data = resp.getJSONArray("data");
 			LOG.debug("Feeds count : " + data.length());
@@ -79,8 +79,10 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 				JSONObject obj = data.getJSONObject(i);
 				if (obj.has("images")) {
 					JSONObject iobj = obj.getJSONObject("images");
-					if (iobj.has("low_resolution"))
-						feed.setMessage(iobj.getJSONObject("low_resolution").optString("url"));
+					if (iobj.has("low_resolution")) {
+						feed.setMessage(iobj.getJSONObject("low_resolution")
+								.optString("url"));
+					}
 				}
 				if (obj.has("user")) {
 					JSONObject iobj = obj.getJSONObject("user");
@@ -95,7 +97,8 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 					}
 				}
 				if (obj.has("created_time")) {
-					feed.setCreatedAt(new Date(Integer.parseInt(obj.getString("created_time"))));
+					feed.setCreatedAt(new Date(Integer.parseInt(obj
+							.getString("created_time"))));
 				}
 				list.add(feed);
 			}
@@ -106,10 +109,12 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 		return list;
 	}
 
+	@Override
 	public ProviderSupport getProviderSupport() {
 		return providerSupport;
 	}
 
+	@Override
 	public void setProviderSupport(final ProviderSupport providerSupport) {
 		this.providerSupport = providerSupport;
 	}

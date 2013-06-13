@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core">
+	
+	<f:loadBundle basename="org.brickred.socialauthcdi.bundle.MessageResources" var="msg"/>
+  	  <h:head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <title>Social Auth</title>
+		    <style type="text/css">
+				.showBold{
+				font-weight:bold;
+				}
+				.grey{background-color: gray;color:black;}
+	        </style>
+	        <link rel="stylesheet" type="text/css" href="./stylesheet/style.css" />
+	        
+	  </h:head>
+ 	 <body>
+	 	<div id="logo">
+	        <div id="slogan">
+	            &nbsp;</div>
+	    </div>
+  	  	<ui:insert name="mainForm">Main Form Goes Here</ui:insert>
+		 <div id="footer">
+		        <div id="left_footer">
+		            <b>&#169; 2010 BrickRed All Rights Reserved&nbsp;.</b></div>
+		        <div id="right_footer">
+		            <b>BrickRed Technologies Pvt. Ltd</b></div>
+		 </div>
+     
+	</body>
+     
+</html>

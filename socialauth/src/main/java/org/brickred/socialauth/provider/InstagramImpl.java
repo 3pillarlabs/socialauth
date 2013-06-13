@@ -1,6 +1,6 @@
 /*
 ===========================================================================
-Copyright (c) 2013 National Technical University of Athens
+Copyright (c) 2013 3PillarGlobal
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-Authors: Konstantinos Psychas
+Authors: Konstantinos Psychas / National Technical University of Athens
 ===========================================================================
  */
 
@@ -39,24 +39,26 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
 import org.brickred.socialauth.oauthstrategy.OAuth2;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.Constants;
+import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Provider implementation for Instagram
+ * 
+ * @author Psychas Konstantinos
+ */
 public class InstagramImpl extends AbstractProvider {
 
-	/**
-	 * Provider implementation for Instagram
-	 * 
-	 * @author Psychas Konstantinos
-	 */
 	private static final long serialVersionUID = 6073346132625871229L;
 	public static final String CLASSID = "instagram";
 
@@ -69,11 +71,12 @@ public class InstagramImpl extends AbstractProvider {
 	private OAuthConfig config;
 	private AccessGrant accessGrant;
 	private Profile userProfile;
-	private OAuthStrategyBase authenticationStrategy;//OAuth2 strategy
+	private OAuthStrategyBase authenticationStrategy;// OAuth2 strategy
 
-	// check http://instagram.com/developer/authentication/ to see supported permissions
+	// check http://instagram.com/developer/authentication/ to see supported
+	// permissions
 	private static final String[] AllPerms = new String[] { "basic",
-		"comments",	"relationships", "likes"  };
+			"comments", "relationships", "likes" };
 	private static final String[] AuthPerms = new String[] { "basic" };
 
 	static {
@@ -84,12 +87,12 @@ public class InstagramImpl extends AbstractProvider {
 				"https://api.instagram.com/oauth/access_token");
 	}
 
-	public InstagramImpl(final OAuthConfig providerConfig) throws Exception{
+	public InstagramImpl(final OAuthConfig providerConfig) throws Exception {
 
 		config = providerConfig;
 
 		authenticationStrategy = new OAuth2(config, ENDPOINTS);
-		
+
 		if (config.getCustomPermissions() != null) {
 			authenticationStrategy.setPermission(Permission.CUSTOM);
 			authenticationStrategy.setScope(getScope(Permission.CUSTOM));
@@ -101,7 +104,7 @@ public class InstagramImpl extends AbstractProvider {
 				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
-	private String getScope(Permission scope) {
+	private String getScope(final Permission scope) {
 		StringBuffer result = new StringBuffer();
 		String arr[];
 		if (Permission.AUTHENTICATE_ONLY.equals(scope)) {
@@ -127,15 +130,15 @@ public class InstagramImpl extends AbstractProvider {
 	public Response api(final String url, final String methodType,
 			final Map<String, String> params,
 			final Map<String, String> headerParams, final String body)
-					throws Exception {
+			throws Exception {
 
 		LOG.debug("Calling URL : " + url);
 		try {
-			return authenticationStrategy.executeFeed(url, methodType,
-					params, headerParams, body);
+			return authenticationStrategy.executeFeed(url, methodType, params,
+					headerParams, body);
 		} catch (Exception e) {
-			throw new SocialAuthException(
-					"Error : " + e.getMessage() + "- while making request to URL : " + url, e);
+			throw new SocialAuthException("Error : " + e.getMessage()
+					+ "- while making request to URL : " + url, e);
 		}
 	}
 
@@ -151,8 +154,8 @@ public class InstagramImpl extends AbstractProvider {
 		try {
 			serviceResponse = authenticationStrategy.executeFeed(CONTACTS_URL);
 		} catch (Exception e) {
-			throw new SocialAuthException("Error : " + e.getMessage() + " - while getting contacts from "
-					+ CONTACTS_URL, e);
+			throw new SocialAuthException("Error : " + e.getMessage()
+					+ " - while getting contacts from " + CONTACTS_URL, e);
 		}
 
 		if (serviceResponse.getStatus() != 200) {
@@ -162,11 +165,12 @@ public class InstagramImpl extends AbstractProvider {
 
 		String respStr = serviceResponse
 				.getResponseBodyAsString(Constants.ENCODING);
+		LOG.debug("Contacts JSON string :: " + respStr);
 		List<Contact> plist = new ArrayList<Contact>();
 
 		JSONObject resp = new JSONObject(respStr);
 		JSONArray data = resp.optJSONArray("data");
-		if (data != null)
+		if (data != null) {
 			for (int i = 0; i < data.length(); i++) {
 				JSONObject obj = data.getJSONObject(i);
 				Contact p = new Contact();
@@ -174,7 +178,7 @@ public class InstagramImpl extends AbstractProvider {
 				p.setId(id);
 				String full_name = obj.optString("full_name");
 				p.setDisplayName(full_name);
-				if (full_name!=null) {
+				if (full_name != null) {
 					String[] names = full_name.split(" ");
 					if (names.length > 1) {
 						p.setFirstName(names[0]);
@@ -185,8 +189,10 @@ public class InstagramImpl extends AbstractProvider {
 				}
 				String username = obj.optString("username");
 				p.setProfileUrl(VIEW_PROFILE_URL + username);
+				p.setProfileImageURL(obj.optString("profile_picture"));
 				plist.add(p);
 			}
+		}
 		return plist;
 	}
 
@@ -206,8 +212,13 @@ public class InstagramImpl extends AbstractProvider {
 		if (userProfile == null && accessGrant != null) {
 			userProfile = getProfile();
 		}
+<<<<<<< HEAD
 		//avoid returning null or throw exception
 		return (userProfile == null) ? new Profile() : userProfile;
+=======
+		// avoid returning null or throw exception
+		return userProfile;
+>>>>>>> origin_social/master
 	}
 
 	private Profile getProfile() throws Exception {
@@ -217,18 +228,21 @@ public class InstagramImpl extends AbstractProvider {
 			response = authenticationStrategy.executeFeed(PROFILE_URL);
 		} catch (Exception e) {
 			throw new SocialAuthException(
-					"Failed to retrieve the user profile from " + PROFILE_URL, e);
+					"Failed to retrieve the user profile from " + PROFILE_URL,
+					e);
 		}
 
 		if (response.getStatus() == 200) {
-			String respStr = response.getResponseBodyAsString(Constants.ENCODING);
-			JSONObject data = new JSONObject(respStr);
+			String respStr = response
+					.getResponseBodyAsString(Constants.ENCODING);
+			LOG.debug("Profile JSON string :: " + respStr);
+			JSONObject obj = new JSONObject(respStr);
+			JSONObject data = obj.getJSONObject("data");
 			Profile p = new Profile();
-
 			p.setValidatedId(data.optString("id"));
 			String full_name = data.optString("full_name");
 			p.setDisplayName(full_name);
-			if (full_name!=null) {
+			if (full_name != null) {
 				String[] names = full_name.split(" ");
 				if (names.length > 1) {
 					p.setFirstName(names[0]);
@@ -242,8 +256,8 @@ public class InstagramImpl extends AbstractProvider {
 			return p;
 		} else {
 			throw new SocialAuthException(
-					"Failed to retrieve the user profile from " + PROFILE_URL 
-					+ ". Server response " + response.getStatus());
+					"Failed to retrieve the user profile from " + PROFILE_URL
+							+ ". Server response " + response.getStatus());
 		}
 	}
 
@@ -254,7 +268,8 @@ public class InstagramImpl extends AbstractProvider {
 	}
 
 	@Override
-	public void setAccessGrant(AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		this.accessGrant = accessGrant;
 		authenticationStrategy.setAccessGrant(accessGrant);
 	}
@@ -262,13 +277,13 @@ public class InstagramImpl extends AbstractProvider {
 	@Override
 	public void setPermission(final Permission p) {
 		LOG.debug("Permission requested: " + p.toString());
-		//this.scope = p;
+		// this.scope = p;
 		authenticationStrategy.setPermission(p);
 		authenticationStrategy.setScope(getScope(p));
 	}
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for Instagram");
 		throw new SocialAuthException(
 				"Update Status is not implemented for Instagram");
@@ -296,7 +311,8 @@ public class InstagramImpl extends AbstractProvider {
 			throw new UserDeniedPermissionException();
 		}
 
-		accessGrant = authenticationStrategy.verifyResponse(requestParams);
+		accessGrant = authenticationStrategy.verifyResponse(requestParams,
+				MethodType.POST.toString());
 		if (accessGrant != null) {
 			LOG.debug("Obtaining user profile");
 			this.userProfile = getProfile();
@@ -324,4 +340,3 @@ public class InstagramImpl extends AbstractProvider {
 	}
 
 }
-

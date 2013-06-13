@@ -26,6 +26,7 @@
 package org.brickred.socialauth.provider;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
@@ -46,6 +48,7 @@ import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.BirthDate;
 import org.brickred.socialauth.util.Constants;
+import org.brickred.socialauth.util.HttpUtil;
 import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
@@ -103,13 +106,25 @@ public class FacebookImpl extends AbstractProvider {
 		if (config.getCustomPermissions() != null) {
 			scope = Permission.CUSTOM;
 		}
+
+		if (config.getAuthenticationUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
+					config.getAuthenticationUrl());
+		} else {
+			config.setAuthenticationUrl(ENDPOINTS
+					.get(Constants.OAUTH_AUTHORIZATION_URL));
+		}
+
+		if (config.getAccessTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+					config.getAccessTokenUrl());
+		} else {
+			config.setAccessTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
 		authenticationStrategy = new OAuth2(config, ENDPOINTS);
 		authenticationStrategy.setPermission(scope);
 		authenticationStrategy.setScope(getScope());
-		config.setAuthenticationUrl(ENDPOINTS
-				.get(Constants.OAUTH_AUTHORIZATION_URL));
-		config.setAccessTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
 	/**
@@ -120,9 +135,19 @@ public class FacebookImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException, SocialAuthException {
 		this.accessGrant = accessGrant;
 		authenticationStrategy.setAccessGrant(accessGrant);
+		LOG.debug("Checking for token expiry");
+		Response response = null;
+		try {
+			response = authenticationStrategy.executeFeed(PROFILE_URL);
+		} catch (Exception e) {
+			LOG.error("Unable to check token expire");
+			LOG.error(e.getMessage());
+		}
+		checkTokenExpiry(response);
 	}
 
 	/**
@@ -246,13 +271,14 @@ public class FacebookImpl extends AbstractProvider {
 	 */
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.info("Updating status : " + msg);
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
 		StringBuilder strb = new StringBuilder();
-		strb.append("message=").append(msg);
+		strb.append("message=").append(
+				URLEncoder.encode(msg, Constants.ENCODING));
 		strb.append("&access_token").append("=").append(accessGrant.getKey());
 		Response serviceResponse;
 		try {
@@ -267,6 +293,7 @@ public class FacebookImpl extends AbstractProvider {
 		} catch (Exception e) {
 			throw new SocialAuthException(e);
 		}
+		return serviceResponse;
 
 	}
 
@@ -312,6 +339,8 @@ public class FacebookImpl extends AbstractProvider {
 				}
 				p.setId(obj.getString("id"));
 				p.setProfileUrl(PUBLIC_PROFILE_URL + obj.getString("id"));
+				p.setProfileImageURL(String.format(PROFILE_IMAGE_URL,
+						obj.getString("id")));
 				plist.add(p);
 			}
 		} catch (Exception e) {
@@ -453,4 +482,86 @@ public class FacebookImpl extends AbstractProvider {
 		return authenticationStrategy;
 	}
 
+	private void checkTokenExpiry(final Response response)
+			throws AccessTokenExpireException, SocialAuthException {
+		if (response.getStatus() == 400) {
+			try {
+				String respStr = response
+						.getErrorStreamAsString(Constants.ENCODING);
+				JSONObject resp = new JSONObject(respStr);
+				/*
+				 * Sampe error response - { "error": { "message": "Error
+				 * validating access token: Session has expired at unix time
+				 * SOME_TIME. The current unix time is
+				 * SOME_TIME.", "type": "OAuthException", "code": 190 } }
+				 */
+				if (resp.has("error")) {
+					JSONObject error = resp.getJSONObject("error");
+					String message = error.getString("message");
+					LOG.debug("Error message :: " + message);
+					if (message != null) {
+						message = message.toLowerCase();
+					}
+					if (message.contains("session has expired")) {
+						throw new AccessTokenExpireException();
+					} else {
+						throw new SocialAuthException("Message :: " + message);
+					}
+				} else {
+					throw new SocialAuthException("Message :: " + respStr);
+				}
+
+			} catch (Exception e) {
+				if (AccessTokenExpireException.class.isInstance(e)) {
+					new AccessTokenExpireException();
+				} else if (SocialAuthException.class.isInstance(e)) {
+					throw new SocialAuthException(e.getMessage());
+				}
+			}
+		}
+	}
+
+	@Override
+	public void refreshToken(final AccessGrant expireAccessGrant)
+			throws SocialAuthException {
+		LOG.debug("Getting refrash token");
+		String url = ENDPOINTS.get(Constants.OAUTH_ACCESS_TOKEN_URL)
+				+ "?grant_type=fb_exchange_token&client_id=%1$s&client_secret=%2$s&fb_exchange_token=%3$s";
+		url = String.format(url, config.get_consumerKey(),
+				config.get_consumerSecret(), expireAccessGrant.getKey());
+		LOG.debug("URL for Refresh Token :: " + url);
+		Response response = HttpUtil.doHttpRequest(url,
+				MethodType.GET.toString(), null, null);
+		String result = null;
+		try {
+			result = response.getResponseBodyAsString(Constants.ENCODING);
+		} catch (Exception e) {
+			throw new SocialAuthException(e);
+		}
+
+		Map<String, Object> attributes = new HashMap<String, Object>();
+		String[] pairs = result.split("&");
+		AccessGrant ag = new AccessGrant();
+		for (String pair : pairs) {
+			String[] kv = pair.split("=");
+			if (kv.length != 2) {
+				throw new SocialAuthException(
+						"Unexpected response from refresh token call");
+			} else {
+				if (kv[0].equals("access_token")) {
+					ag.setKey(kv[1]);
+				} else if (kv[0].equals("expires")) {
+					ag.setAttribute(Constants.EXPIRES, Integer.valueOf(kv[1]));
+				} else if (kv[0].equals("expires_in")) {
+					ag.setAttribute(Constants.EXPIRES, Integer.valueOf(kv[1]));
+				} else {
+					attributes.put(kv[0], kv[1]);
+				}
+			}
+		}
+		ag.setAttributes(attributes);
+		LOG.debug("Refresh token Access Grant ::" + ag);
+		accessGrant = ag;
+		authenticationStrategy.setAccessGrant(ag);
+	}
 }

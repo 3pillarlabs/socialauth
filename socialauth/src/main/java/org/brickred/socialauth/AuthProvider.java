@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.brickred.socialauth.exception.AccessTokenExpireException;
+import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.plugin.Plugin;
 import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.Response;
@@ -92,7 +94,7 @@ public interface AuthProvider {
 	 * @param msg
 	 *            Message to be shown as user's status
 	 */
-	public void updateStatus(String msg) throws Exception;
+	public Response updateStatus(String msg) throws Exception;
 
 	/**
 	 * Gets the list of contacts of the user and their email. this may not be
@@ -167,9 +169,10 @@ public interface AuthProvider {
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
-	public void setAccessGrant(AccessGrant accessGrant) throws Exception;
+	public void setAccessGrant(AccessGrant accessGrant)
+			throws AccessTokenExpireException, SocialAuthException;
 
 	/**
 	 * Updates the image and message on the chosen provider if available. This
@@ -187,9 +190,45 @@ public interface AuthProvider {
 	public Response uploadImage(final String message, final String fileName,
 			final InputStream inputStream) throws Exception;
 
+	/**
+	 * Returns True if provider support given plugin otherwise returns False
+	 * 
+	 * @param clazz
+	 *            Fully qualified plugin class name e.g
+	 *            <b>org.brickred.socialauth.plugin.FeedPlugin.class</b>
+	 * @return true if provider supports plugin otherwise false
+	 */
 	public boolean isSupportedPlugin(final Class<? extends Plugin> clazz);
 
+	/**
+	 * Returns the required plugin if provider support that.
+	 * 
+	 * @param clazz
+	 *            Fully qualified plugin class name e.g
+	 *            <b>org.brickred.socialauth.plugin.FeedPlugin.class</b>
+	 * 
+	 * @return the required plugin object
+	 * @throws Exception
+	 */
 	public <T> T getPlugin(final Class<T> clazz) throws Exception;
 
+	/**
+	 * Registers plugin for a provider those are configured in configuration
+	 * properties or mentioned in provider implementation.
+	 * 
+	 * @throws Exception
+	 */
 	public void registerPlugins() throws Exception;
+
+	/**
+	 * Makes a call for a provider to get RefreshToken and returns object of
+	 * that provider
+	 * 
+	 * @param accessGrant
+	 *            AccessGrant which contains AccessToken
+	 * @return object of provider
+	 * @throws SocialAuthException
+	 */
+	public void refreshToken(AccessGrant accessGrant)
+			throws SocialAuthException;
 }

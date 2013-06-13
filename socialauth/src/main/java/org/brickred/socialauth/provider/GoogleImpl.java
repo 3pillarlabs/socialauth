@@ -38,6 +38,7 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
@@ -61,8 +62,8 @@ import org.w3c.dom.NodeList;
  */
 public class GoogleImpl extends AbstractProvider {
 	private static final long serialVersionUID = -6075582192266022341L;
-	private static final String OAUTH_SCOPE = "http://www.google.com/m8/feeds/";
-	private static final String CONTACTS_FEED_URL = "http://www.google.com/m8/feeds/contacts/default/full/?max-results=1000";
+	private static final String OAUTH_SCOPE = "https://www.google.com/m8/feeds/";
+	private static final String CONTACTS_FEED_URL = "https://www.google.com/m8/feeds/contacts/default/full/?max-results=1000";
 	private static final String CONTACT_NAMESPACE = "http://schemas.google.com/g/2005";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(GoogleImpl.class);
@@ -95,13 +96,25 @@ public class GoogleImpl extends AbstractProvider {
 		if (config.getCustomPermissions() != null) {
 			scope = Permission.CUSTOM;
 		}
+		if (config.getRequestTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
+					config.getRequestTokenUrl());
+		} else {
+			config.setRequestTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_AUTHORIZATION_URL));
+		}
+
+		if (config.getAccessTokenUrl() != null) {
+			ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+					config.getAccessTokenUrl());
+		} else {
+			config.setAccessTokenUrl(ENDPOINTS
+					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
+
 		authenticationStrategy = new Hybrid(config, ENDPOINTS);
 		authenticationStrategy.setPermission(scope);
 		authenticationStrategy.setScope(getScope());
-		config.setAuthenticationUrl(ENDPOINTS
-				.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		config.setAccessTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 	}
 
 	/**
@@ -109,10 +122,11 @@ public class GoogleImpl extends AbstractProvider {
 	 * 
 	 * @param accessGrant
 	 *            It contains the access token and other information
-	 * @throws Exception
+	 * @throws AccessTokenExpireException
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant) throws Exception {
+	public void setAccessGrant(final AccessGrant accessGrant)
+			throws AccessTokenExpireException {
 		this.accessToken = accessGrant;
 		authenticationStrategy.setAccessGrant(accessGrant);
 	}
@@ -168,7 +182,7 @@ public class GoogleImpl extends AbstractProvider {
 	}
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for Google");
 		throw new SocialAuthException(
 				"Update Status is not implemented for Google");

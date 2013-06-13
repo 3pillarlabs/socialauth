@@ -87,7 +87,16 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 					feed.setMessage(obj.getString("message"));
 				} else if (obj.has("story")) {
 					feed.setMessage(obj.getString("story"));
+				} else if (obj.has("name")) {
+					feed.setMessage(obj.getString("name"));
+				} else if (obj.has("caption")) {
+					feed.setMessage(obj.getString("caption"));
+				} else if (obj.has("description")) {
+					feed.setMessage(obj.getString("description"));
+				} else if (obj.has("picture")) {
+					feed.setMessage(obj.getString("picture"));
 				}
+
 				if (obj.has("created_time")) {
 					feed.setCreatedAt(dateFormat.parse(obj
 							.getString("created_time")));

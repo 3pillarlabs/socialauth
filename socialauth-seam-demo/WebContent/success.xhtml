@@ -1,0 +1,166 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<ui:composition template="layout/template.xhtml">
+
+	<ui:define name="mainForm">
+    <div id="main">
+        <div id="sidebar">
+           <h1><a href="http://www.brickred.com/"><img alt="" src="images/logo.png" style="border: 0px" /></a></h1>
+        </div>
+		 <div id="text" >
+	       	<h2 align="center">${msg.get("msg.authenticationSuccessfull")}</h2>
+			<br/>
+			<div align="center">
+				<h:form>
+					<h:commandLink action="#{socialauthenticator.mainPage}" value="Back" actionListener="socialauth.logout" />
+				</h:form>
+			</div>
+			<br />
+			<h3 align="center">${msg.get("label.profileInfo")}</h3>
+			<c:if test="${not empty socialauth.profile}">
+				<table cellspacing="1" border="0" bgcolor="e5e5e5" width="60%" align="center">
+					<tr class="sectiontableheader">
+						<th>${msg.get("label.field")}</th>
+						<th>${msg.get("label.value")}Value</th>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg.get("label.email")}:</td>
+						<td>${socialauth.profile.email}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg.get("label.firstName")}:</td>
+						<td>${socialauth.profile.firstName}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg.get("label.lastName")}:</td>
+						<td>${socialauth.profile.lastName}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg.get("label.country")}:</td>
+						<td>${socialauth.profile.country}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg.get("label.language")}:</td>
+						<td>${socialauth.profile.language}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg.get("label.fullName")}:</td>
+						<td>${socialauth.profile.fullName}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg.get("label.displayName")}:</td>
+						<td>${socialauth.profile.displayName}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg.get("label.dob")}:</td>
+						<td>${socialauth.profile.dob}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+						<td>${msg.get("label.gender")}:</td>
+						<td>${socialauth.profile.gender}</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg.get("label.location")}:</td>
+						<td>${socialauth.profile.location}</td>
+					</tr>
+					<tr class="sectiontableentry1">
+					<td>${msg.get("label.profileImage")}:</td>
+					<td>
+						<c:if test="${socialauth.profile.profileImageURL != null}">
+							<img src="${socialauth.profile.profileImageURL}"/>
+						</c:if>
+					</td>
+					</tr>
+					<tr class="sectiontableentry2">
+						<td>${msg.get("label.updateStatus")}:</td>
+						<td>
+							<!--input type="button" value="Click to Update Status" onclick="updateStatus();" id="btnUpdateStatus"/-->		
+							
+							<a:form id="updateForm">
+								<input type="hidden" name="statusMessage" id="statusMessage"/>
+								<a:commandButton value="Click to Update Status" action="#{socialAuthUpdateStatus.updateStatus}" onclick="preUpdateStatus();" id="btnUpdateStatus" reRender="statusPanel" oncomplete="enableUpdateStatusButton();"/>
+ 							</a:form>
+ 							<h:panelGroup id="statusPanel" >
+                                    <h:outputText value="#{socialAuthUpdateStatus.status}" rendered="#{not empty socialAuthUpdateStatus.status}" style="color:red"/>
+                            </h:panelGroup>
+						</td>
+					</tr>
+					
+			</table>
+			<h3 align="center">${msg.get("label.contactDet")}</h3>
+			
+			<table cellspacing="4" border="0" bgcolor="e5e5e5" align="center" width="60%">
+				<tr class="sectiontableheader">
+					<th width="15%">${msg.get("label.fullName")}</th>
+					<th>${msg.get("label.email")}</th>
+					<th>${msg.get("label.profileURL")}</th>
+				</tr>
+				<c:if test="${not empty socialauth.contactList}">
+					<ui:repeat value="#{socialauth.contactList}" var="contact">
+						<tr class="sectiontableentry1">
+							<td>${contact.firstName}</td>
+							<td>${contact.email}</td>
+							<td><a href="${contact.profileUrl}" target="_new">${contact.profileUrl}</a></td>
+						</tr>
+					</ui:repeat>
+				</c:if>	
+				<c:if test="${empty socialauth.contactList}">
+					<tr>
+						<td colspan="4">
+
+							${msg.get("msg.noContactAvailable")}
+
+						</td>
+					</tr>
+				</c:if>
+			</table>
+			
+		</c:if>
+		
+		
+            <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+	        <br />
+             <p class="additional">
+                ${msg.get("msg.footerMsg1")}
+            </p>
+        </div>
+	</div>
+    
+  		<script>
+				function disableUpdateStatusButton(){
+					var btn = document.getElementById('updateForm:btnUpdateStatus');
+		        	btn.disabled=true;
+				}
+		    	function enableUpdateStatusButton(){
+					var btn = document.getElementById('updateForm:btnUpdateStatus');
+		        	btn.disabled=false;
+				}
+		    	function preUpdateStatus(){
+		    		disableUpdateStatusButton();
+		        	var msg = prompt("Enter your status here:");
+					if(msg == null || msg.length == 0){
+						btn.disabled=false;
+				    	return false;
+			        }
+					document.getElementById('statusMessage').value=msg;
+		    	}
+		    	
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

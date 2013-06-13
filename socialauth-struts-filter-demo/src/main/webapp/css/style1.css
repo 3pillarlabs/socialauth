@@ -1,0 +1,206 @@
+body
+{
+	margin: 0;
+	padding: 0;
+	font-size: 0.9em;
+	line-height: 20px;
+	font-family: "Myriad Pro" , "Trebuchet MS" , Arial;
+	border: 1px solid #000;
+	background: #000;
+}
+a
+{
+	color: #97070b;
+	text-decoration: none;
+	border:0px;
+}
+a:hover
+{
+	text-decoration: underline;
+	border:0px;
+	
+}
+p
+{
+	padding: 0 10px 5px 10px;
+}
+h1
+{
+	margin: 0;
+	padding: 10px 0 0 10px;
+	text-transform: uppercase;
+	font-size: 1.5em;
+	color: #be141d;
+	font-weight: normal;
+}
+
+
+#logo
+{
+	padding: 20px 20px 10px 40px;
+	height: 83px;
+	background: url(../images/head_bckg.jpg) no-repeat top left #B9121C;
+}
+#slogan
+{
+	float: right;
+	color: #FFFFFF;
+	font-size: 25px;
+	text-transform: None;
+
+}
+#logo a
+{
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+	font-size: 20px;
+	text-transform: none;
+	letter-spacing: 5px;
+}
+#logo_text
+{
+	float: right;
+	width: 240px;
+	text-align: left;
+	font-size: 11px;
+	color: #fff;
+	text-transform: none;
+	line-height: 12px;
+	padding-top: 5px;
+}
+#menu
+{
+	background: url(../images/menu_bckg.gif) repeat-x #fff;
+	height: 40px;
+	padding-top: 10px;
+}
+#menu_list
+{
+	width: 600px;
+	margin: 0 auto;
+}
+#menu a
+{
+	display: block;
+	color: #000000;
+	float: left;
+	font-size: 14px;
+	text-transform: uppercase;
+	font-weight: bold;
+	text-decoration: none;
+	margin: 0 20px;
+	padding-top: 8px;
+}
+#menu a:hover
+{
+	padding-top: 10px;
+}
+.splitter
+{
+	display: block;
+	float: left;
+}
+.item img
+{
+	background-color: #FFFFFF;
+	padding: 6px;
+	border: 1px solid #d0d0d0;
+}
+.item a
+{
+	display: block;
+	float: left;
+	font-size: 12px;
+	color: #bd131d;
+}
+.description
+{
+	display: block;
+	float: right;
+	width: 130px;
+	padding: 0 10px 20px 0;
+	line-height: 12px;
+}
+p.additional
+{
+	margin: 0 10px;
+	color: #9c9c9c;
+	font-size: 11px;
+	line-height: 12px;
+	border-top: 1px solid #bdbdbd;
+	padding: 10px 10px 30px 45px;
+	background: url(../images/umbrella.gif) no-repeat 0 12px;
+}
+
+#text
+{
+	margin: 0 305px 0 20px;
+}
+#text li
+{
+	list-style: none;
+	padding-left: 20px;
+	background: url(../images/li.gif) no-repeat 0px 4px;
+}
+#sidebar
+{
+	float: right;
+	width: 245px;
+	padding: 10px 20px 0 30px;
+	font-size: 11px;
+}
+#sidebar a
+{
+	font-weight: bold;
+}
+#sidebar h1
+{
+	margin: 0;
+	padding: 0 0 20px 0;
+	text-transform: none;
+	font-size: 21px;
+	color: #000;
+	font-weight: normal;
+}
+
+#main
+{
+	/*float: left;*/
+	background: url(../images/sidebar_bckg.gif) no-repeat top right #fff;
+	padding: 20px 0 0 0;
+	text-transform: none;
+}
+#footer
+{
+	background: url(../images/footer_bckg.gif) repeat-x #000;
+	height: 57px;
+	clear: both;
+}
+#left_footer
+{
+	float: left;
+	padding: 20px 0 0 30px;
+	color: #fff;
+	font-size: 12px;
+}
+#left_footer a
+{
+	color: #fff;
+}
+#left_footer a:hover
+{
+	text-decoration: none;
+}
+#right_footer
+{
+	float: right;
+	padding: 20px 30px 0 0;
+	color: #fff;
+	font-size: 12px;
+	text-align: right;
+}
+#right_footer a
+{
+	color: #fff;
+}
