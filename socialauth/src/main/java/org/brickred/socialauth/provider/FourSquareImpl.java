@@ -315,7 +315,7 @@ public class FourSquareImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for FourSquare");
 		throw new SocialAuthException(
 				"Update Status is not implemented for FourSquare");

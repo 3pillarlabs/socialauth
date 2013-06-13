@@ -146,7 +146,7 @@ public class GenericOAuth2Provider extends AbstractProvider implements
 	 */
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for GenericOauth2Provider");
 		throw new SocialAuthException(
 				"Update Status is not implemented for GenericOauth2Provider");

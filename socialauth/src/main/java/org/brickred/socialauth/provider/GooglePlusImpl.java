@@ -238,7 +238,7 @@ public class GooglePlusImpl extends AbstractProvider {
 	 */
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for GooglePlus");
 		throw new SocialAuthException(
 				"Update Status is not implemented for GooglePlus");

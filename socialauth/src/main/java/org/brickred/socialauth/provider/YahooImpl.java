@@ -386,7 +386,7 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
@@ -411,7 +411,7 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 		LOG.debug("Status Updated and return status code is : "
 				+ serviceResponse.getStatus());
 		// return 204
-
+		return serviceResponse;
 	}
 
 	/**

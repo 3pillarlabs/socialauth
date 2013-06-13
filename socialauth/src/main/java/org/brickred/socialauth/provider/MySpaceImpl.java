@@ -261,7 +261,7 @@ public class MySpaceImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
@@ -277,7 +277,7 @@ public class MySpaceImpl extends AbstractProvider {
 					+ UPDATE_STATUS_URL, ie);
 		}
 		LOG.info("Update Status Response :" + serviceResponse.getStatus());
-
+		return serviceResponse;
 	}
 
 	/**

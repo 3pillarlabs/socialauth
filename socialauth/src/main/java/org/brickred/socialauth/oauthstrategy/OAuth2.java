@@ -209,7 +209,7 @@ public class OAuth2 implements OAuthStrategyBase {
 				}
 				if (jObj.has("expires_in")) {
 					String str = jObj.getString("expires_in");
-					if (!str.isEmpty()) {
+					if (str != null && str.length() > 0) {
 						expires = Integer.valueOf(str);
 					}
 				}
@@ -219,7 +219,7 @@ public class OAuth2 implements OAuthStrategyBase {
 						String key = keyItr.next();
 						if (!"access_token".equals(key)
 								&& !"expires_in".equals(key)) {
-							attributes.put(key, jObj.get(key));
+							attributes.put(key, jObj.optString(key));
 						}
 					}
 				}

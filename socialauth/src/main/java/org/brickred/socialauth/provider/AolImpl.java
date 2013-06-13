@@ -47,6 +47,7 @@ import org.brickred.socialauth.AbstractProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Permission;
 import org.brickred.socialauth.Profile;
+import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.OAuthConfig;
@@ -168,8 +169,10 @@ public class AolImpl extends AbstractProvider implements Serializable {
 	 */
 
 	@Override
-	public void updateStatus(final String msg) {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("Update status not implemented");
+		throw new SocialAuthException(
+				"Update Status is not implemented for FourSquare");
 	}
 
 	/**

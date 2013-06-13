@@ -94,7 +94,7 @@ public interface AuthProvider {
 	 * @param msg
 	 *            Message to be shown as user's status
 	 */
-	public void updateStatus(String msg) throws Exception;
+	public Response updateStatus(String msg) throws Exception;
 
 	/**
 	 * Gets the list of contacts of the user and their email. this may not be

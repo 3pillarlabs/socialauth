@@ -223,7 +223,7 @@ public class GenericOAuth1Provider extends AbstractProvider {
 	 * <code>api()</code> method instead to update user status.
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for GenericOauth1Provider");
 		throw new SocialAuthException(
 				"Update Status is not implemented for GenericOauth1Provider");

@@ -62,8 +62,8 @@ import org.w3c.dom.NodeList;
  */
 public class GoogleImpl extends AbstractProvider {
 	private static final long serialVersionUID = -6075582192266022341L;
-	private static final String OAUTH_SCOPE = "http://www.google.com/m8/feeds/";
-	private static final String CONTACTS_FEED_URL = "http://www.google.com/m8/feeds/contacts/default/full/?max-results=1000";
+	private static final String OAUTH_SCOPE = "https://www.google.com/m8/feeds/";
+	private static final String CONTACTS_FEED_URL = "https://www.google.com/m8/feeds/contacts/default/full/?max-results=1000";
 	private static final String CONTACT_NAMESPACE = "http://schemas.google.com/g/2005";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(GoogleImpl.class);
@@ -182,7 +182,7 @@ public class GoogleImpl extends AbstractProvider {
 	}
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for Google");
 		throw new SocialAuthException(
 				"Update Status is not implemented for Google");

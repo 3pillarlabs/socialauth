@@ -296,7 +296,7 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 	 */
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.info("Updating status : " + msg);
 		if (!isVerify || accessToken == null) {
 			throw new SocialAuthException(
@@ -323,7 +323,7 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 		} catch (Exception e) {
 			throw new SocialAuthException(e);
 		}
-
+		return serviceResponse;
 	}
 
 	/**

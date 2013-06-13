@@ -109,6 +109,14 @@ public class Response {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the error response content as String
+	 * 
+	 * @param encoding
+	 *            the encoding type
+	 * @return Error response message
+	 * @throws Exception
+	 */
 	public String getErrorStreamAsString(final String encoding)
 			throws Exception {
 		String line = null;

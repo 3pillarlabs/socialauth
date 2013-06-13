@@ -273,7 +273,7 @@ public class HotmailImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.info("Updating status : " + msg);
 		if (!isVerify) {
 			throw new SocialAuthException(
@@ -294,7 +294,7 @@ public class HotmailImpl extends AbstractProvider {
 		int code = serviceResponse.getStatus();
 		LOG.debug("Status updated and return status code is :" + code);
 		// return 201
-		serviceResponse.close();
+		return serviceResponse;
 	}
 
 	/**

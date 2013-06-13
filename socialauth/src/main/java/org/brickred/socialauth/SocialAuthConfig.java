@@ -67,7 +67,6 @@ public class SocialAuthConfig implements Serializable {
 	private static final Log LOG = LogFactory.getLog(SocialAuthConfig.class);
 	private static SocialAuthConfig DEFAULT = new SocialAuthConfig();
 	private boolean isConfigLoaded;
-	private String tokensFilepath = null;
 
 	/**
 	 * Returns the instance of SocialAuthConfig
@@ -380,10 +379,6 @@ public class SocialAuthConfig implements Serializable {
 						+ " is not available");
 			}
 		}
-		if (applicationProperties.getProperty("tokens.filepath") != null) {
-			tokensFilepath = applicationProperties
-					.getProperty("tokens.filepath");
-		}
 		configSetup = true;
 	}
 
@@ -455,7 +450,4 @@ public class SocialAuthConfig implements Serializable {
 		}
 	}
 
-	public String getTokensFilepath() {
-		return tokensFilepath;
-	}
 }

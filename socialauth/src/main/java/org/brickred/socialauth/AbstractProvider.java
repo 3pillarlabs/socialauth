@@ -49,7 +49,7 @@ public abstract class AbstractProvider implements AuthProvider, Serializable {
 
 	private static final long serialVersionUID = -7827145708317886744L;
 
-	private final Map<Class<? extends Plugin>, Class<? extends Plugin>> pluginsMap;
+	private Map<Class<? extends Plugin>, Class<? extends Plugin>> pluginsMap;
 
 	private final Log LOG = LogFactory.getLog(this.getClass());
 

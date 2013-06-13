@@ -231,7 +231,7 @@ public class MendeleyImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		throw new SocialAuthException(
 				"Mendeley does not support status updates");
 	}

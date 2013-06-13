@@ -190,7 +190,7 @@ public interface Constants {
 	/**
 	 * googlePlus
 	 */
-	public static final String GOOGLE_PLUS = "googlePlus";
+	public static final String GOOGLE_PLUS = "googleplus";
 
 	/**
 	 * access token parameter name

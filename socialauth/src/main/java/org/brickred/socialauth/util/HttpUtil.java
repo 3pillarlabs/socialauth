@@ -205,15 +205,12 @@ public class HttpUtil {
 
 			// If use POST or PUT must use this
 			OutputStream os = null;
-			// OutputStreamWriter wr = null;
 			if (body != null) {
 				if (requestMethod != null
 						&& !MethodType.GET.toString().equals(requestMethod)
 						&& !MethodType.DELETE.toString().equals(requestMethod)) {
 					os = conn.getOutputStream();
 					DataOutputStream out = new DataOutputStream(os);
-					// wr = new OutputStreamWriter(conn.getOutputStream());
-					// wr.write(body);
 					out.write(body.getBytes("UTF-8"));
 					out.flush();
 				}

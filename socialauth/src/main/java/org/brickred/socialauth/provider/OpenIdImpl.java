@@ -267,7 +267,7 @@ public class OpenIdImpl extends AbstractProvider implements AuthProvider,
 	 * Updating status is not available for generic Open ID providers.
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.warn("WARNING: Not implemented for OpenId");
 		throw new SocialAuthException(
 				"Update Status is not implemented for OpenId");

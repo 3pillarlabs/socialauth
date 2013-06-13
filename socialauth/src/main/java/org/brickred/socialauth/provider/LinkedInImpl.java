@@ -270,7 +270,7 @@ public class LinkedInImpl extends AbstractProvider {
 	}
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
 		}
@@ -280,6 +280,7 @@ public class LinkedInImpl extends AbstractProvider {
 			message = msg.substring(0, 700);
 		}
 		// message = URLEncoder.encode(message, Constants.ENCODING);
+		message = message.replace("&", "&amp;");
 		LOG.info("Updating status " + message + " on " + UPDATE_STATUS_URL);
 		Map<String, String> headerParams = new HashMap<String, String>();
 		headerParams.put("Content-Type", "text/xml;charset=UTF-8");
@@ -296,6 +297,7 @@ public class LinkedInImpl extends AbstractProvider {
 		LOG.debug("Status Updated and return status code is : "
 				+ serviceResponse.getStatus());
 		// return 201
+		return serviceResponse;
 	}
 
 	/**

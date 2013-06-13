@@ -271,7 +271,7 @@ public class FacebookImpl extends AbstractProvider {
 	 */
 
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.info("Updating status : " + msg);
 		if (msg == null || msg.trim().length() == 0) {
 			throw new ServerDataException("Status cannot be blank");
@@ -293,6 +293,7 @@ public class FacebookImpl extends AbstractProvider {
 		} catch (Exception e) {
 			throw new SocialAuthException(e);
 		}
+		return serviceResponse;
 
 	}
 
@@ -338,6 +339,8 @@ public class FacebookImpl extends AbstractProvider {
 				}
 				p.setId(obj.getString("id"));
 				p.setProfileUrl(PUBLIC_PROFILE_URL + obj.getString("id"));
+				p.setProfileImageURL(String.format(PROFILE_IMAGE_URL,
+						obj.getString("id")));
 				plist.add(p);
 			}
 		} catch (Exception e) {

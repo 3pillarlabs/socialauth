@@ -67,11 +67,11 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		Serializable {
 
 	private static final long serialVersionUID = 1908393649053616794L;
-	private static final String PROFILE_URL = "http://api.twitter.com/1/users/show.json?screen_name=";
-	private static final String CONTACTS_URL = "http://api.twitter.com/1/friends/ids.json?screen_name=%1$s&cursor=-1";
-	private static final String LOOKUP_URL = "http://api.twitter.com/1/users/lookup.json?user_id=";
-	private static final String UPDATE_STATUS_URL = "http://api.twitter.com/1/statuses/update.json?status=";
-	private static final String IMAGE_UPLOAD_URL = "https://upload.twitter.com/1/statuses/update_with_media.json";
+	private static final String PROFILE_URL = "http://api.twitter.com/1.1/users/show.json?screen_name=";
+	private static final String CONTACTS_URL = "http://api.twitter.com/1.1/friends/ids.json?screen_name=%1$s&cursor=-1";
+	private static final String LOOKUP_URL = "http://api.twitter.com/1.1/users/lookup.json?user_id=";
+	private static final String UPDATE_STATUS_URL = "http://api.twitter.com/1.1/statuses/update.json?status=";
+	private static final String IMAGE_UPLOAD_URL = "https://api.twitter.com/1.1/statuses/update_with_media.json";
 
 	private static final String PROPERTY_DOMAIN = "twitter.com";
 	private static final Map<String, String> ENDPOINTS;
@@ -90,7 +90,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-				"http://api.twitter.com/oauth/request_token");
+				"https://api.twitter.com/oauth/request_token");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
 				"https://api.twitter.com/oauth/authenticate");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
@@ -251,7 +251,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 	 * @throws Exception
 	 */
 	@Override
-	public void updateStatus(final String msg) throws Exception {
+	public Response updateStatus(final String msg) throws Exception {
 		LOG.info("Updatting status " + msg);
 		if (!isVerify) {
 			throw new SocialAuthException(
@@ -280,6 +280,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 			throw new SocialAuthException("Failed to update status on " + url
 					+ ". Status :" + serviceResponse.getStatus());
 		}
+		return serviceResponse;
 	}
 
 	/**
@@ -392,6 +393,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 					cont.setProfileUrl("http://" + PROPERTY_DOMAIN + "/"
 							+ jobj.getString("screen_name"));
 				}
+				cont.setProfileImageURL(jobj.optString("profile_image_url"));
 				if (jobj.has("id_str")) {
 					cont.setId(jobj.getString("id_str"));
 				}

@@ -25,9 +25,6 @@
 
 package org.brickred.socialauth;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -192,26 +189,6 @@ public class SocialAuthManager implements Serializable {
 		return authProvider;
 	}
 
-	public AuthProvider connect(final String providerId) throws Exception {
-		if (providerId == null) {
-			throw new SocialAuthException();
-		}
-		LOG.info("Connecting provider : " + providerId);
-		File file = null;
-		if (socialAuthConfig.getTokensFilepath() != null) {
-			file = new File(socialAuthConfig.getTokensFilepath()
-					+ File.separatorChar + providerId + "_accessGrant_file.ser");
-		} else {
-			file = new File(providerId + "_accessGrant_file.ser");
-		}
-		FileInputStream fs = new FileInputStream(file);
-		ObjectInputStream os = new ObjectInputStream(fs);
-		Object obj = os.readObject();
-		AccessGrant ag = (AccessGrant) obj;
-		connect(ag);
-		return authProvider;
-	}
-
 	/**
 	 * Generates access token and creates a object of AccessGrant
 	 * 
@@ -266,7 +243,7 @@ public class SocialAuthManager implements Serializable {
 	 * 
 	 * @param accessGrant
 	 *            the access grant object which contains
-	 * @return the auth provider
+	 * @return the AuthProvider
 	 * @throws Exception
 	 */
 	public AuthProvider connect(final AccessGrant accessGrant)
@@ -285,6 +262,16 @@ public class SocialAuthManager implements Serializable {
 		return provider;
 	}
 
+	/**
+	 * Makes a call for a provider to get RefreshToken and returns object of
+	 * that provider
+	 * 
+	 * @param accessGrant
+	 *            AccessGrant object which contains access token
+	 * @return the provider object
+	 * @throws SocialAuthConfigurationException
+	 * @throws SocialAuthException
+	 */
 	public AuthProvider refreshToken(final AccessGrant accessGrant)
 			throws SocialAuthConfigurationException, SocialAuthException {
 		if (accessGrant.getProviderId() == null || accessGrant.getKey() == null) {
