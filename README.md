@@ -1,4 +1,4 @@
-![SocialAuth Library](http://socialauth.googlecode.com/svn/wiki/images/java.png)
+![SocialAuth Library](https://raw.github.com/wiki/3pillarlabs/socialauth/images/java.png)
 
 Socialauth
 ================
