@@ -31,12 +31,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.brickred.socialauth.Album;
 import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Contact;
 import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.SocialAuthManager;
-import org.brickred.socialauth.plugin.AlbumsPlugin;
 import org.brickred.socialauth.spring.bean.SocialAuthTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,13 +59,6 @@ public class SuccessController {
 		String type = null;
 		if (session.getAttribute(Constants.REQUEST_TYPE) != null) {
 			type = (String) session.getAttribute(Constants.REQUEST_TYPE);
-		}
-		if (provider
-				.isSupportedPlugin(org.brickred.socialauth.plugin.AlbumsPlugin.class)) {
-			AlbumsPlugin p = provider
-					.getPlugin(org.brickred.socialauth.plugin.AlbumsPlugin.class);
-			List<Album> albums = p.getAlbums();
-			System.out.println(albums);
 		}
 		if (type != null) {
 			if (Constants.REGISTRATION.equals(type)) {
