@@ -65,9 +65,9 @@ import org.w3c.dom.NodeList;
 public class LinkedInImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = -6141448721085510813L;
-	private static final String CONNECTION_URL = "http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url)";
+	private static final String CONNECTION_URL = "http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)";
 	private static final String UPDATE_STATUS_URL = "http://api.linkedin.com/v1/people/~/shares";
-	private static final String PROFILE_URL = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name))";
+	private static final String PROFILE_URL = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name),phone-numbers,main-address)";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(LinkedInImpl.class);
@@ -246,6 +246,8 @@ public class LinkedInImpl extends AbstractProvider {
 					String id = XMLParseUtil.getElementData(p, "id");
 					String profileUrl = XMLParseUtil.getElementData(p,
 							"public-profile-url");
+					String pictureUrl = XMLParseUtil.getElementData(p,
+							"picture-url");
 					if (id != null) {
 						Contact cont = new Contact();
 						if (fname != null) {
@@ -256,6 +258,9 @@ public class LinkedInImpl extends AbstractProvider {
 						}
 						if (profileUrl != null) {
 							cont.setProfileUrl(profileUrl);
+						}
+						if (pictureUrl != null) {
+							cont.setProfileImageURL(pictureUrl);
 						}
 						cont.setId(id);
 						contactList.add(cont);
@@ -325,6 +330,7 @@ public class LinkedInImpl extends AbstractProvider {
 					"Failed to retrieve the user profile from  " + PROFILE_URL
 							+ ". Staus :" + serviceResponse.getStatus());
 		}
+
 		Element root;
 		try {
 			root = XMLParseUtil.loadXmlResource(serviceResponse
@@ -374,6 +380,26 @@ public class LinkedInImpl extends AbstractProvider {
 				if (loc != null) {
 					profile.setLocation(loc);
 				}
+			}
+			Map<String, String> map = new HashMap<String, String>();
+			NodeList phoneNodes = root.getElementsByTagName("phone-number");
+			if (phoneNodes != null && phoneNodes.getLength() > 0) {
+				Element phoneEl = (Element) phoneNodes.item(0);
+				String type = XMLParseUtil
+						.getElementData(phoneEl, "phone-type");
+				String phone = XMLParseUtil.getElementData(phoneEl,
+						"phone-number");
+				if (type != null && type.length() > 0 && phone != null) {
+					map.put(type, phone);
+				}
+			}
+			String mainAddress = XMLParseUtil.getElementData(root,
+					"main-address");
+			if (mainAddress != null) {
+				map.put("mainAddress", mainAddress);
+			}
+			if (map != null && !map.isEmpty()) {
+				profile.setContactInfo(map);
 			}
 			profile.setFirstName(fname);
 			profile.setLastName(lname);
@@ -461,6 +487,7 @@ public class LinkedInImpl extends AbstractProvider {
 	protected List<String> getPluginsList() {
 		List<String> list = new ArrayList<String>();
 		list.add("org.brickred.socialauth.plugin.linkedin.FeedPluginImpl");
+		list.add("org.brickred.socialauth.plugin.linkedin.CareerPluginImpl");
 		if (config.getRegisteredPlugins() != null
 				&& config.getRegisteredPlugins().length > 0) {
 			list.addAll(Arrays.asList(config.getRegisteredPlugins()));

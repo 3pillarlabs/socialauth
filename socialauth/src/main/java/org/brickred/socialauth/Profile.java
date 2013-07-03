@@ -26,6 +26,7 @@
 package org.brickred.socialauth;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.brickred.socialauth.util.BirthDate;
 
@@ -103,6 +104,11 @@ public class Profile implements Serializable {
 	 * provider id with this profile associates
 	 */
 	private String providerId;
+
+	/**
+	 * contact info
+	 */
+	private Map<String, String> contactInfo;
 
 	/**
 	 * Retrieves the first name
@@ -352,6 +358,27 @@ public class Profile implements Serializable {
 	}
 
 	/**
+	 * Retrieves the contact information. It contains address and phone numbers.
+	 * Key may contain values like mainAddress, home, work where home and work
+	 * value will be phone numbers.
+	 * 
+	 * @return contact information.
+	 */
+	public Map<String, String> getContactInfo() {
+		return contactInfo;
+	}
+
+	/**
+	 * Updates the contact info.
+	 * 
+	 * @param contactInfo
+	 *            the map which contains the contact information
+	 */
+	public void setContactInfo(final Map<String, String> contactInfo) {
+		this.contactInfo = contactInfo;
+	}
+
+	/**
 	 * Retrieves the profile info as a string
 	 * 
 	 * @return String
@@ -374,9 +401,18 @@ public class Profile implements Serializable {
 		result.append(" validatedId: " + validatedId + NEW_LINE);
 		result.append(" profileImageURL: " + profileImageURL + NEW_LINE);
 		result.append(" providerId: " + providerId + NEW_LINE);
+		result.append(" contactInfo { " + NEW_LINE);
+		if (contactInfo != null && !contactInfo.isEmpty()) {
+			for (Map.Entry<String, String> entry : contactInfo.entrySet()) {
+				result.append(entry.getKey() + " = " + entry.getValue()
+						+ NEW_LINE);
+			}
+		}
+		result.append(" } " + NEW_LINE);
 		result.append("}");
 
 		return result.toString();
 
 	}
+
 }

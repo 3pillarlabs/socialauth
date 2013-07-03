@@ -11,6 +11,8 @@ SocialAuth is a Java library ([.NET port](http://code.google.com/p/socialauth-ne
 
 See our [SoicalAuth demo in action](http://labs.3pillarglobal.com/socialauthdemo) !
 
+Download [socialauth-java-sdk-4.2.zip](http://socialauth.googlecode.com/files/socialauth-java-sdk-4.2.zip)
+
 Whats new in Version 4.2?
 =========================
 
