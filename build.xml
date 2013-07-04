@@ -1,0 +1,281 @@
+<?xml version="1.0" ?>
+<project name="socialauthSDK" default="init">
+	<property name="basedir" value="." />
+	<property file="${basedir}/env.properties" />
+	<property name="sdk.name" value="socialauth-java-sdk-${sdk.version}" />
+	<property name="distDir" value="${basedir}/${sdk.name}" />
+	<property name="javadoc" value="${distDir}/javadoc" />
+	<property name="examples" value="${distDir}/examples" />
+	<property name="dist" value="${distDir}/dist" />
+	<property name="src" value="${distDir}/src" />
+	<property name="dependencies" value="${distDir}/dependencies" />
+
+	<property name="project.socialauth" value="socialauth-core" />
+	<property name="project.filter" value="socialauth-filter" />
+	<property name="project.spring" value="socialauth-spring" />
+	<property name="project.seam" value="socialauth-seam" />
+	<property name="project.cdi" value="socialauth-cdi" />
+	<property name="project.cmd.utility" value="socialauth-cmd-utility" />
+
+	<property name="project.struts.demo" value="socialauth-struts-demo" />
+	<property name="project.struts.filter.demo" value="socialauth-struts-filter-demo" />
+	<property name="project.grails.demo" value="socialauth-grails-demo" />
+	<property name="project.seam.demo" value="socialauth-seam-demo" />
+	<property name="project.cdi.demo" value="socialauth-cdi-demo" />
+	<property name="project.socialauth.demo" value="socialauthdemo" />
+
+	<path id="libraries">
+
+		<fileset dir="${tomcat.home}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${distDir}" failonerror="true" />
+		<delete file="${basedir}/{sdk.name}" />
+		<delete file="${basedir}/{sdk.name}.zip" />
+		<delete>
+			<fileset dir="." includes="socialauth*.jar" />
+		</delete>
+
+		<delete>
+			<fileset
+				dir="${projects.path}/${project.seam.demo}/WebContent/WEB-INF/lib"
+				includes="socialauth*.jar" />
+		</delete>
+		<delete>
+			<fileset dir="${projects.path}/${project.grails.demo}/socialauthdemo/lib"
+				includes="socialauth*.jar" />
+		</delete>
+	</target>
+
+	<target name="init"
+		depends="clean,socialauthJar,copyJavadocs,copyExamples,copyDependencies,copySrc,copyPropertiesFile,copyReadMe,createZip" />
+
+	<target name="socialauthJar">
+
+		<echo message="Copying main jar in dist directory" />
+		<copy todir="${dist}">
+			<fileset dir="${projects.path}/${project.socialauth}/target">
+				<filename name="/socialauth-${socialauth.core.version}.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${projects.path}/${project.seam.demo}/WebContent/WEB-INF/lib">
+			<fileset dir=".">
+				<filename name="/socialauth-${socialauth.core.version}.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${projects.path}/${project.grails.demo}/socialauthdemo/lib">
+			<fileset dir=".">
+				<filename name="/socialauth-${socialauth.core.version}.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist}">
+			<fileset dir="${projects.path}/${project.filter}/target">
+				<filename name="/${project.filter}-${socialauth.filter.version}.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${projects.path}/${project.grails.demo}/socialauthdemo/lib">
+			<fileset dir=".">
+				<filename name="${project.filter}-${socialauth.filter.version}.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist}">
+			<fileset dir="${projects.path}/${project.spring}/target">
+				<filename name="/${project.spring}-${socialauth.spring.version}.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist}">
+			<fileset dir="${projects.path}/${project.seam}/target">
+				<filename name="/${project.seam}-${socialauth.seam.version}.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${projects.path}/${project.seam.demo}/WebContent/WEB-INF/lib">
+			<fileset dir=".">
+				<filename name="${project.seam}-${socialauth.seam.version}.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist}">
+			<fileset dir="${projects.path}/${project.cdi}/target">
+				<filename name="/${project.cdi}-${socialauth.cdi.version}.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist}">
+			<fileset dir="${projects.path}/${project.cmd.utility}/target">
+				<filename
+					name="/${project.cmd.utility}-${socialauth.cmd.utility.version}.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyDependencies">
+		<echo message="Copying jar in dependencies directory" />
+		<copy todir="${dependencies}">
+			<fileset dir="./libs" />
+		</copy>
+	</target>
+
+	<target name="copySrc">
+		<echo message="Copying source in src directory" />
+		<copy todir="${src}/${project.socialauth}">
+			<fileset dir="${projects.path}/${project.socialauth}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${src}/${project.filter}">
+			<fileset dir="${projects.path}/${project.filter}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${src}/${project.spring}">
+			<fileset dir="${projects.path}/${project.spring}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${src}/${project.seam}">
+			<fileset dir="${projects.path}/${project.seam}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${src}/${project.cdi}">
+			<fileset dir="${projects.path}/${project.cdi}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${src}/${project.cmd.utility}">
+			<fileset dir="${projects.path}/${project.cmd.utility}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyExamples">
+		<echo message="Copying example projects in example directory" />
+		<copy todir="${examples}/${project.struts.demo}">
+			<fileset dir="${projects.path}/${project.struts.demo}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${examples}/${project.struts.filter.demo}">
+			<fileset dir="${projects.path}/${project.struts.filter.demo}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+
+		<copy todir="${examples}/${project.seam.demo}">
+			<fileset dir="${projects.path}/${project.seam.demo}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${examples}/${project.cdi.demo}">
+			<fileset dir="${projects.path}/${project.cdi.demo}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${examples}/${project.grails.demo}">
+			<fileset dir="${projects.path}/${project.grails.demo}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${examples}/${project.socialauth.demo}">
+			<fileset dir="${projects.path}/${project.socialauth.demo}">
+				<exclude name="**/.svn" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyPropertiesFile">
+		<echo message="Copying Properties file" />
+		<copy todir="${dist}">
+			<fileset
+				dir="${projects.path}/${project.struts.filter.demo}/src/main/java">
+				<filename name="/oauth_consumer.properties" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}">
+			<fileset
+				dir="${projects.path}/${project.struts.filter.demo}/src/main/java">
+				<filename name="/socialauth_filter.properties" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyReadMe">
+		<echo message="Copying ReadMe file" />
+		<copy todir="${distDir}">
+			<fileset dir=".">
+				<filename name="/ReadMe.txt" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyJavadocs">
+		<echo message="Copying Javadocs" />
+
+		<copy todir="${javadoc}/${project.socialauth}">
+			<fileset dir="${projects.path}/${project.socialauth}/target/site/apidocs" />
+		</copy>
+		<copy todir="${javadoc}/${project.filter}">
+			<fileset dir="${projects.path}/${project.filter}/target/site/apidocs" />
+		</copy>
+		<copy todir="${javadoc}/${project.spring}">
+			<fileset dir="${projects.path}/${project.spring}/target/site/apidocs" />
+		</copy>
+		<copy todir="${javadoc}/${project.seam}">
+			<fileset dir="${projects.path}/${project.seam}/target/site/apidocs" />
+		</copy>
+		<copy todir="${javadoc}/${project.cdi}">
+			<fileset dir="${projects.path}/${project.cdi}/target/site/apidocs" />
+		</copy>
+		<copy todir="${javadoc}/${project.cmd.utility}">
+			<fileset
+				dir="${projects.path}/${project.cmd.utility}/target/site/apidocs" />
+		</copy>
+	</target>
+
+	<target name="createZip">
+		<zip destfile="./${sdk.name}.zip">
+			<fileset dir="${distDir}" />
+		</zip>
+	</target>
+
+	<target name="doc" depends="filterDoc">
+		<javadoc destdir="${javadoc}/${project.socialauth}"
+			sourcepath="${projects.path}/${project.socialauth}/src/main/java"
+			packagenames="*" windowtitle="SocialAuth" classpathref="libraries" />
+	</target>
+	<target name="filterDoc" depends="springDoc">
+		<javadoc destdir="${javadoc}/${project.filter}"
+			sourcepath="${projects.path}/${project.filter}/src/main/java"
+			packagenames="*" windowtitle="SocialAuth Filter">
+
+		</javadoc>
+	</target>
+	<target name="springDoc" depends="seamDoc">
+		<javadoc destdir="${javadoc}/${project.spring}"
+			sourcepath="${projects.path}/${project.spring}/src/main/java"
+			packagenames="*" windowtitle="SocialAuth Spring">
+
+		</javadoc>
+	</target>
+	<target name="seamDoc" depends="cdiDoc">
+		<javadoc destdir="${javadoc}/${project.seam}"
+			sourcepath="${projects.path}/${project.seam}/src/main/java"
+			packagenames="*" windowtitle="SocialAuth Seam">
+
+		</javadoc>
+	</target>
+	<target name="cdiDoc">
+		<javadoc destdir="${javadoc}/${project.cdi}"
+			sourcepath="${projects.path}/${project.cdi}/src/main/java"
+			packagenames="*" windowtitle="SocialAuth CDI">
+
+		</javadoc>
+	</target>
+</project>

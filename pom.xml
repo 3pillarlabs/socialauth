@@ -1,0 +1,128 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.brickred</groupId>
+	<artifactId>socialauth-java-sdk</artifactId>
+	<name>socialauth-java-sdk</name>
+	<version>4.1</version>
+	<packaging>pom</packaging>
+	<description>SocialAuth library</description>
+	<url>http://code.google.com/p/socialauth/</url>
+	<licenses>
+		<license>
+			<name>The MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:http://socialauth.googlecode.com/svn/trunk/</connection>
+		<url>http://socialauth.googlecode.com/svn/trunk/</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>3pillar labs</id>
+			<name>3pillar Labs</name>
+			<email>labs@3pillarglobal.com</email>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>socialauth-core</module>
+		<module>socialauth-filter</module>
+		<module>socialauth-spring</module>
+		<module>socialauth-seam</module>
+		<module>socialauth-cdi</module>
+		<module>socialauth-cmd-utility</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>copy-installed</id>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.json</groupId>
+									<artifactId>json</artifactId>
+									<version>20090211</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.openid4java</groupId>
+									<artifactId>openid4java-consumer</artifactId>
+									<version>0.9.5</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-logging</groupId>
+									<artifactId>commons-logging</artifactId>
+									<version>1.1</version>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>./libs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="build.xml" target="init" />
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>jboss-repo</id>
+			<url>http://repository.jboss.org/maven2</url>
+		</repository>
+	</repositories>
+
+</project>
