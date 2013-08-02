@@ -49,7 +49,10 @@ import org.brickred.socialauth.util.Constants;
 import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
+import org.brickred.socialauth.util.XMLParseUtil;
 import org.json.JSONObject;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Provider implementation for GooglePlus
@@ -61,6 +64,8 @@ public class GooglePlusImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = 8644510564735754296L;
 	private static final String PROFILE_URL = "https://www.googleapis.com/oauth2/v1/userinfo";
+	private static final String CONTACTS_FEED_URL = "https://www.google.com/m8/feeds/contacts/default/full/?max-results=1000";
+	private static final String CONTACT_NAMESPACE = "http://schemas.google.com/g/2005";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(GooglePlusImpl.class);
 
@@ -73,7 +78,8 @@ public class GooglePlusImpl extends AbstractProvider {
 	// set this to the list of extended permissions you want
 	private static final String[] AllPerms = new String[] {
 			"https://www.googleapis.com/auth/userinfo.profile",
-			"https://www.googleapis.com/auth/userinfo.email" };
+			"https://www.googleapis.com/auth/userinfo.email",
+			"https://www.google.com/m8/feeds" };
 	private static final String[] AuthPerms = new String[] {
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email" };
@@ -247,9 +253,93 @@ public class GooglePlusImpl extends AbstractProvider {
 
 	@Override
 	public List<Contact> getContactList() throws Exception {
-		LOG.warn("WARNING: Not implemented for GooglePlus");
-		throw new SocialAuthException(
-				"Get contact list is not implemented for GooglePlus");
+		LOG.info("Fetching contacts from " + CONTACTS_FEED_URL);
+		if (Permission.AUTHENTICATE_ONLY.equals(this.scope)) {
+			throw new SocialAuthException(
+					"You have not set Permission to get contacts.");
+		}
+		Response serviceResponse = null;
+		try {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("Authorization", "Bearer " + getAccessGrant().getKey());
+			serviceResponse = authenticationStrategy.executeFeed(
+					CONTACTS_FEED_URL, null, null, map, null);
+		} catch (Exception ie) {
+			throw new SocialAuthException(
+					"Failed to retrieve the contacts from " + CONTACTS_FEED_URL,
+					ie);
+		}
+		List<Contact> plist = new ArrayList<Contact>();
+		Element root;
+
+		try {
+			root = XMLParseUtil.loadXmlResource(serviceResponse
+					.getInputStream());
+		} catch (Exception e) {
+			throw new ServerDataException(
+					"Failed to parse the contacts from response."
+							+ CONTACTS_FEED_URL, e);
+		}
+		NodeList contactsList = root.getElementsByTagName("entry");
+		if (contactsList != null && contactsList.getLength() > 0) {
+			LOG.debug("Found contacts : " + contactsList.getLength());
+			for (int i = 0; i < contactsList.getLength(); i++) {
+				Element contact = (Element) contactsList.item(i);
+				String fname = "";
+				NodeList l = contact.getElementsByTagNameNS(CONTACT_NAMESPACE,
+						"email");
+				String address = null;
+				String emailArr[] = null;
+				if (l != null && l.getLength() > 0) {
+					Element el = (Element) l.item(0);
+					if (el != null) {
+						address = el.getAttribute("address");
+					}
+					if (l.getLength() > 1) {
+						emailArr = new String[l.getLength() - 1];
+						for (int k = 1; k < l.getLength(); k++) {
+							Element e = (Element) l.item(k);
+							if (e != null) {
+								emailArr[k - 1] = e.getAttribute("address");
+							}
+						}
+					}
+				}
+				String lname = "";
+				String dispName = XMLParseUtil.getElementData(contact, "title");
+				if (dispName != null) {
+					String sarr[] = dispName.split(" ");
+					if (sarr.length > 0) {
+						if (sarr.length >= 1) {
+							fname = sarr[0];
+						}
+						if (sarr.length >= 2) {
+							StringBuilder sb = new StringBuilder();
+							for (int k = 1; k < sarr.length; k++) {
+								sb.append(sarr[k]).append(" ");
+							}
+							lname = sb.toString();
+						}
+					}
+				}
+				String id = XMLParseUtil.getElementData(contact, "id");
+
+				if (address != null && address.length() > 0) {
+					Contact p = new Contact();
+					p.setFirstName(fname);
+					p.setLastName(lname);
+					p.setEmail(address);
+					p.setDisplayName(dispName);
+					p.setOtherEmails(emailArr);
+					p.setId(id);
+					plist.add(p);
+				}
+			}
+		} else {
+			LOG.debug("No contacts were obtained from the feed : "
+					+ CONTACTS_FEED_URL);
+		}
+		return plist;
 	}
 
 	/**
