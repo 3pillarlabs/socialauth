@@ -79,7 +79,9 @@ public class GooglePlusImpl extends AbstractProvider {
 	private static final String[] AllPerms = new String[] {
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email",
-			"https://www.google.com/m8/feeds" };
+			"https://www.google.com/m8/feeds",
+			"https://picasaweb.google.com/data/" };
+
 	private static final String[] AuthPerms = new String[] {
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email" };
@@ -248,7 +250,6 @@ public class GooglePlusImpl extends AbstractProvider {
 		LOG.warn("WARNING: Not implemented for GooglePlus");
 		throw new SocialAuthException(
 				"Update Status is not implemented for GooglePlus");
-
 	}
 
 	@Override
@@ -454,6 +455,8 @@ public class GooglePlusImpl extends AbstractProvider {
 	@Override
 	protected List<String> getPluginsList() {
 		List<String> list = new ArrayList<String>();
+		list.add("org.brickred.socialauth.plugin.googleplus.FeedPluginImpl");
+		list.add("org.brickred.socialauth.plugin.googleplus.AlbumsPluginImpl");
 		if (config.getRegisteredPlugins() != null
 				&& config.getRegisteredPlugins().length > 0) {
 			list.addAll(Arrays.asList(config.getRegisteredPlugins()));
