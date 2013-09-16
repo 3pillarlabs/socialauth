@@ -301,6 +301,8 @@ public class OAuth2 implements OAuthStrategyBase {
 				int idx = url.indexOf('?');
 				if (idx == -1) {
 					reqURL += "?";
+				} else {
+					reqURL += "&";
 				}
 				reqURL += sb.toString();
 			}

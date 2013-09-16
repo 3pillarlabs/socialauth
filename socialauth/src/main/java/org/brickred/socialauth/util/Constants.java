@@ -181,7 +181,7 @@ public interface Constants {
 	 * runkeeper
 	 */
 	public static final String RUNKEEPER = "runkeeper";
-	
+
 	/**
 	 * instagram
 	 */
@@ -191,6 +191,16 @@ public interface Constants {
 	 * googlePlus
 	 */
 	public static final String GOOGLE_PLUS = "googleplus";
+
+	/**
+	 * github
+	 */
+	public static final String GITHUB = "github";
+
+	/**
+	 * flickr
+	 */
+	public static final String FLICKR = "flickr";
 
 	/**
 	 * access token parameter name

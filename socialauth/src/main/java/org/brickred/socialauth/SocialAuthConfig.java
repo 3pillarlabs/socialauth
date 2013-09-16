@@ -109,6 +109,10 @@ public class SocialAuthConfig implements Serializable {
 				org.brickred.socialauth.provider.GooglePlusImpl.class);
 		providersImplMap.put(Constants.INSTAGRAM,
 				org.brickred.socialauth.provider.InstagramImpl.class);
+		providersImplMap.put(Constants.GITHUB,
+				org.brickred.socialauth.provider.GitHubImpl.class);
+		providersImplMap.put(Constants.FLICKR,
+				org.brickred.socialauth.provider.FlickerImpl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");
@@ -125,6 +129,8 @@ public class SocialAuthConfig implements Serializable {
 		domainMap.put(Constants.RUNKEEPER, "runkeeper.com");
 		domainMap.put(Constants.GOOGLE_PLUS, "googleapis.com");
 		domainMap.put(Constants.INSTAGRAM, "api.instagram.com");
+		domainMap.put(Constants.GITHUB, "api.github.com");
+		domainMap.put(Constants.FLICKR, "www.flickr.com");
 
 		providersConfig = new HashMap<String, OAuthConfig>();
 
