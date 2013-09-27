@@ -37,8 +37,12 @@ public class Permission implements Serializable {
 	public static final Permission CUSTOM = new Permission("custom");
 	private String scope;
 
-	private Permission(final String scope) {
+	public Permission(final String scope) {
 		this.scope = scope;
+	}
+
+	public Permission() {
+
 	}
 
 	@Override
@@ -53,5 +57,13 @@ public class Permission implements Serializable {
 	@Override
 	public String toString() {
 		return scope;
+	}
+
+	public String getScope() {
+		return scope;
+	}
+
+	public void setScope(final String scope) {
+		this.scope = scope;
 	}
 }
