@@ -71,7 +71,7 @@ public class GitHubImpl extends AbstractProvider {
 	private OAuthStrategyBase authenticationStrategy;
 
 	private static final String[] AllPerms = new String[] { "user",
-			"user:email", "user:follow", "public_repo" };
+			"user:email" };
 	private static final String[] AuthPerms = new String[] { "user",
 			"user:email" };
 
