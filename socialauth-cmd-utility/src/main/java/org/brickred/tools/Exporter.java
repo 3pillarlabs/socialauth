@@ -26,13 +26,12 @@ package org.brickred.tools;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.AccessGrant;
-import org.json.JSONObject;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Saves {@link AccessGrant} in a file
@@ -47,20 +46,8 @@ public class Exporter {
 	public static void exportAccessGrant(final AccessGrant accessGrant,
 			final String filePath) throws Exception {
 		LOG.info("Exporting AccessGrant");
-
-		JSONObject obj = new JSONObject();
-		obj.put("key", accessGrant.getKey());
-		obj.put("providerId", accessGrant.getProviderId());
-		obj.put("secret", accessGrant.getSecret());
-		obj.put("permission", accessGrant.getPermission().toString());
-		Map<String, Object> map = accessGrant.getAttributes();
-		if (!map.isEmpty()) {
-			JSONObject mapObj = new JSONObject();
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				mapObj.put(entry.getKey(), entry.getValue().toString());
-			}
-			obj.put("attributes", mapObj);
-		}
+		ObjectMapper mapper = new ObjectMapper();
+		String str = mapper.writeValueAsString(accessGrant);
 
 		File file = null;
 		String fpath = filePath;
@@ -75,7 +62,7 @@ public class Exporter {
 		LOG.debug("Persisting access grant on :: " + file.getAbsolutePath());
 		file.createNewFile();
 		PrintWriter out = new PrintWriter(file);
-		out.println(obj.toString());
+		out.println(str);
 		out.flush();
 		out.close();
 
