@@ -154,7 +154,7 @@ public class SocialAuthWebController {
 	}
 
 	@SuppressWarnings("unused")
-	@RequestMapping(params = "error_reason")
+	@RequestMapping(params = { "error", "error_reason" })
 	private String fbCancel(@RequestParam("error_reason") final String error) {
 		LOG.debug("Facebook send an error : " + error);
 		if ("user_denied".equals(error)) {
@@ -190,6 +190,16 @@ public class SocialAuthWebController {
 			@RequestParam("oauth_problem") final String error) {
 		LOG.debug("MySpace send an error : " + error);
 		if ("user_refused".equals(error)) {
+			return "redirect:/" + accessDeniedPageURL;
+		}
+		return "redirect:/";
+	}
+
+	@SuppressWarnings("unused")
+	@RequestMapping(params = "error")
+	private String gitHubCancel(@RequestParam("error") final String error) {
+		LOG.debug("GitHub send an error : " + error);
+		if ("access_denied".equals(error)) {
 			return "redirect:/" + accessDeniedPageURL;
 		}
 		return "redirect:/";
