@@ -41,6 +41,15 @@
 					<td>
 						<a href="socialauth.do?id=yammer"><img src="images/yammer.jpg" alt="Yammer" title="Yammer" border="0"></img></a>
 					</td>
+					<td>
+						<a href="socialauth.do?id=googleplus"><img src="images/googleplus.png" alt="Google Plus" title="Google Plus" border="0"></img></a>
+					</td>
+					<td>
+						<a href="socialauth.do?id=instagram"><img src="images/instagram.png" alt="Instagram" title="Instagram" border="0"></img></a>
+					</td>
+					<td>
+						<a href="socialauth.do?id=flickr"><img src="images/flickr_icon.jpg" alt="Flickr" title="Flickr" border="0"></img></a>
+					</td>
 				</tr>
 			</table>
            	<br />
