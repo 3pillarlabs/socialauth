@@ -314,9 +314,10 @@ public class SocialAuthConfig implements Serializable {
 			String cKey = applicationProperties.getProperty(value
 					+ ".consumer_key");
 			String cSecret = applicationProperties.getProperty(value
-					+ ".consumer_secret").trim();
+					+ ".consumer_secret");
 			if (cKey != null && cSecret != null) {
 				LOG.debug("Loading configuration for provider : " + key);
+ 				cSecret = cSecret.trim();
 				OAuthConfig conf = new OAuthConfig(cKey, cSecret);
 				conf.setId(key);
 				conf.setProviderImplClass(providersImplMap.get(key));
