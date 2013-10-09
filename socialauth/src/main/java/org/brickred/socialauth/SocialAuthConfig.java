@@ -316,6 +316,8 @@ public class SocialAuthConfig implements Serializable {
 			String cSecret = applicationProperties.getProperty(value
 					+ ".consumer_secret");
 			if (cKey != null && cSecret != null) {
+				cKey = cKey.trim();
+				cSecret = cSecret.trim();
 				LOG.debug("Loading configuration for provider : " + key);
 				OAuthConfig conf = new OAuthConfig(cKey, cSecret);
 				conf.setId(key);
@@ -333,7 +335,7 @@ public class SocialAuthConfig implements Serializable {
 					String reqUrl = applicationProperties.getProperty(
 							value + ".request_token_url").trim();
 					if (reqUrl.length() > 0) {
-						conf.setRequestTokenUrl(reqUrl);
+						conf.setRequestTokenUrl(reqUrl.trim());
 					}
 				}
 				if (applicationProperties.containsKey(value
@@ -341,7 +343,7 @@ public class SocialAuthConfig implements Serializable {
 					String authUrl = applicationProperties.getProperty(
 							value + ".authentication_url").trim();
 					if (authUrl.length() > 0) {
-						conf.setAuthenticationUrl(authUrl);
+						conf.setAuthenticationUrl(authUrl.trim());
 					}
 				}
 				if (applicationProperties.containsKey(value
@@ -349,7 +351,7 @@ public class SocialAuthConfig implements Serializable {
 					String tokenUrl = applicationProperties.getProperty(
 							value + ".access_token_url").trim();
 					if (tokenUrl.length() > 0) {
-						conf.setAccessTokenUrl(tokenUrl);
+						conf.setAccessTokenUrl(tokenUrl.trim());
 					}
 				}
 				if (applicationProperties.containsKey(value + ".plugins")) {

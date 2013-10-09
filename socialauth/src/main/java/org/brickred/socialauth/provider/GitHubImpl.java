@@ -166,7 +166,10 @@ public class GitHubImpl extends AbstractProvider {
 				p.setFullName(resp.getString("name"));
 			}
 			if (resp.has("email")) {
-				p.setEmail(resp.getString("email"));
+				String email = resp.getString("email");
+				if (!"null".equals(email)) {
+					p.setEmail(resp.getString("email"));
+				}
 			}
 			if (resp.has("location")) {
 				p.setLocation(resp.getString("location"));
