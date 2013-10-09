@@ -14,6 +14,10 @@ Usage
 
 java GenerateToken --providerId=[providerId] --host=[hostname] --port=[port] --returnURL=[returnURL] --tokenFileLocation=[tokenFileLocation]
 
+If you generate fat jar of this utility then you can use the following command 
+
+java -jar socialauth-cmd-utility.jar  --providerId=[providerId] --host=[hostname] --port=[port] --returnURL=[returnURL] --tokenFileLocation=[tokenFileLocation]
+
 Here 
 	providerId is the id of provider like facebook etc.
 	host is the host of your server. This will be the same which will you use in returnURL
