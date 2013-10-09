@@ -10,7 +10,7 @@
 	<property name="src" value="${distDir}/src" />
 	<property name="dependencies" value="${distDir}/dependencies" />
 
-	<property name="project.socialauth" value="socialauth-core" />
+	<property name="project.socialauth" value="socialauth" />
 	<property name="project.filter" value="socialauth-filter" />
 	<property name="project.spring" value="socialauth-spring" />
 	<property name="project.seam" value="socialauth-seam" />
