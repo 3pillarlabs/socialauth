@@ -94,7 +94,7 @@
 							</archive>
 						</configuration>
 						<goals>
-							<goal>assembly</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
