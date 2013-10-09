@@ -50,6 +50,9 @@
 					<td>
 						<a href="socialauth.do?id=flickr"><img src="images/flickr_icon.jpg" alt="Flickr" title="Flickr" border="0"></img></a>
 					</td>
+					<td>
+						<a href="socialauth.do?id=github"><img src="images/github.png" alt="GITHub" title="GITHub" border="0"></img></a>
+					</td>
 				</tr>
 			</table>
            	<br />
