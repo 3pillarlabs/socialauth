@@ -300,6 +300,12 @@ public class FourSquareImpl extends AbstractProvider {
 				c.setProfileUrl(VIEW_PROFILE_URL + obj.getString("id"));
 				c.setId(obj.getString("id"));
 			}
+			if (obj.has("photo")) {
+				String photo = obj.getString("photo");
+				if (photo.length() > 1) {
+					c.setProfileImageURL(photo);
+				}
+			}
 			plist.add(c);
 		}
 
