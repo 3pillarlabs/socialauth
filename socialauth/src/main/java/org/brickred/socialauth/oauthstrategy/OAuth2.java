@@ -310,7 +310,8 @@ public class OAuth2 implements OAuthStrategyBase {
 				|| MethodType.PUT.toString().equals(methodType)) {
 			if (sb.length() > 0) {
 				if (bodyStr != null) {
-					if (headerParams.containsKey("Content-Type")) {
+					if (headerParams != null
+							&& headerParams.containsKey("Content-Type")) {
 						String val = headerParams.get("Content-Type");
 						if (!"application/json".equals(val)) {
 							bodyStr += "&";
