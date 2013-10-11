@@ -4,7 +4,7 @@
 	<groupId>org.brickred</groupId>
 	<artifactId>socialauth-cmd-utility</artifactId>
 	<name>socialauth-cmd-utility</name>
-	<version>1.1</version>
+	<version>1.2</version>
 	<description>SocialAuth Command line Utility to generate and save access token.</description>
 	<url>http://maven.apache.org</url>
 	<licenses>
