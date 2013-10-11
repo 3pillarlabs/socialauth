@@ -53,19 +53,18 @@ import org.brickred.socialauth.util.SocialAuthUtil;
  * the contacts.
  * 
  * @author tarun.nagpal
- *
+ * 
  */
-@Results({
-		@Result(name="success",location="/jsp/authSuccess.jsp"),
-		@Result(name="failure",location="/jsp/error.jsp"),
-	})
-public class SocialAuthSuccessAction implements SessionAware,ServletRequestAware {
+@Results({ @Result(name = "success", location = "/jsp/authSuccess.jsp"),
+		@Result(name = "failure", location = "/jsp/error.jsp"), })
+public class SocialAuthSuccessAction implements SessionAware,
+		ServletRequestAware {
 
 	final Log LOG = LogFactory.getLog(this.getClass());
-	
-	private Map<String, Object> userSession ;
+
+	private Map<String, Object> userSession;
 	public HttpServletRequest request;
-	
+
 	/**
 	 * Displays the user profile and contacts for the given provider.
 	 * 
@@ -73,16 +72,15 @@ public class SocialAuthSuccessAction implements SessionAware,ServletRequestAware
 	 * @throws Exception
 	 *             if an error occurs
 	 */
-	@Action(value="/socialAuthSuccessAction")
+	@Action(value = "/socialAuthSuccessAction")
 	public String execute() throws Exception {
-
 
 		SocialAuthManager manager = null;
 		if (userSession.get("socialAuthManager") != null) {
-			manager = (SocialAuthManager)userSession.get("socialAuthManager");
-		} 
-		
-		if(manager!=null){
+			manager = (SocialAuthManager) userSession.get("socialAuthManager");
+		}
+
+		if (manager != null) {
 			List<Contact> contactsList = new ArrayList<Contact>();
 			Profile profile = null;
 			try {
@@ -107,18 +105,18 @@ public class SocialAuthSuccessAction implements SessionAware,ServletRequestAware
 			return "success";
 		}
 		return "failure";
-		
+
 	}
 
 	@Override
-	public void setSession(Map<String, Object> session) {
-		userSession = session ;
-		
+	public void setSession(final Map<String, Object> session) {
+		userSession = session;
+
 	}
-	
+
 	@Override
-	public void setServletRequest(HttpServletRequest request) {
-		this.request = request; 
+	public void setServletRequest(final HttpServletRequest request) {
+		this.request = request;
 	}
 
 }
