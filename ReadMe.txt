@@ -1,6 +1,8 @@
 ===============================================================================
-WELCOME to SocialAuth Java SDK version 4.2
+WELCOME to SocialAuth Java SDK version 4.3
 ===============================================================================
+
+https://github.com/3pillarlabs/socialauth
 
 The SDK contains all the material you need to use SocialAuth java library.
 The directories are as follows:
@@ -27,5 +29,5 @@ how the SDK can be used to build java application.
 5. javadoc - Documentation for SocialAuth different libraries.
 
 ===============================================================================
-Detailed wiki available at http://code.google.com/p/socialauth/
+Detailed wiki available at https://github.com/3pillarlabs/socialauth/wiki
 ===============================================================================
