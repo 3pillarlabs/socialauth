@@ -79,6 +79,7 @@ public class GooglePlusImpl extends AbstractProvider {
 	private static final String[] AllPerms = new String[] {
 			"https://www.googleapis.com/auth/userinfo.profile",
 			"https://www.googleapis.com/auth/userinfo.email",
+			"https://www.googleapis.com/auth/plus.login",
 			"https://www.google.com/m8/feeds",
 			"https://picasaweb.google.com/data/" };
 
