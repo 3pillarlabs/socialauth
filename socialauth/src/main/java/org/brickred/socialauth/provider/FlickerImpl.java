@@ -67,7 +67,7 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 
 	private static final long serialVersionUID = 1908393649053616794L;
 	private static final String PROFILE_URL = "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&user_id=%1$s&apikey=%2$s";
-	private static final String CONTACT_URL = "http://api.flickr.com/services/rest/??method=flickr.contacts.getList&user_id=%1$s&apikey=%2$s";
+	private static final String CONTACT_URL = "http://api.flickr.com/services/rest/?method=flickr.contacts.getList&user_id=%1$s&apikey=%2$s";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(FlickerImpl.class);
 
@@ -274,7 +274,6 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 	 */
 	@Override
 	public List<Contact> getContactList() throws Exception {
-
 		String contactUrl = String
 				.format(CONTACT_URL, accessToken.getAttribute("user_nsid"),
 						config.get_consumerKey());
@@ -314,44 +313,46 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 		if (root != null) {
 			NodeList cList = root.getElementsByTagName("contacts");
 			if (cList != null && cList.getLength() > 0) {
-				LOG.debug("Found contacts : " + cList.getLength());
-				for (int i = 0; i < cList.getLength(); i++) {
-					Element c = (Element) cList.item(i);
-					NodeList contactNode = c.getElementsByTagName("contact");
-					if (contactNode != null) {
-						Element cl = (Element) contactNode.item(0);
-						String id = cl.getAttribute("nsid");
-						String userName = cl.getAttribute("username");
-						String realName = cl.getAttribute("realname");
-						String iconfarm = cl.getAttribute("iconfarm");
-						String iconserver = cl.getAttribute("iconserver");
+				Element contacts = (Element) cList.item(0);
+				NodeList contactNodes = contacts
+						.getElementsByTagName("contact");
+				if (contactNodes != null && contactNodes.getLength() > 0) {
+					LOG.debug("Found contacts : " + contactNodes.getLength());
+					for (int i = 0; i < contactNodes.getLength(); i++) {
+						Element contact = (Element) contactNodes.item(i);
+						String id = contact.getAttribute("nsid");
+						String userName = contact.getAttribute("username");
+						String realName = contact.getAttribute("realname");
+						String iconfarm = contact.getAttribute("iconfarm");
+						String iconserver = contact.getAttribute("iconserver");
 						String buddyurl = "http://farm" + iconfarm
 								+ ".staticflickr.com/" + iconserver
 								+ "/buddyicons/" + id + ".jpg";
 
 						if (id != null) {
-							Contact cont = new Contact();
+							Contact contactObj = new Contact();
 							if (realName != null) {
-								cont.setFirstName(realName);
+								contactObj.setFirstName(realName);
 							}
 							if (userName != null) {
-								cont.setDisplayName(userName);
+								contactObj.setDisplayName(userName);
 							}
 
 							if (iconserver != null) {
 								if (iconserver.equalsIgnoreCase("0")) {
-									cont.setProfileImageURL("http://www.flickr.com/images/buddyicon.gif");
+									contactObj
+											.setProfileImageURL("http://www.flickr.com/images/buddyicon.gif");
 								} else {
-									cont.setProfileImageURL(buddyurl);
+									contactObj.setProfileImageURL(buddyurl);
 								}
 							}
-							cont.setId(id);
-							contactList.add(cont);
+							contactObj.setId(id);
+							contactList.add(contactObj);
 						}
 					}
 				}
 			} else {
-				LOG.debug("No contacts were obtained from : " + CONTACT_URL);
+				LOG.debug("No contacts were obtained from : " + contactUrl);
 			}
 		}
 		return contactList;
