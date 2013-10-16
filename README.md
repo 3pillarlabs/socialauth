@@ -11,7 +11,16 @@ SocialAuth is a Java library ([.NET port](http://code.google.com/p/socialauth-ne
 
 See our [SoicalAuth demo in action](http://labs.3pillarglobal.com/socialauthdemo) !
 
-Download [socialauth-java-sdk-4.2.zip](http://socialauth.googlecode.com/files/socialauth-java-sdk-4.2.zip)
+Download [socialauth-java-sdk-4.3.zip](http://socialauth.googlecode.com/files/socialauth-java-sdk-4.3.zip)
+
+Whats new in Version 4.3?
+=========================
+* Added GitHub Provider
+* Added Flickr Provider
+* Added !GooglePlus Feed Plugin
+* Added !GooglePlus Album Plugin
+* Added Facebook wall demo
+* Jackson support in Command line utility to generate and save access token
 
 Whats new in Version 4.2?
 =========================
