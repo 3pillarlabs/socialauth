@@ -317,6 +317,9 @@ public class OAuth2 implements OAuthStrategyBase {
 							bodyStr += "&";
 							bodyStr += sb.toString();
 						}
+					} else {
+						bodyStr += "&";
+						bodyStr += sb.toString();
 					}
 				} else {
 					bodyStr = sb.toString();

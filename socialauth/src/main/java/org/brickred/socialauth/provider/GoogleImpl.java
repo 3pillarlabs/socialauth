@@ -55,9 +55,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Provider implementation for Google
+ * Provider implementation for Google. Now google supports OAuth2.0 protocol, so
+ * if you are registering your application now on google, use
+ * {@link GooglePlusImpl} (GoolgePlus) provider and set the key/secret in
+ * configuration accordingly. Please visit <a
+ * href="https://github.com/3pillarlabs/socialauth/wiki/Sample-Properties"
+ * >Sample Properties</a> to configure GooglePlus key/secret.
  * 
  * @author abhinavm@brickred.com
+ * @author tarun.nagpal
  * 
  */
 public class GoogleImpl extends AbstractProvider {
