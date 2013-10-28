@@ -203,6 +203,11 @@ public interface Constants {
 	public static final String FLICKR = "flickr";
 
 	/**
+	 * nimble
+	 */
+	public static final String NIMBLE = "nimble";
+
+	/**
 	 * access token parameter name
 	 */
 	public static final String ACCESS_TOKEN_PARAMETER_NAME = "access_token";
