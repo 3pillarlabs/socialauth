@@ -67,9 +67,9 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		Serializable {
 
 	private static final long serialVersionUID = 1908393649053616794L;
-	private static final String PROFILE_URL = "http://api.twitter.com/1.1/users/show.json?screen_name=";
-	private static final String CONTACTS_URL = "http://api.twitter.com/1.1/friends/ids.json?screen_name=%1$s&cursor=-1";
-	private static final String LOOKUP_URL = "http://api.twitter.com/1.1/users/lookup.json?user_id=";
+	private static final String PROFILE_URL = "https://api.twitter.com/1.1/users/show.json?screen_name=";
+	private static final String CONTACTS_URL = "https://api.twitter.com/1.1/friends/ids.json?screen_name=%1$s&cursor=-1";
+	private static final String LOOKUP_URL = "https://api.twitter.com/1.1/users/lookup.json?user_id=";
 	private static final String UPDATE_STATUS_URL = "http://api.twitter.com/1.1/statuses/update.json?status=";
 	private static final String IMAGE_UPLOAD_URL = "https://api.twitter.com/1.1/statuses/update_with_media.json";
 
@@ -390,7 +390,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 				}
 				if (jobj.has("screen_name")) {
 					cont.setDisplayName(jobj.getString("screen_name"));
-					cont.setProfileUrl("http://" + PROPERTY_DOMAIN + "/"
+					cont.setProfileUrl("https://" + PROPERTY_DOMAIN + "/"
 							+ jobj.getString("screen_name"));
 				}
 				cont.setProfileImageURL(jobj.optString("profile_image_url"));
