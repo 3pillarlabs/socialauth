@@ -73,6 +73,7 @@ public class GenerateToken {
 	final Condition gotAuthorizationResponse = lock.newCondition();
 	String code;
 	String error;
+	Map<String, String> paramsMap;
 
 	String providerId;
 	String successURL;
@@ -127,8 +128,9 @@ public class GenerateToken {
 		if (tokenFilePath == null) {
 			tokenFilePath = System.getProperty("user.home");
 		}
-		startServer();
 		String url = manager.getAuthenticationUrl(providerId, successURL);
+		startServer();
+
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(Action.BROWSE)) {
@@ -143,7 +145,7 @@ public class GenerateToken {
 
 		lock.lock();
 		try {
-			while (code == null && error == null) {
+			while (paramsMap == null && error == null) {
 				gotAuthorizationResponse.awaitUninterruptibly();
 			}
 			if (error != null) {
@@ -155,9 +157,8 @@ public class GenerateToken {
 		}
 		stop();
 
-		manager.getAuthenticationUrl(providerId, successURL);
-		AccessGrant accessGrant = manager.createAccessGrant(providerId, code,
-				successURL);
+		AccessGrant accessGrant = manager.createAccessGrant(providerId,
+				paramsMap, successURL);
 
 		Exporter.exportAccessGrant(accessGrant, tokenFilePath);
 
@@ -208,7 +209,18 @@ public class GenerateToken {
 			lock.lock();
 			try {
 				error = request.getParameter("error");
-				code = request.getParameter("code");
+				if (request.getParameter("code") != null) {
+					code = request.getParameter("code");
+				} else if (request.getParameter("oauth_token") != null) {
+					code = request.getParameter("oauth_token");
+				}
+				Map<String, String[]> map = request.getParameterMap();
+				paramsMap = new HashMap<String, String>();
+				for (Map.Entry<String, String[]> entry : map.entrySet()) {
+					String key = entry.getKey();
+					String values[] = entry.getValue();
+					paramsMap.put(key, values[0].toString()); // Only 1 value is
+				}
 				gotAuthorizationResponse.signal();
 				LOG.debug("Auth code :: " + code);
 			} finally {
