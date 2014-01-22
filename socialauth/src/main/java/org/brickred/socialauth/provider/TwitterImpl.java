@@ -390,7 +390,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 				}
 				if (jobj.has("screen_name")) {
 					cont.setDisplayName(jobj.getString("screen_name"));
-					cont.setProfileUrl("http://" + PROPERTY_DOMAIN + "/"
+					cont.setProfileUrl("https://" + PROPERTY_DOMAIN + "/"
 							+ jobj.getString("screen_name"));
 				}
 				cont.setProfileImageURL(jobj.optString("profile_image_url"));
