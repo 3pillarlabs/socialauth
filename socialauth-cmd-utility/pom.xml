@@ -15,8 +15,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://socialauth.googlecode.com/svn/trunk/</connection>
-		<url>http://socialauth.googlecode.com/svn/trunk/</url>
+		<connection>scm:git:https://github.com/3pillarlabs/socialauth.git</connection>
+		<url>http://github.com/3pillarlabs/socialauth</url>
 	</scm>
 	<developers>
 		<developer>
