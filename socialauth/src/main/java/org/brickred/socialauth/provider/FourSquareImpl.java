@@ -60,8 +60,9 @@ import org.json.JSONObject;
 public class FourSquareImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = 3364430495809289118L;
-	private static final String PROFILE_URL = "https://api.foursquare.com/v2/users/self";
-	private static final String CONTACTS_URL = "https://api.foursquare.com/v2/users/self/friends";
+    private static final String FOURSQUARE_VERSION_PARAMETER = "v=20140101";
+    private static final String PROFILE_URL = "https://api.foursquare.com/v2/users/self?" + FOURSQUARE_VERSION_PARAMETER;
+    private static final String CONTACTS_URL = "https://api.foursquare.com/v2/users/self/friends?" + FOURSQUARE_VERSION_PARAMETER;
 	private static final String VIEW_PROFILE_URL = "http://foursquare.com/user/";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(FourSquareImpl.class);
