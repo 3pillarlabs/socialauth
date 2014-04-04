@@ -20,8 +20,9 @@ import de.deltatree.social.web.filter.api.security.SASFSocialAuthManager;
 import de.deltatree.social.web.filter.impl.props.SASFProperties;
 
 public class DefaultSASFHelper implements SASFHelper, Serializable {
+
 	private final static long serialVersionUID = 2188168359053036053L;
-	
+
 	private final static String SESSION_KEY = "S_SASFHelper";
 	private final static String SESSION_SOCIAL_AUTH_PROVIDER = "SESSION_SOCIAL_AUTH_PROVIDER";
 	private final static String SESSION_SOCIAL_AUTH_MANAGER = "SESSION_SOCIAL_AUTH_MANAGER";
