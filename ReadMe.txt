@@ -1,5 +1,5 @@
 ===============================================================================
-WELCOME to SocialAuth Java SDK version 4.3
+WELCOME to SocialAuth Java SDK version 4.5
 ===============================================================================
 
 https://github.com/3pillarlabs/socialauth
