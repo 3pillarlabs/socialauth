@@ -68,9 +68,9 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 		Serializable {
 
 	private static final long serialVersionUID = 903564874550419470L;
-	private static final String PROFILE_URL = "http://social.yahooapis.com/v1/user/%1$s/profile?format=json";
-	private static final String CONTACTS_URL = "http://social.yahooapis.com/v1/user/%1$s/contacts;count=max";
-	private static final String UPDATE_STATUS_URL = "http://social.yahooapis.com/v1/user/%1$s/profile/status";
+	private static final String PROFILE_URL = "https://social.yahooapis.com/v1/user/%1$s/profile?format=json";
+	private static final String CONTACTS_URL = "https://social.yahooapis.com/v1/user/%1$s/contacts;count=max";
+	private static final String UPDATE_STATUS_URL = "https://social.yahooapis.com/v1/user/%1$s/profile/status";
 	private final Log LOG = LogFactory.getLog(YahooImpl.class);
 	private static final Map<String, String> ENDPOINTS;
 

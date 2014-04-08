@@ -23,6 +23,8 @@
  */
 package org.brickred.socialauth.spring.bean;
 
+import java.io.Serializable;
+
 import org.brickred.socialauth.SocialAuthManager;
 
 /**
@@ -31,7 +33,9 @@ import org.brickred.socialauth.SocialAuthManager;
  * @author tarunn@brickred.com
  * 
  */
-public class SocialAuthTemplate {
+public class SocialAuthTemplate implements Serializable {
+
+	private static final long serialVersionUID = -1015105736894158333L;
 	private SocialAuthManager socialAuthManager;
 
 	public SocialAuthManager getSocialAuthManager() {
