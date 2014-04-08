@@ -4,7 +4,7 @@
 	<groupId>org.brickred</groupId>
 	<artifactId>socialauth-spring</artifactId>
 	<name>socialauth-spring</name>
-	<version>2.4</version>
+	<version>2.5</version>
 	<description>SocialAuth-Spring library</description>
 	<url>http://code.google.com/p/socialauth/</url>
 	<licenses>
@@ -26,7 +26,7 @@
 		</developer>
 	</developers>
 	<properties>
-		<org.brickred.socialauth-version>[4.2,)</org.brickred.socialauth-version>
+		<org.brickred.socialauth-version>[4.5,)</org.brickred.socialauth-version>
 		<org.springframework-version>3.1.2.RELEASE</org.springframework-version>
 	</properties>
 	<dependencies>
