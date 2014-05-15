@@ -208,6 +208,11 @@ public interface Constants {
 	public static final String NIMBLE = "nimble";
 
 	/**
+	 * linkedin oAuth2.0 provider
+	 */
+	public static final String LINKEDINOAUTH2 = "linkedin2";
+
+	/**
 	 * access token parameter name
 	 */
 	public static final String ACCESS_TOKEN_PARAMETER_NAME = "access_token";
