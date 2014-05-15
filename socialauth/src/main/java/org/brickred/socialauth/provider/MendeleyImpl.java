@@ -41,29 +41,29 @@ import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
-import org.brickred.socialauth.oauthstrategy.OAuth1;
+import org.brickred.socialauth.oauthstrategy.OAuth2;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.Constants;
+import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  * Mendeley implementation of the provider.
  * 
- * @author tarunn@brickred.com
+ * @author tarun.nagpal@3pillarlabs.com
  * 
  */
 
 public class MendeleyImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = -8791307959143391316L;
-	private static final String PROFILE_URL = "https://api.mendeley.com/oapi/profiles/info/me/";
-	private static final String CONTACTS_URL = "https://api.mendeley.com/oapi/profiles/contacts/";
+	private static final String PROFILE_URL = "https://api-oauth2.mendeley.com/oapi/profiles/info/me/";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(MendeleyImpl.class);
+	private static final String SCOPE = "all";
 
 	private Permission scope;
 	private boolean isVerify;
@@ -74,12 +74,10 @@ public class MendeleyImpl extends AbstractProvider {
 
 	static {
 		ENDPOINTS = new HashMap<String, String>();
-		ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-				"https://www.mendeley.com/oauth/request_token/");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://www.mendeley.com/oauth/authorize/");
+				"https://api-oauth2.mendeley.com/oauth/authorize/");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"https://www.mendeley.com/oauth/access_token/");
+				"https://api-oauth2.mendeley.com/oauth/token");
 	}
 
 	/**
@@ -92,13 +90,6 @@ public class MendeleyImpl extends AbstractProvider {
 	 */
 	public MendeleyImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
-		if (config.getRequestTokenUrl() != null) {
-			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-					config.getRequestTokenUrl());
-		} else {
-			config.setRequestTokenUrl(ENDPOINTS
-					.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		}
 
 		if (config.getAuthenticationUrl() != null) {
 			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
@@ -115,7 +106,8 @@ public class MendeleyImpl extends AbstractProvider {
 			config.setAccessTokenUrl(ENDPOINTS
 					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 		}
-		authenticationStrategy = new OAuth1(config, ENDPOINTS);
+		authenticationStrategy = new OAuth2(config, ENDPOINTS);
+		authenticationStrategy.setScope(SCOPE);
 	}
 
 	/**
@@ -165,7 +157,8 @@ public class MendeleyImpl extends AbstractProvider {
 	private Profile doVerifyResponse(final Map<String, String> requestParams)
 			throws Exception {
 		LOG.info("Verifying the authentication response from provider");
-		accessToken = authenticationStrategy.verifyResponse(requestParams);
+		accessToken = authenticationStrategy.verifyResponse(requestParams,
+				MethodType.POST.toString());
 		isVerify = true;
 		return getProfile();
 	}
@@ -244,53 +237,9 @@ public class MendeleyImpl extends AbstractProvider {
 	 */
 	@Override
 	public List<Contact> getContactList() throws Exception {
-		if (!isVerify) {
-			throw new SocialAuthException(
-					"Please call verifyResponse function first to get Access Token");
-		}
-		String url = CONTACTS_URL;
-		List<Contact> plist = new ArrayList<Contact>();
-		LOG.info("Fetching contacts from " + url);
-		Response serviceResponse = null;
-		try {
-			serviceResponse = authenticationStrategy.executeFeed(url);
-		} catch (Exception ie) {
-			throw new SocialAuthException(
-					"Failed to retrieve the contacts from " + url, ie);
-		}
-		String result;
-		try {
-			result = serviceResponse
-					.getResponseBodyAsString(Constants.ENCODING);
-		} catch (Exception e) {
-			throw new ServerDataException("Failed to get response from " + url);
-		}
-		try {
-			LOG.debug("User Contacts list in json : " + result);
-			JSONArray data = new JSONArray(result);
-			LOG.debug("Found contacts : " + data.length());
-			for (int i = 0; i < data.length(); i++) {
-				JSONObject obj = data.getJSONObject(i);
-				Contact p = new Contact();
-				String name = obj.getString("name");
-				if (name != null) {
-					String nameArr[] = name.split(" ");
-					if (nameArr.length > 1) {
-						p.setFirstName(nameArr[0]);
-						p.setLastName(nameArr[1]);
-					} else {
-						p.setFirstName(obj.getString("name"));
-					}
-					p.setDisplayName(name);
-				}
-				p.setId(obj.getString("profile_id"));
-				plist.add(p);
-			}
-		} catch (Exception e) {
-			throw new ServerDataException(
-					"Failed to parse the user friends json : " + result, e);
-		}
-		return plist;
+		LOG.warn("WARNING: Not implemented for Mendeley");
+		throw new SocialAuthException(
+				"Get contact list is not implemented for Mendeley");
 	}
 
 	/**
