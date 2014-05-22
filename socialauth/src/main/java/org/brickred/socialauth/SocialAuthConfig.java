@@ -384,6 +384,15 @@ public class SocialAuthConfig implements Serializable {
 						}
 					}
 				}
+				
+				// add custom properties
+				for (String propertyKey : applicationProperties
+						.stringPropertyNames()) {
+					if (propertyKey.startsWith(value + ".custom."))
+						conf.getCustomProperties().put(propertyKey,
+								applicationProperties.getProperty(propertyKey));
+				}
+
 				providersConfig.put(key, conf);
 			} else {
 				LOG.debug("Configuration for provider " + key

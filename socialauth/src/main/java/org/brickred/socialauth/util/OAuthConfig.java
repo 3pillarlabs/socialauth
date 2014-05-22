@@ -25,7 +25,9 @@
 package org.brickred.socialauth.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * It contains the configuration of application like consumer key and consumer
@@ -49,6 +51,8 @@ public class OAuthConfig implements Serializable {
 	private String accessTokenUrl;
 	private String[] registeredPlugins;
 	private List<String> pluginsScopes;
+	
+	private Map<String, String> customProperties = new HashMap<String, String>();
 
 	/**
 	 * 
@@ -273,6 +277,24 @@ public class OAuthConfig implements Serializable {
 	public void setPluginsScopes(final List<String> pluginsScopes) {
 		this.pluginsScopes = pluginsScopes;
 	}
+	
+	/**
+	 * Retrieves the list of custom properties
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getCustomProperties() {
+		return customProperties;
+	}
+
+	/**
+	 * Set the list of custom properties
+	 * 
+	 * @param rawProperties
+	 */
+	public void setCustomProperties(Map<String, String> customProperties) {
+		this.customProperties = customProperties;
+	}
 
 	@Override
 	public String toString() {
@@ -291,6 +313,7 @@ public class OAuthConfig implements Serializable {
 		result.append(" accessTokenUrl: " + accessTokenUrl + NEW_LINE);
 		result.append(" registeredPlugins: " + registeredPlugins + NEW_LINE);
 		result.append(" pluginsScopes: " + pluginsScopes + NEW_LINE);
+		result.append(" customProperties: " + customProperties + NEW_LINE);
 		result.append("}");
 		return result.toString();
 	}
