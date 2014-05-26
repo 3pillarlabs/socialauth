@@ -385,11 +385,11 @@ public class SocialAuthConfig implements Serializable {
 					}
 				}
 				
-				// add custom properties
+				// add raw properties
 				for (String propertyKey : applicationProperties
 						.stringPropertyNames()) {
-					if (propertyKey.startsWith(value + ".custom."))
-						conf.getCustomProperties().put(propertyKey,
+					if (propertyKey.startsWith(value + "."))
+						conf.getRawProperties().put(propertyKey,
 								applicationProperties.getProperty(propertyKey));
 				}
 

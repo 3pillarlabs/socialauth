@@ -52,7 +52,7 @@ public class OAuthConfig implements Serializable {
 	private String[] registeredPlugins;
 	private List<String> pluginsScopes;
 	
-	private Map<String, String> customProperties = new HashMap<String, String>();
+	private Map<String, String> rawProperties = new HashMap<String, String>();
 
 	/**
 	 * 
@@ -279,21 +279,21 @@ public class OAuthConfig implements Serializable {
 	}
 	
 	/**
-	 * Retrieves the list of custom properties
+	 * Retrieves the list of raw properties
 	 * 
 	 * @return
 	 */
-	public Map<String, String> getCustomProperties() {
-		return customProperties;
+	public Map<String, String> getRawProperties() {
+		return rawProperties;
 	}
 
 	/**
-	 * Set the list of custom properties
+	 * Set the list of raw properties
 	 * 
 	 * @param rawProperties
 	 */
-	public void setCustomProperties(Map<String, String> customProperties) {
-		this.customProperties = customProperties;
+	public void setRawProperties(Map<String, String> rawProperties) {
+		this.rawProperties = rawProperties;
 	}
 
 	@Override
@@ -313,7 +313,7 @@ public class OAuthConfig implements Serializable {
 		result.append(" accessTokenUrl: " + accessTokenUrl + NEW_LINE);
 		result.append(" registeredPlugins: " + registeredPlugins + NEW_LINE);
 		result.append(" pluginsScopes: " + pluginsScopes + NEW_LINE);
-		result.append(" customProperties: " + customProperties + NEW_LINE);
+		result.append(" rawProperties: " + rawProperties + NEW_LINE);
 		result.append("}");
 		return result.toString();
 	}
