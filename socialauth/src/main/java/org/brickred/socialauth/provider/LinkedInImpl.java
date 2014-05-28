@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Implementation of Linkedin provider. This uses the oAuth API provided by
+ * Implementation of LinkedIn provider. This uses the OAuth API provided by
  * Linkedin
  * 
  * 

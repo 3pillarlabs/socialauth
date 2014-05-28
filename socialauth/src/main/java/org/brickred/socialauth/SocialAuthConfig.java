@@ -116,7 +116,7 @@ public class SocialAuthConfig implements Serializable {
 		providersImplMap.put(Constants.NIMBLE,
 				org.brickred.socialauth.provider.NimbleImpl.class);
 		providersImplMap.put(Constants.LINKEDINOAUTH2,
-				org.brickred.socialauth.provider.LinkedInAuth2Impl.class);
+				org.brickred.socialauth.provider.LinkedInOAuth2Impl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");

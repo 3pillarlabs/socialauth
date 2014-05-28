@@ -208,7 +208,7 @@ public interface Constants {
 	public static final String NIMBLE = "nimble";
 
 	/**
-	 * linkedin oAuth2.0 provider
+	 * linkedin OAuth2 provider
 	 */
 	public static final String LINKEDINOAUTH2 = "linkedin2";
 
