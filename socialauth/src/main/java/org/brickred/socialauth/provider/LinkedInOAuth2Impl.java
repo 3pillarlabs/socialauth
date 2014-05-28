@@ -1,6 +1,6 @@
 /*
  ===========================================================================
- Copyright (c) 2010 BrickRed Technologies Limited
+ Copyright (c) 2014 BrickRed Technologies Limited
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -54,23 +54,23 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Implementation of Linkedin oAuth2 provider. This uses the oAuth API provided
- * by Linkedin
+ * Implementation of LinkedIn OAuth2 provider. This uses the OAuth2 API provided
+ * by LinkedIn
  * 
  * 
  * @author vineet.aggarwal@3pillarglobal.com
  * 
  */
 
-public class LinkedInAuth2Impl extends AbstractProvider {
+public class LinkedInOAuth2Impl extends AbstractProvider {
 
-	private static final long serialVersionUID = -6141448721085510813L;
+	private static final long serialVersionUID = 3389564715902769183L;
 	private static final String CONNECTION_URL = "https://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)?oauth2_access_token=";
 	private static final String UPDATE_STATUS_URL = "https://api.linkedin.com/v1/people/~/shares?oauth2_access_token=";
 	private static final String PROFILE_URL = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name),phone-numbers,main-address)?oauth2_access_token=";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
 	private static final Map<String, String> ENDPOINTS;
-	private final Log LOG = LogFactory.getLog(LinkedInImpl.class);
+	private final Log LOG = LogFactory.getLog(LinkedInOAuth2Impl.class);
 
 	private Permission scope;
 	private AccessGrant accessToken;
@@ -100,7 +100,8 @@ public class LinkedInAuth2Impl extends AbstractProvider {
 	 *            and consumer secret
 	 * @throws Exception
 	 */
-	public LinkedInAuth2Impl(final OAuthConfig providerConfig) throws Exception {
+	public LinkedInOAuth2Impl(final OAuthConfig providerConfig)
+			throws Exception {
 		config = providerConfig;
 		// Need to pass scope while fetching RequestToken from LinkedIn for new
 		// keys
@@ -462,8 +463,8 @@ public class LinkedInAuth2Impl extends AbstractProvider {
 	@Override
 	protected List<String> getPluginsList() {
 		List<String> list = new ArrayList<String>();
-		list.add("org.brickred.socialauth.plugin.linkedinAuth2.FeedPluginImpl");
-		list.add("org.brickred.socialauth.plugin.linkedinAuth2.CareerPluginImpl");
+		list.add("org.brickred.socialauth.plugin.linkedin.oauth2.FeedPluginImpl");
+		list.add("org.brickred.socialauth.plugin.linkedin.oauth2.CareerPluginImpl");
 		if (config.getRegisteredPlugins() != null
 				&& config.getRegisteredPlugins().length > 0) {
 			list.addAll(Arrays.asList(config.getRegisteredPlugins()));

@@ -22,7 +22,7 @@
  ===========================================================================
 
  */
-package org.brickred.socialauth.plugin.linkedinAuth2;
+package org.brickred.socialauth.plugin.linkedin.oauth2;
 
 import java.io.Serializable;
 
@@ -43,19 +43,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Career plugin implementation for linkedin
+ * Career plugin implementation for LinkedIn OAuth2 provider
  * 
  * @author tarun.nagpal
  * 
  */
 public class CareerPluginImpl implements CareerPlugin, Serializable {
 
-	private static final long serialVersionUID = -1733773634998485298L;
-
+	private static final long serialVersionUID = 3296673276334272488L;
 	private ProviderSupport providerSupport;
 	private final Log LOG = LogFactory.getLog(this.getClass());
 
-	private static final String PROFILE_URL = "https://api.linkedin.com/v1/people/~:(id,phone-numbers,headline,educations,positions,recommendations-received)?oauth2_access_token";
+	private static final String PROFILE_URL = "https://api.linkedin.com/v1/people/~:(id,phone-numbers,headline,educations,positions,recommendations-received)?oauth2_access_token=";
 
 	public CareerPluginImpl(final ProviderSupport providerSupport) {
 		this.providerSupport = providerSupport;
