@@ -42,14 +42,16 @@ import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.OAuthConfig;
 
 /**
- * This is a factory which creates an instance of the requested provider based
- * on the string passed as id. Currently available providers are facebook,
- * foursquare, google, hotmail, linkedin,myspace, openid, twitter, yahoo . If
- * requested provider id is not matched, it returns the OpenId provider.
+ * This is deprecated. Use {@link SocialAuthManager} class instead of this. This
+ * is a factory which creates an instance of the requested provider based on the
+ * string passed as id. Currently available providers are facebook, foursquare,
+ * google, hotmail, linkedin,myspace, openid, twitter, yahoo . If requested
+ * provider id is not matched, it returns the OpenId provider.
  * 
  * @author tarunn@brickred.com
  * 
  */
+@Deprecated
 public class AuthProviderFactory {
 
 	private static String propFileName = "oauth_consumer.properties";

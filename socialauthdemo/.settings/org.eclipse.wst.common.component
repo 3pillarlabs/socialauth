@@ -4,10 +4,10 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="socialauth-spring-2.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/socialauth-spring/socialauth-spring">
+        <dependent-module archiveName="socialauth-spring-2.5.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/socialauth-spring/socialauth-spring">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="socialauth-4.5.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/socialauth/socialauth">
+        <dependent-module archiveName="socialauth-4.6.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/socialauth/socialauth">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/socialauthdemo/target/classes"/>
