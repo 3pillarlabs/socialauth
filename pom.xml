@@ -4,7 +4,7 @@
 	<groupId>org.brickred</groupId>
 	<artifactId>socialauth-java-sdk</artifactId>
 	<name>socialauth-java-sdk</name>
-	<version>4.3</version>
+	<version>4.6</version>
 	<packaging>pom</packaging>
 	<description>SocialAuth library</description>
 	<url>http://code.google.com/p/socialauth/</url>
