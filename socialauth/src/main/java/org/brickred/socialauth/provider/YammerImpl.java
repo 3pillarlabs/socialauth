@@ -249,11 +249,13 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 		}
 		List<Contact> plist = new ArrayList<Contact>();
 		String contactURL = String.format(CONTACTS_URL, accessToken);
+		Map<String, String> headerParam = new HashMap<String, String>();
+		headerParam.put("Authorization", "Bearer " + accessToken);
 		LOG.info("Fetching contacts from " + contactURL);
 		String respStr;
 		try {
 			Response response = HttpUtil.doHttpRequest(contactURL,
-					MethodType.GET.toString(), null, null);
+					MethodType.GET.toString(), null, headerParam);
 			respStr = response.getResponseBodyAsString(Constants.ENCODING);
 		} catch (Exception e) {
 			throw new SocialAuthException("Error while getting contacts from "
@@ -350,16 +352,17 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 			profileId = (String) accessGrant.getAttribute("profileId");
 		}
 		String profileURL = String.format(PROFILE_URL, profileId, accessToken);
+		Map<String, String> headerParam = new HashMap<String, String>();
+		headerParam.put("Authorization", "Bearer " + accessToken);
 		try {
 
 			serviceResponse = HttpUtil.doHttpRequest(profileURL, "GET", null,
-					null);
+					headerParam);
 		} catch (Exception e) {
 			throw new SocialAuthException(
 					"Failed to retrieve the user profile from  " + profileURL,
 					e);
 		}
-
 		String result;
 		try {
 			result = serviceResponse
