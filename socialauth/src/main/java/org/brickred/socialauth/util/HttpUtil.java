@@ -24,11 +24,7 @@
  */
 package org.brickred.socialauth.util;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -258,8 +254,7 @@ public class HttpUtil {
 			}
 
 			if (requestMethod.equalsIgnoreCase(MethodType.POST.toString())
-					|| requestMethod
-							.equalsIgnoreCase(MethodType.PUT.toString())) {
+					|| requestMethod.equalsIgnoreCase(MethodType.PUT.toString())) {
 				conn.setDoOutput(true);
 			}
 
@@ -270,9 +265,9 @@ public class HttpUtil {
 				LOG.debug("Setting connection timeout : " + timeoutValue);
 				conn.setConnectTimeout(timeoutValue);
 			}
-			if (requestMethod != null) {
-				conn.setRequestMethod(requestMethod);
-			}
+
+            conn.setRequestMethod(requestMethod);
+
 			if (header != null) {
 				for (String key : header.keySet()) {
 					conn.setRequestProperty(key, header.get(key));
@@ -280,42 +275,32 @@ public class HttpUtil {
 			}
 
 			// If use POST or PUT must use this
-			OutputStream os = null;
 			if (inputStream != null) {
-				if (requestMethod != null
-						&& !MethodType.GET.toString().equals(requestMethod)
-						&& !MethodType.DELETE.toString().equals(requestMethod)) {
+				if (!MethodType.GET.toString().equals(requestMethod) && !MethodType.DELETE.toString().equals(requestMethod)) {
 					LOG.debug(requestMethod + " request");
-					String boundary = "----Socialauth-posting"
-							+ System.currentTimeMillis();
-					conn.setRequestProperty("Content-Type",
-							"multipart/form-data; boundary=" + boundary);
+
+					String boundary = "----Socialauth-posting" + System.currentTimeMillis();
+					conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 					boundary = "--" + boundary;
 
-					os = conn.getOutputStream();
+                    OutputStream os = conn.getOutputStream();
 					DataOutputStream out = new DataOutputStream(os);
 					write(out, boundary + "\r\n");
 
 					if (fileParamName != null) {
-						write(out, "Content-Disposition: form-data; name=\""
-								+ fileParamName + "\"; filename=\"" + fileName
-								+ "\"\r\n");
+						write(out, "Content-Disposition: form-data; name=\"" + fileParamName + "\"; filename=\"" + fileName + "\"\r\n");
 					} else {
-						write(out,
-								"Content-Disposition: form-data;  filename=\""
-										+ fileName + "\"\r\n");
+						write(out, "Content-Disposition: form-data;  filename=\"" + fileName + "\"\r\n");
 					}
-					write(out, "Content-Type: " + "multipart/form-data"
-							+ "\r\n\r\n");
-					int b;
-					while ((b = inputStream.read()) != -1) {
-						out.write(b);
-					}
-					// out.write(imageFile);
+
+					write(out, "Content-Type: " + "multipart/form-data" + "\r\n\r\n");
+
+                    writeData(inputStream, out);
+
 					write(out, "\r\n");
 
-					Iterator<Map.Entry<String, String>> entries = params
-							.entrySet().iterator();
+					Iterator<Map.Entry<String, String>> entries = params.entrySet().iterator();
+
 					while (entries.hasNext()) {
 						Map.Entry<String, String> entry = entries.next();
 						write(out, boundary + "\r\n");
@@ -332,15 +317,21 @@ public class HttpUtil {
 					write(out, "\r\n");
 				}
 			}
-			conn.connect();
 		} catch (Exception e) {
 			throw new SocialAuthException(e);
 		}
-		return new Response(conn);
+
+        return new Response(conn);
 
 	}
 
-	/**
+    private static void writeData(final InputStream from, final OutputStream to) throws IOException {
+        final byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = from.read(buffer)) != -1) to.write(buffer, 0, bytesRead);
+    }
+
+    /**
 	 * Generates a query string from given Map while sorting the parameters in
 	 * the canonical order as required by oAuth before signing
 	 * 
