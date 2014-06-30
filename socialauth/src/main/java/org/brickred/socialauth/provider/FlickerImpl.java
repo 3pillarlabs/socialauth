@@ -66,8 +66,8 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 		Serializable {
 
 	private static final long serialVersionUID = 1908393649053616794L;
-	private static final String PROFILE_URL = "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&user_id=%1$s&apikey=%2$s";
-	private static final String CONTACT_URL = "http://api.flickr.com/services/rest/?method=flickr.contacts.getList&user_id=%1$s&apikey=%2$s";
+	private static final String PROFILE_URL = "https://api.flickr.com/services/rest/?method=flickr.people.getInfo&user_id=%1$s&api_key=%2$s";
+	private static final String CONTACT_URL = "https://api.flickr.com/services/rest/?method=flickr.contacts.getList&user_id=%1$s&api_key=%2$s";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(FlickerImpl.class);
 
@@ -245,6 +245,7 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 					} else {
 						profile.setProfileImageURL(buddyurl);
 					}
+					profile.setProviderId(getProviderId());
 					userProfile = profile;
 				}
 			}
