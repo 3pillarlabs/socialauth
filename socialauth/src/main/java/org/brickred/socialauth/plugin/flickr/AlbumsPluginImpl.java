@@ -1,6 +1,6 @@
 /*
  ===========================================================================
- Copyright (c) 2012 3PillarGlobal
+ Copyright (c) 2014 3PillarGlobal
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@
 
  */
 package org.brickred.socialauth.plugin.flickr;
-
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,12 +54,12 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 	private static final String ALBUM_PHOTOS_URL = "https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&photoset_id=%1$s&extras=url_t,url_s,url_m,url_o&api_key=%2$s";
 	private static final String PROFILE_URL = "https://api.flickr.com/services/rest/?method=flickr.urls.getUserProfile&api_key=%1$s";
 	private static final String PHOTO_LINK = "https://www.flickr.com/photos/%1$s/%2$s";
-	private static final String SET_LINK = "https://www.flickr.com/photos/%1$s/sets/%2$s";	
-	
+	private static final String SET_LINK = "https://www.flickr.com/photos/%1$s/sets/%2$s";
+
 	private final Log LOG = LogFactory.getLog(this.getClass());
 
 	private ProviderSupport providerSupport;
-	
+
 	private String userId = null;
 
 	public AlbumsPluginImpl(final ProviderSupport providerSupport) {
@@ -69,7 +68,8 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 
 	@Override
 	public List<Album> getAlbums() throws Exception {
-		String albumUrl = String.format(ALBUMS_URL, providerSupport.getAccessGrant().getKey());
+		String albumUrl = String.format(ALBUMS_URL, providerSupport
+				.getAccessGrant().getKey());
 		Response response = providerSupport.api(albumUrl,
 				MethodType.GET.toString(), null, null, null);
 
@@ -79,55 +79,60 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 		} catch (Exception e) {
 			throw new ServerDataException(
 					"Failed to parse the albums from response." + albumUrl, e);
-		}		
+		}
 
 		List<Album> albums = new ArrayList<Album>();
 		if (root != null) {
 			NodeList cList = root.getElementsByTagName("photosets");
 			if (cList != null && cList.getLength() > 0) {
-				Element photosets  = (Element) cList.item(0);
+				Element photosets = (Element) cList.item(0);
 				NodeList photosetNodes = photosets
 						.getElementsByTagName("photoset");
 				if (photosetNodes != null && photosetNodes.getLength() > 0) {
 					LOG.debug("Found photo sets : " + photosetNodes.getLength());
-					
+
 					for (int i = 0; i < photosetNodes.getLength(); i++) {
 						Element photoset = (Element) photosetNodes.item(i);
 						String id = photoset.getAttribute("id");
 						if (id != null) {
 							Album albumObj = new Album();
 							albumObj.setId(id);
-							
+
 							String photoCount = photoset.getAttribute("photos");
 							if (photoCount != null) {
-								albumObj.setPhotosCount(Integer.parseInt(photoCount));
+								albumObj.setPhotosCount(Integer
+										.parseInt(photoCount));
 							}
-							
-							NodeList titleList = photoset.getElementsByTagName("title");
-							if (titleList != null && titleList.getLength() > 0){
-								String title = titleList.item(0).getTextContent();
+
+							NodeList titleList = photoset
+									.getElementsByTagName("title");
+							if (titleList != null && titleList.getLength() > 0) {
+								String title = titleList.item(0)
+										.getTextContent();
 								if (title != null) {
 									albumObj.setName(title);
 								}
 							}
-							
-							NodeList coverList = photoset.getElementsByTagName("primary_photo_extras");	
-							if (coverList != null && coverList.getLength() > 0){
-								Element cE = (Element)coverList.item(0);
-								String coverPhotoUrl = cE.getAttribute("url_m");;
+
+							NodeList coverList = photoset
+									.getElementsByTagName("primary_photo_extras");
+							if (coverList != null && coverList.getLength() > 0) {
+								Element cE = (Element) coverList.item(0);
+								String coverPhotoUrl = cE.getAttribute("url_m");
+								;
 								if (coverPhotoUrl != null) {
 									albumObj.setCoverPhoto(coverPhotoUrl);
 								}
 							}
 							String uId = this.getUserId();
-							if(uId != ""){
-								albumObj.setLink(String.format(SET_LINK, this.getUserId() , id));
+							if (uId != "") {
+								albumObj.setLink(String.format(SET_LINK,
+										this.getUserId(), id));
 							}
 							List<Photo> photos = getAlbumPhotos(id);
 							albumObj.setPhotos(photos);
-	
+
 							albums.add(albumObj);
-							//System.out.println(albumObj);
 						}
 					}
 				}
@@ -137,39 +142,41 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 		}
 		return albums;
 	}
-	
+
 	private String getUserId() throws Exception {
-		if (this.userId != null){
+		if (this.userId != null) {
 			return this.userId;
 		} else {
-			String profileUrl = String.format(PROFILE_URL, providerSupport.getAccessGrant().getKey());
+			String profileUrl = String.format(PROFILE_URL, providerSupport
+					.getAccessGrant().getKey());
 			Response response = providerSupport.api(profileUrl,
 					MethodType.GET.toString(), null, null, null);
-			//System.out.println(response.getResponseBodyAsString(Constants.ENCODING));
 			Element root;
 			try {
 				root = XMLParseUtil.loadXmlResource(response.getInputStream());
 			} catch (Exception e) {
 				throw new ServerDataException(
-						"Failed to parse the User from response." + profileUrl, e);
+						"Failed to parse the User from response." + profileUrl,
+						e);
 			}
 			String id = "";
 			if (root != null) {
 				NodeList uList = root.getElementsByTagName("user");
 				if (uList != null && uList.getLength() > 0) {
-					Element user  = (Element) uList.item(0);
+					Element user = (Element) uList.item(0);
 					id = user.getAttribute("nsid");
 				}
-				
+
 			}
 			return id;
 		}
 	}
 
 	private List<Photo> getAlbumPhotos(final String id) throws Exception {
-		String url = String.format(ALBUM_PHOTOS_URL, id, providerSupport.getAccessGrant().getKey());
-		Response response = providerSupport.api(url,
-				MethodType.GET.toString(), null, null, null);
+		String url = String.format(ALBUM_PHOTOS_URL, id, providerSupport
+				.getAccessGrant().getKey());
+		Response response = providerSupport.api(url, MethodType.GET.toString(),
+				null, null, null);
 		LOG.info("Getting Photos of Album :: " + id);
 
 		Element root;
@@ -177,8 +184,7 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 			root = XMLParseUtil.loadXmlResource(response.getInputStream());
 		} catch (Exception e) {
 			throw new ServerDataException(
-					"Failed to parse the photos from response." + url
-							+ id, e);
+					"Failed to parse the photos from response." + url + id, e);
 		}
 
 		List<Photo> photos = new ArrayList<Photo>();
@@ -190,17 +196,17 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 				for (int i = 0; i < photoList.getLength(); i++) {
 					Photo photo = new Photo();
 					Element pl = (Element) photoList.item(i);
-					
-					String photoId  = pl.getAttribute("id");
+
+					String photoId = pl.getAttribute("id");
 					photo.setId(photoId);
 
 					photo.setTitle(pl.getAttribute("title"));
 					String uId = this.getUserId();
-					if (uId != ""){
+					if (uId != "") {
 						String link = String.format(PHOTO_LINK, uId, photoId);
 						photo.setLink(link);
 					}
-				
+
 					photo.setLargeImage(pl.getAttribute("url_o"));
 					photo.setMediumImage(pl.getAttribute("url_m"));
 					photo.setSmallImage(pl.getAttribute("url_s"));
@@ -213,7 +219,7 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 			}
 		}
 		return photos;
-	}	
+	}
 
 	@Override
 	public ProviderSupport getProviderSupport() {

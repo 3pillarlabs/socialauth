@@ -490,6 +490,7 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 	@Override
 	protected List<String> getPluginsList() {
 		List<String> list = new ArrayList<String>();
+		list.add("org.brickred.socialauth.plugin.flickr.AlbumsPluginImpl");
 		if (config.getRegisteredPlugins() != null
 				&& config.getRegisteredPlugins().length > 0) {
 			list.addAll(Arrays.asList(config.getRegisteredPlugins()));
