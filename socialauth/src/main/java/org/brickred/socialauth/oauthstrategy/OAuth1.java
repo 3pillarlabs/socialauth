@@ -187,9 +187,19 @@ public class OAuth1 implements OAuthStrategyBase {
 			final Map<String, String> headerParams, final String fileName,
 			final InputStream inputStream, final String fileParamName)
 			throws Exception {
-		return oauth.uploadImage(url, params, headerParams, inputStream,
-				fileParamName, fileName, methodType, accessToken, true);
+		return uploadImage(url, methodType, params, headerParams, fileName, inputStream, fileParamName, true);
 	}
+
+    @Override
+    public Response uploadImage(final String url, final String methodType,
+                                final Map<String, String> params,
+                                final Map<String, String> headerParams, final String fileName,
+                                final InputStream inputStream, final String fileParamName,
+                                final boolean appendAccessToken)
+            throws Exception {
+        return oauth.uploadImage(url, params, headerParams, inputStream,
+                fileParamName, fileName, methodType, accessToken, true, true);
+    }
 
 	@Override
 	public AccessGrant getAccessGrant() {

@@ -212,6 +212,11 @@ public interface Constants {
 	 */
 	public static final String LINKEDINOAUTH2 = "linkedin2";
 
+    /**
+     * vk.com OAuth2 provider
+     */
+    public static final String VK_OAUTH2 = "vk";
+
 	/**
 	 * access token parameter name
 	 */

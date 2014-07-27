@@ -165,6 +165,34 @@ public interface OAuthStrategyBase extends Serializable {
 			final InputStream inputStream, final String fileParamName)
 			throws Exception;
 
+    /**
+     * Makes HTTP request to upload image and status.
+     *
+     * @param url
+     *            URL to make HTTP request.
+     * @param methodType
+     *            Method type can be GET, POST or PUT
+     * @param params
+     *            Parameters need to pass in request
+     * @param headerParams
+     *            Parameters need to pass as Header Parameters
+     * @param fileName
+     *            Image file name
+     * @param inputStream
+     *            Input stream of image
+     * @param fileParamName
+     *            Image Filename parameter. It requires in some provider.
+     * @param appendAccessToken pass true if you need to add access token to the query parameters, pass false otherwise
+     * @return Response object
+     * @throws Exception
+     */
+    public Response uploadImage(final String url, final String methodType,
+                                final Map<String, String> params,
+                                final Map<String, String> headerParams, final String fileName,
+                                final InputStream inputStream, final String fileParamName,
+                                final boolean appendAccessToken)
+            throws Exception;
+
 	/**
 	 * Retrieves the AccessGrant object.
 	 * 

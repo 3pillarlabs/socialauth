@@ -92,7 +92,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
 				"https://api.twitter.com/oauth/request_token");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://api.twitter.com/oauth/authenticate");
+				"https://api.twitter.com/oauth/authorize");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
 				"https://api.twitter.com/oauth/access_token");
 	}

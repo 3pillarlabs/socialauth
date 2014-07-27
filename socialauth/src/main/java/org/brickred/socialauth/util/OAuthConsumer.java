@@ -592,11 +592,14 @@ public class OAuthConsumer implements Serializable, Constants {
 			final Map<String, String> headerParams,
 			final InputStream inputStream, final String fileParamName,
 			final String fileName, final String methodName,
-			final AccessGrant token, final boolean isHeaderRequired)
+			final AccessGrant token, final boolean isHeaderRequired,
+            final boolean appendAccessToken)
 			throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
-		params.put(OAUTH_TOKEN, token.getKey());
-		putOauthParams(params);
+
+        if (appendAccessToken) params.put(OAUTH_TOKEN, token.getKey());
+
+        putOauthParams(params);
 		String url;
 		int idx = reqURL.indexOf('?');
 		if (idx != -1) {

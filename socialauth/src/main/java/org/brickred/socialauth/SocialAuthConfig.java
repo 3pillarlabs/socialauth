@@ -42,6 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.brickred.socialauth.exception.SocialAuthConfigurationException;
 import org.brickred.socialauth.exception.SocialAuthException;
+import org.brickred.socialauth.provider.VKImpl;
 import org.brickred.socialauth.util.Constants;
 import org.brickred.socialauth.util.HttpUtil;
 import org.brickred.socialauth.util.OAuthConfig;
@@ -117,6 +118,7 @@ public class SocialAuthConfig implements Serializable {
 				org.brickred.socialauth.provider.NimbleImpl.class);
 		providersImplMap.put(Constants.LINKEDINOAUTH2,
 				org.brickred.socialauth.provider.LinkedInOAuth2Impl.class);
+        providersImplMap.put(Constants.VK_OAUTH2, VKImpl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");
@@ -137,6 +139,7 @@ public class SocialAuthConfig implements Serializable {
 		domainMap.put(Constants.FLICKR, "www.flickr.com");
 		domainMap.put(Constants.NIMBLE, "api.nimble.com");
 		domainMap.put(Constants.LINKEDINOAUTH2, "api.linkedin.com");
+		domainMap.put(Constants.VK_OAUTH2, "vk.com");
 
 		providersConfig = new HashMap<String, OAuthConfig>();
 
