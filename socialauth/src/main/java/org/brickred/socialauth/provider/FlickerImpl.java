@@ -246,6 +246,10 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 						profile.setProfileImageURL(buddyurl);
 					}
 					profile.setProviderId(getProviderId());
+					if (config.isSaveRawResponse()) {
+						profile.setRawResponse(XMLParseUtil
+								.getStringFromElement(root));
+					}
 					userProfile = profile;
 				}
 			}
@@ -348,9 +352,15 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 								}
 							}
 							contactObj.setId(id);
+							if (config.isSaveRawResponse()) {
+								contactObj.setRawResponse(XMLParseUtil
+										.getStringFromElement(contact));
+							}
 							contactList.add(contactObj);
 						}
 					}
+				} else {
+					LOG.debug("No contacts were obtained from : " + contactUrl);
 				}
 			} else {
 				LOG.debug("No contacts were obtained from : " + contactUrl);

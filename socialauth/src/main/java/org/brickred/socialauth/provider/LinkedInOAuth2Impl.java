@@ -70,7 +70,6 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	private static final String UPDATE_STATUS_URL = "https://api.linkedin.com/v1/people/~/shares?oauth2_access_token=";
 	private static final String PROFILE_URL = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name),phone-numbers,main-address)?oauth2_access_token=";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
-	private static final String STATE = "state";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(LinkedInOAuth2Impl.class);
 
@@ -107,7 +106,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 		config = providerConfig;
 		state = "SocialAuth" + System.currentTimeMillis();
 		String authURL = ENDPOINTS.get(Constants.OAUTH_AUTHORIZATION_URL) + "?"
-				+ STATE + "=" + state;
+				+ Constants.STATE + "=" + state;
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL, authURL);
 		// Need to pass scope while fetching RequestToken from LinkedIn for new
 		// keys
@@ -177,9 +176,8 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	@Override
 	public Profile verifyResponse(final Map<String, String> requestParams)
 			throws Exception {
-		if (requestParams.containsKey(STATE)) {
-			String stateStr = requestParams.get(STATE);
-			System.out.println("-------------" + stateStr);
+		if (requestParams.containsKey(Constants.STATE)) {
+			String stateStr = requestParams.get(Constants.STATE);
 			if (!state.equals(stateStr)) {
 				throw new SocialAuthException(
 						"State parameter value does not match with expected value");
@@ -252,6 +250,10 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 							cont.setProfileImageURL(pictureUrl);
 						}
 						cont.setId(id);
+						if (config.isSaveRawResponse()) {
+							cont.setRawResponse(XMLParseUtil
+									.getStringFromElement(p));
+						}
 						contactList.add(cont);
 					}
 				}
@@ -396,6 +398,9 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 			profile.setLastName(lname);
 			profile.setValidatedId(id);
 			profile.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				profile.setRawResponse(XMLParseUtil.getStringFromElement(root));
+			}
 			LOG.debug("User Profile :" + profile.toString());
 			userProfile = profile;
 		}

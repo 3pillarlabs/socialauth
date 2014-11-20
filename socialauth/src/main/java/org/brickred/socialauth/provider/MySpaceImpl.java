@@ -246,6 +246,9 @@ public class MySpaceImpl extends AbstractProvider {
 				if (pObj.has("id")) {
 					contact.setId(pObj.getString("id"));
 				}
+				if (config.isSaveRawResponse()) {
+					contact.setRawResponse(pObj.toString());
+				}
 				plist.add(contact);
 			}
 		}
@@ -366,6 +369,9 @@ public class MySpaceImpl extends AbstractProvider {
 			profile.setProfileImageURL(pObj.getString("thumbnailUrl"));
 		}
 		profile.setProviderId(getProviderId());
+		if (config.isSaveRawResponse()) {
+			profile.setRawResponse(result);
+		}
 		userProfile = profile;
 		return profile;
 	}

@@ -171,7 +171,6 @@ public class FacebookImpl extends AbstractProvider {
 	 * @return Profile object containing the profile information
 	 * @throws Exception
 	 */
-
 	@Override
 	public Profile verifyResponse(final Map<String, String> requestParams)
 			throws Exception {
@@ -252,6 +251,9 @@ public class FacebookImpl extends AbstractProvider {
 				p.setCountry(a[1]);
 			}
 			p.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(presp);
+			}
 			userProfile = p;
 			return p;
 
@@ -341,6 +343,9 @@ public class FacebookImpl extends AbstractProvider {
 				p.setProfileUrl(PUBLIC_PROFILE_URL + obj.getString("id"));
 				p.setProfileImageURL(String.format(PROFILE_IMAGE_URL,
 						obj.getString("id")));
+				if (config.isSaveRawResponse()) {
+					p.setRawResponse(obj.toString());
+				}
 				plist.add(p);
 			}
 		} catch (Exception e) {
@@ -490,7 +495,7 @@ public class FacebookImpl extends AbstractProvider {
 						.getErrorStreamAsString(Constants.ENCODING);
 				JSONObject resp = new JSONObject(respStr);
 				/*
-				 * Sampe error response - { "error": { "message": "Error
+				 * Sample error response - { "error": { "message": "Error
 				 * validating access token: Session has expired at unix time
 				 * SOME_TIME. The current unix time is
 				 * SOME_TIME.", "type": "OAuthException", "code": 190 } }

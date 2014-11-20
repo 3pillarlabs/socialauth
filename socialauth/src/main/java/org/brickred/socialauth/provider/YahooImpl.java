@@ -277,6 +277,9 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 
 			}
 			profile.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				profile.setRawResponse(result);
+			}
 			userProfile = profile;
 			return profile;
 		} catch (Exception e) {
@@ -367,6 +370,10 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 							p.setOtherEmails(arr);
 						}
 						p.setId(contact.getAttribute("yahoo:uri"));
+						if (config.isSaveRawResponse()) {
+							p.setRawResponse(XMLParseUtil
+									.getStringFromElement(contact));
+						}
 						plist.add(p);
 					}
 				}

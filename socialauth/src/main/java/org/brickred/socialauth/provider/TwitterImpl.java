@@ -234,6 +234,9 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 				profile.setProfileImageURL(pObj.getString("profile_image_url"));
 			}
 			profile.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				profile.setRawResponse(result);
+			}
 			userProfile = profile;
 			return profile;
 		} catch (Exception e) {
@@ -277,8 +280,16 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 					e);
 		}
 		if (serviceResponse.getStatus() != 200) {
+			String errorMessage = null;
+			try {
+				errorMessage = serviceResponse
+						.getErrorStreamAsString(Constants.ENCODING);
+			} catch (Exception e) {
+				LOG.error(e.getMessage());
+			}
 			throw new SocialAuthException("Failed to update status on " + url
-					+ ". Status :" + serviceResponse.getStatus());
+					+ ". Status :" + serviceResponse.getStatus()
+					+ " Error Message : " + errorMessage);
 		}
 		return serviceResponse;
 	}
@@ -396,6 +407,9 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 				cont.setProfileImageURL(jobj.optString("profile_image_url"));
 				if (jobj.has("id_str")) {
 					cont.setId(jobj.getString("id_str"));
+				}
+				if (config.isSaveRawResponse()) {
+					cont.setRawResponse(jobj.toString());
 				}
 				plist.add(cont);
 			}

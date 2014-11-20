@@ -111,6 +111,11 @@ public class Profile implements Serializable {
 	private Map<String, String> contactInfo;
 
 	/**
+	 * raw response xml/json as string
+	 */
+	private String rawResponse;
+
+	/**
 	 * Retrieves the first name
 	 * 
 	 * @return String the first name
@@ -376,6 +381,29 @@ public class Profile implements Serializable {
 	 */
 	public void setContactInfo(final Map<String, String> contactInfo) {
 		this.contactInfo = contactInfo;
+	}
+
+	/**
+	 * Retrieves the raw response xml/json in string which is returned by the
+	 * provider for this object. Set
+	 * {@link SocailAuthConfig#setRawResponse(boolean)} to true to save this
+	 * response in object.
+	 * 
+	 * @return raw response xml/json in string
+	 */
+	public String getRawResponse() {
+		return rawResponse;
+	}
+
+	/**
+	 * Updates raw response xml/json return by the provider for this object
+	 * call. Set {@link SocailAuthConfig#setRawResponse(boolean)} to true to
+	 * save this response in object.
+	 * 
+	 * @param rawResponse
+	 */
+	public void setRawResponse(String rawResponse) {
+		this.rawResponse = rawResponse;
 	}
 
 	/**

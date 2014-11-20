@@ -263,6 +263,10 @@ public class LinkedInImpl extends AbstractProvider {
 							cont.setProfileImageURL(pictureUrl);
 						}
 						cont.setId(id);
+						if (config.isSaveRawResponse()) {
+							cont.setRawResponse(XMLParseUtil
+									.getStringFromElement(p));
+						}
 						contactList.add(cont);
 					}
 				}
@@ -405,6 +409,9 @@ public class LinkedInImpl extends AbstractProvider {
 			profile.setLastName(lname);
 			profile.setValidatedId(id);
 			profile.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				profile.setRawResponse(XMLParseUtil.getStringFromElement(root));
+			}
 			LOG.debug("User Profile :" + profile.toString());
 			userProfile = profile;
 		}

@@ -278,6 +278,9 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 				}
 				p.setId(obj.getString("id"));
 				p.setProfileUrl(obj.getString("web_url"));
+				if (config.isSaveRawResponse()) {
+					p.setRawResponse(obj.toString());
+				}
 				plist.add(p);
 			}
 		} catch (Exception e) {
@@ -414,6 +417,9 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 			}
 
 			p.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(result);
+			}
 			userProfile = p;
 			return userProfile;
 		} catch (Exception e) {

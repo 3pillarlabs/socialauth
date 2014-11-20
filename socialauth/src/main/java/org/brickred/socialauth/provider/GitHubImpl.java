@@ -177,7 +177,13 @@ public class GitHubImpl extends AbstractProvider {
 			if (resp.has("avatar_url")) {
 				p.setProfileImageURL(resp.getString("avatar_url"));
 			}
+			if (resp.has("login")) {
+				p.setDisplayName(resp.getString("login"));
+			}
 			p.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(presp);
+			}
 			userProfile = p;
 			return p;
 		} catch (Exception ex) {

@@ -67,6 +67,7 @@ public class SocialAuthConfig implements Serializable {
 	private static final Log LOG = LogFactory.getLog(SocialAuthConfig.class);
 	private static SocialAuthConfig DEFAULT = new SocialAuthConfig();
 	private boolean isConfigLoaded;
+	private boolean saveRawResponse;
 
 	/**
 	 * Returns the instance of SocialAuthConfig
@@ -117,6 +118,8 @@ public class SocialAuthConfig implements Serializable {
 				org.brickred.socialauth.provider.NimbleImpl.class);
 		providersImplMap.put(Constants.LINKEDINOAUTH2,
 				org.brickred.socialauth.provider.LinkedInOAuth2Impl.class);
+		providersImplMap.put(Constants.AMAZON,
+				org.brickred.socialauth.provider.AmazonImpl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");
@@ -137,6 +140,7 @@ public class SocialAuthConfig implements Serializable {
 		domainMap.put(Constants.FLICKR, "www.flickr.com");
 		domainMap.put(Constants.NIMBLE, "api.nimble.com");
 		domainMap.put(Constants.LINKEDINOAUTH2, "api.linkedin.com");
+		domainMap.put(Constants.AMAZON, "amazon.com");
 
 		providersConfig = new HashMap<String, OAuthConfig>();
 
@@ -433,6 +437,7 @@ public class SocialAuthConfig implements Serializable {
 			throw new SocialAuthConfigurationException(id
 					+ " consumer_key value is null");
 		}
+		config.setSaveRawResponse(this.saveRawResponse);
 		return config;
 	}
 
@@ -462,6 +467,27 @@ public class SocialAuthConfig implements Serializable {
 			}
 			HttpUtil.setProxyConfig(proxyHost, port);
 		}
+	}
+
+	/**
+	 * Returns status to save the raw response for profile and contacts. Default
+	 * value is False.
+	 * 
+	 * @return True/False to check whether raw response should save or not.
+	 */
+	public boolean isSaveRawResponse() {
+		return saveRawResponse;
+	}
+
+	/**
+	 * Set this flag to True if raw response should be save for profile and
+	 * contacts. Default it is False.
+	 * 
+	 * @param saveRawResponse
+	 *            flag to config whether raw response should be saved or not.
+	 */
+	public void setSaveRawResponse(boolean saveRawResponse) {
+		this.saveRawResponse = saveRawResponse;
 	}
 
 }

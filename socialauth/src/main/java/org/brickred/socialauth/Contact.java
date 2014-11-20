@@ -81,6 +81,11 @@ public class Contact implements Serializable {
 	private String profileImageURL;
 
 	/**
+	 * raw response xml/json as string
+	 */
+	private String rawResponse;
+
+	/**
 	 * Retrieves the first name
 	 * 
 	 * @return String the first name
@@ -249,6 +254,30 @@ public class Contact implements Serializable {
 	 */
 	public void setProfileImageURL(final String profileImageURL) {
 		this.profileImageURL = profileImageURL;
+	}
+
+	/**
+	 * Retrieves the raw response xml/json in string which is returned by the
+	 * provider for this object call. Set
+	 * {@link SocailAuthConfig#setRawResponse(boolean)} to true to save the
+	 * response in object.
+	 * 
+	 * @return raw response xml/json in string
+	 */
+	public String getRawResponse() {
+		return rawResponse;
+	}
+
+	/**
+	 * Updates raw response xml/json returned by the provider for this object
+	 * call. Set {@link SocailAuthConfig#setRawResponse(boolean)} to true to
+	 * save the response in object.
+	 * 
+	 * @param rawResponse
+	 *            raw response xml/json in string
+	 */
+	public void setRawResponse(String rawResponse) {
+		this.rawResponse = rawResponse;
 	}
 
 	/**

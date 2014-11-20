@@ -190,6 +190,9 @@ public class InstagramImpl extends AbstractProvider {
 				String username = obj.optString("username");
 				p.setProfileUrl(VIEW_PROFILE_URL + username);
 				p.setProfileImageURL(obj.optString("profile_picture"));
+				if (config.isSaveRawResponse()) {
+					p.setRawResponse(obj.toString());
+				}
 				plist.add(p);
 			}
 		}
@@ -248,6 +251,9 @@ public class InstagramImpl extends AbstractProvider {
 			}
 			p.setProfileImageURL(data.optString("profile_picture"));
 			p.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(respStr);
+			}
 			return p;
 		} else {
 			throw new SocialAuthException(

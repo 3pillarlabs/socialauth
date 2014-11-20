@@ -198,7 +198,7 @@ public class SocialAuthWebController {
 	@SuppressWarnings("unused")
 	@RequestMapping(params = "error")
 	private String gitHubCancel(@RequestParam("error") final String error) {
-		LOG.debug("GitHub send an error : " + error);
+		LOG.debug("Provider send an error : " + error);
 		if ("access_denied".equals(error)) {
 			return "redirect:/" + accessDeniedPageURL;
 		}

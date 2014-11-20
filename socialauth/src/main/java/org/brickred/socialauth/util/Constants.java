@@ -213,6 +213,11 @@ public interface Constants {
 	public static final String LINKEDINOAUTH2 = "linkedin2";
 
 	/**
+	 * amazon
+	 */
+	public static final String AMAZON = "amazon";
+
+	/**
 	 * access token parameter name
 	 */
 	public static final String ACCESS_TOKEN_PARAMETER_NAME = "access_token";
@@ -242,4 +247,9 @@ public interface Constants {
 	 * GZip Content Encoding
 	 */
 	public static final String GZIP_CONTENT_ENCODING = "gzip";
+
+	/**
+	 * Constant for state paramter
+	 */
+	public static final String STATE = "state";
 }

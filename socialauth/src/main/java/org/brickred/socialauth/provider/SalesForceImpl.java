@@ -297,6 +297,9 @@ public class SalesForceImpl extends AbstractProvider implements AuthProvider,
 			}
 			serviceResponse.close();
 			p.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(result);
+			}
 			userProfile = p;
 			return p;
 		} catch (Exception e) {

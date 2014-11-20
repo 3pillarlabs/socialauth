@@ -207,6 +207,9 @@ public class MendeleyImpl extends AbstractProvider {
 				}
 			}
 			profile.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				profile.setRawResponse(result);
+			}
 			userProfile = profile;
 			return profile;
 		} catch (Exception e) {

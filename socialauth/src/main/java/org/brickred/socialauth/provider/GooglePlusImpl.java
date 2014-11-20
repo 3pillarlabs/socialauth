@@ -78,6 +78,7 @@ public class GooglePlusImpl extends AbstractProvider {
 	private Profile userProfile;
 	private AccessGrant accessGrant;
 	private OAuthStrategyBase authenticationStrategy;
+	private String state;
 
 	// set this to the list of extended permissions you want
 	private static final String[] AllPerms = new String[] {
@@ -109,6 +110,11 @@ public class GooglePlusImpl extends AbstractProvider {
 	 */
 	public GooglePlusImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
+		state = "SocialAuth" + System.currentTimeMillis();
+		String authURL = ENDPOINTS.get(Constants.OAUTH_AUTHORIZATION_URL) + "?"
+				+ Constants.STATE + "=" + state;
+		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL, authURL);
+
 		if (config.getCustomPermissions() != null) {
 			scope = Permission.CUSTOM;
 		}
@@ -173,6 +179,14 @@ public class GooglePlusImpl extends AbstractProvider {
 	@Override
 	public Profile verifyResponse(final Map<String, String> requestParams)
 			throws Exception {
+		if (requestParams.containsKey(Constants.STATE)) {
+			String stateStr = requestParams.get(Constants.STATE);
+			if (!state.equals(stateStr)) {
+				throw new SocialAuthException(
+						"State parameter value does not match with expected value");
+			}
+		}
+
 		return doVerifyResponse(requestParams);
 	}
 
@@ -229,6 +243,9 @@ public class GooglePlusImpl extends AbstractProvider {
 			}
 			if (resp.has("id")) {
 				p.setValidatedId(resp.getString("id"));
+			}
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(presp);
 			}
 
 			p.setProviderId(getProviderId());
@@ -338,6 +355,9 @@ public class GooglePlusImpl extends AbstractProvider {
 					p.setDisplayName(dispName);
 					p.setOtherEmails(emailArr);
 					p.setId(id);
+					if (config.isSaveRawResponse()) {
+						p.setRawResponse(XMLParseUtil.getStringFromElement(contact));
+					}
 					plist.add(p);
 				}
 			}

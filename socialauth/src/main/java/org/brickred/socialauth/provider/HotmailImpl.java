@@ -257,6 +257,9 @@ public class HotmailImpl extends AbstractProvider {
 				if (obj.has("id")) {
 					p.setId(obj.getString("id"));
 				}
+				if (config.isSaveRawResponse()) {
+					p.setRawResponse(obj.toString());
+				}
 				plist.add(p);
 			}
 		}
@@ -385,6 +388,9 @@ public class HotmailImpl extends AbstractProvider {
 			String picUrl = String.format(PROFILE_PICTURE_URL,
 					accessGrant.getKey());
 			p.setProfileImageURL(picUrl);
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(result);
+			}
 			userProfile = p;
 			return p;
 		} catch (Exception e) {

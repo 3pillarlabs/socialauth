@@ -49,6 +49,7 @@ public class OAuthConfig implements Serializable {
 	private String accessTokenUrl;
 	private String[] registeredPlugins;
 	private List<String> pluginsScopes;
+	private boolean saveRawResponse;
 
 	/**
 	 * 
@@ -274,6 +275,27 @@ public class OAuthConfig implements Serializable {
 		this.pluginsScopes = pluginsScopes;
 	}
 
+	/**
+	 * Returns status to save the raw response for profile and contacts. Default
+	 * value is False.
+	 * 
+	 * @return True/False to check whether raw response should save or not.
+	 */
+	public boolean isSaveRawResponse() {
+		return saveRawResponse;
+	}
+
+	/**
+	 * Set this flag to True if raw response should be save for profile and
+	 * contacts. Default it is False.
+	 * 
+	 * @param saveRawResponse
+	 *            flag to config whether raw response should be saved or not.
+	 */
+	public void setSaveRawResponse(boolean saveRawResponse) {
+		this.saveRawResponse = saveRawResponse;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
@@ -291,6 +313,7 @@ public class OAuthConfig implements Serializable {
 		result.append(" accessTokenUrl: " + accessTokenUrl + NEW_LINE);
 		result.append(" registeredPlugins: " + registeredPlugins + NEW_LINE);
 		result.append(" pluginsScopes: " + pluginsScopes + NEW_LINE);
+		result.append(" saveRawResponse: " + saveRawResponse + NEW_LINE);
 		result.append("}");
 		return result.toString();
 	}

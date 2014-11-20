@@ -1,6 +1,6 @@
 /*
  ===========================================================================
- Copyright (c) 2013 3PillarGlobal
+ Copyright (c) 2014 3PillarGlobal
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,6 @@
  ===========================================================================
 
  */
-
 package org.brickred.socialauth.provider;
 
 import java.io.InputStream;
@@ -41,7 +40,6 @@ import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
-import org.brickred.socialauth.exception.UserDeniedPermissionException;
 import org.brickred.socialauth.oauthstrategy.OAuth2;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.util.AccessGrant;
@@ -49,34 +47,37 @@ import org.brickred.socialauth.util.Constants;
 import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Provider implementation for Nimble
+ * Provider implementation for Amazon
  * 
  * @author tarun.nagpal
  * 
  */
-public class NimbleImpl extends AbstractProvider {
+public class AmazonImpl extends AbstractProvider {
 
-	private static final long serialVersionUID = 8942981661253696430L;
-
-	private static final String CONTACTS_URL = "https://api.nimble.com/api/v1/contacts?per_page=200";
+	private static final long serialVersionUID = -4484000112933480313L;
+	private static final String PROFILE_URL = "https://api.amazon.com/user/profile";
 	private static final Map<String, String> ENDPOINTS;
-	private final Log LOG = LogFactory.getLog(NimbleImpl.class);
+	private final Log LOG = LogFactory.getLog(AmazonImpl.class);
 
 	private Permission scope;
 	private OAuthConfig config;
+	private Profile userProfile;
 	private AccessGrant accessGrant;
 	private OAuthStrategyBase authenticationStrategy;
+	private String state;
+
+	private static final String[] AuthPerms = new String[] { "profile",
+			"postal_code" };
 
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://api.nimble.com/oauth/authorize");
+				"https://www.amazon.com/ap/oa");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"https://api.nimble.com/oauth/token");
+				"https://api.amazon.com/auth/o2/token");
 	}
 
 	/**
@@ -87,8 +88,14 @@ public class NimbleImpl extends AbstractProvider {
 	 *            and consumer secret
 	 * @throws Exception
 	 */
-	public NimbleImpl(final OAuthConfig providerConfig) throws Exception {
+	public AmazonImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
+		state = "SocialAuth" + System.currentTimeMillis();
+		String authURL = ENDPOINTS.get(Constants.OAUTH_AUTHORIZATION_URL) + "?"
+				+ Constants.STATE + "=" + state;
+		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL, authURL);
+		// Need to pass scope while fetching RequestToken from LinkedIn for new
+		// keys
 		if (config.getCustomPermissions() != null) {
 			scope = Permission.CUSTOM;
 		}
@@ -108,6 +115,7 @@ public class NimbleImpl extends AbstractProvider {
 			config.setAccessTokenUrl(ENDPOINTS
 					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 		}
+
 		authenticationStrategy = new OAuth2(config, ENDPOINTS);
 		authenticationStrategy.setPermission(scope);
 		authenticationStrategy.setScope(getScope());
@@ -121,7 +129,7 @@ public class NimbleImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public void setAccessGrant(final AccessGrant accessGrant)
+	public void setAccessGrant(AccessGrant accessGrant)
 			throws AccessTokenExpireException, SocialAuthException {
 		this.accessGrant = accessGrant;
 		authenticationStrategy.setAccessGrant(accessGrant);
@@ -134,7 +142,7 @@ public class NimbleImpl extends AbstractProvider {
 	 * 
 	 */
 	@Override
-	public String getLoginRedirectURL(final String successUrl) throws Exception {
+	public String getLoginRedirectURL(String successUrl) throws Exception {
 		return authenticationStrategy.getLoginRedirectURL(successUrl);
 	}
 
@@ -148,167 +156,94 @@ public class NimbleImpl extends AbstractProvider {
 	 * @return Profile object containing the profile information
 	 * @throws Exception
 	 */
-
 	@Override
-	public Profile verifyResponse(final Map<String, String> requestParams)
+	public Profile verifyResponse(Map<String, String> requestParams)
 			throws Exception {
+		if (requestParams.containsKey(Constants.STATE)) {
+			String stateStr = requestParams.get(Constants.STATE);
+			if (!state.equals(stateStr)) {
+				throw new SocialAuthException(
+						"State parameter value does not match with expected value");
+			}
+		}
 		return doVerifyResponse(requestParams);
 	}
 
 	private Profile doVerifyResponse(final Map<String, String> requestParams)
 			throws Exception {
-		LOG.info("Retrieving Access Token in verify response function");
-		if (requestParams.get("error") != null
-				&& "access_denied".equals(requestParams.get("error"))) {
-			throw new UserDeniedPermissionException();
-		}
+		LOG.info("Verifying the authentication response from provider");
 		accessGrant = authenticationStrategy.verifyResponse(requestParams,
 				MethodType.POST.toString());
+		return getProfile();
+	}
 
-		if (accessGrant != null) {
-			LOG.debug("Obtaining user profile");
-			return null;
-		} else {
-			throw new SocialAuthException("Access token not found");
+	private Profile getProfile() throws Exception {
+		String presp;
+
+		try {
+			Response response = authenticationStrategy.executeFeed(PROFILE_URL);
+			presp = response.getResponseBodyAsString(Constants.ENCODING);
+		} catch (Exception e) {
+			throw new SocialAuthException("Error while getting profile from "
+					+ PROFILE_URL, e);
+		}
+		try {
+			LOG.debug("User Profile : " + presp);
+			JSONObject resp = new JSONObject(presp);
+			Profile p = new Profile();
+			if (resp.has("name")) {
+				p.setFullName(resp.getString("name"));
+			}
+			if (resp.has("email")) {
+				p.setEmail(resp.getString("email"));
+			}
+			if (resp.has("user_id")) {
+				p.setValidatedId(resp.getString("user_id"));
+			}
+			if (resp.has("postal_code")) {
+				p.setLocation(resp.getString("postal_code"));
+			}
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(presp);
+			}
+			p.setProviderId(getProviderId());
+			if (config.isSaveRawResponse()) {
+				p.setRawResponse(presp);
+			}
+			userProfile = p;
+			return p;
+
+		} catch (Exception ex) {
+			throw new ServerDataException(
+					"Failed to parse the user profile json : " + presp, ex);
 		}
 	}
 
 	@Override
-	public Response updateStatus(final String msg) throws Exception {
-		LOG.warn("WARNING: Not implemented for Nimble");
+	public Response updateStatus(String msg) throws Exception {
+		LOG.warn("WARNING: Not implemented for Amazon");
 		throw new SocialAuthException(
-				"Update Status is not implemented for Nimble");
+				"Update Status is not implemented for Amazon");
 	}
-
-	/**
-	 * Gets the list of contacts of the user. this may not be available for all
-	 * providers.
-	 * 
-	 * @return List of contact objects representing Contacts. Only name will be
-	 *         available
-	 */
 
 	@Override
 	public List<Contact> getContactList() throws Exception {
-		List<Contact> plist = new ArrayList<Contact>();
-		LOG.info("Fetching contacts from " + CONTACTS_URL);
-		String respStr;
-		try {
-			Response response = authenticationStrategy
-					.executeFeed(CONTACTS_URL);
-			respStr = response.getResponseBodyAsString(Constants.ENCODING);
-		} catch (Exception e) {
-			throw new SocialAuthException("Error while getting contacts from "
-					+ CONTACTS_URL, e);
-		}
-		try {
-			LOG.debug("User Contacts list in json : " + respStr);
-			JSONObject resp = new JSONObject(respStr);
-			JSONArray responses = resp.getJSONArray("resources");
-			LOG.debug("Found contacts : " + responses.length());
-			for (int i = 0; i < responses.length(); i++) {
-				JSONObject obj = responses.getJSONObject(i);
-				JSONObject fields = obj.getJSONObject("fields");
-				Contact p = null;
-				if (obj.has("record_type")) {
-					if ("company".equals(obj.getString("record_type"))) {
-						p = new Contact();
-						if (fields.has("company name")) {
-							JSONArray arr = fields.getJSONArray("company name");
-							JSONObject jobj = arr.getJSONObject(0);
-							if (jobj.has("value")) {
-								p.setFirstName(jobj.getString("value"));
-							}
-						}
-						if (obj.has("avatar_url")) {
-							p.setProfileImageURL(obj.getString("avatar_url"));
-						}
-						if (fields.has("URL")) {
-							JSONArray arr = fields.getJSONArray("URL");
-							JSONObject jobj = arr.getJSONObject(0);
-							if (jobj.has("value")) {
-								p.setProfileUrl(jobj.getString("value"));
-							}
-						}
-					} else if ("person".equals(obj.getString("record_type"))) {
-						p = new Contact();
-						if (fields.has("last name")) {
-							JSONArray arr = fields.getJSONArray("last name");
-							JSONObject jobj = arr.getJSONObject(0);
-							if (jobj.has("value")) {
-								p.setLastName(jobj.getString("value"));
-							}
-						}
-						if (fields.has("first name")) {
-							JSONArray arr = fields.getJSONArray("first name");
-							JSONObject jobj = arr.getJSONObject(0);
-							if (jobj.has("value")) {
-								p.setFirstName(jobj.getString("value"));
-							}
-						}
-						if (obj.has("avatar_url")) {
-							p.setProfileImageURL(obj.getString("avatar_url"));
-						}
-						if (fields.has("URL")) {
-							JSONArray arr = fields.getJSONArray("URL");
-							if (arr.length() == 1) {
-								JSONObject jobj = arr.getJSONObject(0);
-								if (jobj.has("value")) {
-									p.setProfileUrl(jobj.getString("value"));
-								}
-							} else {
-								String url = null;
-								for (int k = 0; k < arr.length(); k++) {
-									JSONObject jobj = arr.getJSONObject(k);
-									url = jobj.optString("value");
-									if ("personal".equals(jobj
-											.optString("modifier"))) {
-										break;
-									}
-								}
-								if (url != null) {
-									p.setProfileUrl(url);
-								}
-							}
-						}
-					}
-
-					if (p != null) {
-						if (config.isSaveRawResponse()) {
-							p.setRawResponse(obj.toString());
-						}
-						plist.add(p);
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new ServerDataException(
-					"Failed to parse the contacts json : " + respStr, e);
-		}
-		return plist;
+		LOG.warn("WARNING: Not implemented for Amazon");
+		throw new SocialAuthException(
+				"Get contact list is not implemented for Amazon");
 	}
 
-	/**
-	 * Logout
-	 */
 	@Override
 	public void logout() {
 		accessGrant = null;
 		authenticationStrategy.logout();
 	}
 
-	/**
-	 * 
-	 * @param p
-	 *            Permission object which can be Permission.AUHTHENTICATE_ONLY,
-	 *            Permission.ALL, Permission.DEFAULT
-	 */
 	@Override
-	public void setPermission(final Permission p) {
+	public void setPermission(Permission p) {
 		LOG.debug("Permission requested : " + p.toString());
 		this.scope = p;
 		authenticationStrategy.setPermission(this.scope);
-		authenticationStrategy.setScope(getScope());
 	}
 
 	/**
@@ -319,7 +254,7 @@ public class NimbleImpl extends AbstractProvider {
 	 * @param methodType
 	 *            Method type can be GET, POST or PUT
 	 * @param params
-	 *            Not using this parameter in Google API function
+	 *            Parameter need to pass with request
 	 * @param headerParams
 	 *            Parameters need to pass as Header Parameters
 	 * @param body
@@ -328,10 +263,9 @@ public class NimbleImpl extends AbstractProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public Response api(final String url, final String methodType,
-			final Map<String, String> params,
-			final Map<String, String> headerParams, final String body)
-			throws Exception {
+	public Response api(String url, String methodType,
+			Map<String, String> params, Map<String, String> headerParams,
+			String body) throws Exception {
 		LOG.info("Calling api function for url	:	" + url);
 		Response response = null;
 		try {
@@ -344,15 +278,12 @@ public class NimbleImpl extends AbstractProvider {
 		return response;
 	}
 
-	/**
-	 * Retrieves the user profile.
-	 * 
-	 * @return Profile object containing the profile information.
-	 */
 	@Override
 	public Profile getUserProfile() throws Exception {
-		LOG.warn("WARNING: Get Profile function not implemented for Nimble");
-		return null;
+		if (userProfile == null && accessGrant != null) {
+			getProfile();
+		}
+		return userProfile;
 	}
 
 	@Override
@@ -366,15 +297,11 @@ public class NimbleImpl extends AbstractProvider {
 	}
 
 	@Override
-	public Response uploadImage(final String message, final String fileName,
-			final InputStream inputStream) throws Exception {
-		LOG.warn("WARNING: Not implemented for Nimble");
+	public Response uploadImage(String message, String fileName,
+			InputStream inputStream) throws Exception {
+		LOG.warn("WARNING: Not implemented for Amazon");
 		throw new SocialAuthException(
-				"Upload Image is not implemented for Nimble");
-	}
-
-	private String getScope() {
-		return null;
+				"Upload Image is not implemented for Amazon");
 	}
 
 	@Override
@@ -392,4 +319,23 @@ public class NimbleImpl extends AbstractProvider {
 		return authenticationStrategy;
 	}
 
+	private String getScope() {
+		StringBuffer result = new StringBuffer();
+		String arr[] = AuthPerms;
+		if (Permission.AUTHENTICATE_ONLY.equals(scope)) {
+			arr = AuthPerms;
+		} else if (Permission.CUSTOM.equals(scope)
+				&& config.getCustomPermissions() != null) {
+			arr = config.getCustomPermissions().split(",");
+		}
+		result.append(arr[0]);
+		for (int i = 1; i < arr.length; i++) {
+			result.append(" ").append(arr[i]);
+		}
+		String pluginScopes = getPluginsScope(config);
+		if (pluginScopes != null) {
+			result.append(" ").append(pluginScopes);
+		}
+		return result.toString();
+	}
 }
