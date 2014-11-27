@@ -218,6 +218,11 @@ public interface Constants {
 	public static final String AMAZON = "amazon";
 
 	/**
+	 * stackexchange
+	 */
+	public static final String STACK_EXCHANGE = "stackexchange";
+
+	/**
 	 * access token parameter name
 	 */
 	public static final String ACCESS_TOKEN_PARAMETER_NAME = "access_token";

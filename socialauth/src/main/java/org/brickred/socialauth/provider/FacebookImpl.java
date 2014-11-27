@@ -59,17 +59,18 @@ import org.json.JSONObject;
  * Provider implementation for Facebook
  * 
  * @author Abhinav Maheshwari
+ * @author Tarun Nagpal
  * 
  */
 public class FacebookImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = 8644510564735754296L;
-	private static final String PROFILE_URL = "https://graph.facebook.com/me";
-	private static final String CONTACTS_URL = "https://graph.facebook.com/me/friends";
-	private static final String UPDATE_STATUS_URL = "https://graph.facebook.com/me/feed";
+	private static final String PROFILE_URL = "https://graph.facebook.com/v2.2/me";
+	private static final String CONTACTS_URL = "https://graph.facebook.com/v2.2/me/friends";
+	private static final String UPDATE_STATUS_URL = "https://graph.facebook.com/v2.2/me/feed";
 	private static final String PROFILE_IMAGE_URL = "http://graph.facebook.com/%1$s/picture";
 	private static final String PUBLIC_PROFILE_URL = "http://www.facebook.com/profile.php?id=";
-	private static final String IMAGE_UPLOAD_URL = "https://graph.facebook.com/me/photos";
+	private static final String IMAGE_UPLOAD_URL = "https://graph.facebook.com/v2.2/me/photos";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(FacebookImpl.class);
 
@@ -80,8 +81,9 @@ public class FacebookImpl extends AbstractProvider {
 	private OAuthStrategyBase authenticationStrategy;
 
 	// set this to the list of extended permissions you want
-	private static final String[] AllPerms = new String[] { "publish_stream",
-			"email", "user_birthday", "user_location", "user_photos" };
+	private static final String[] AllPerms = new String[] { "publish_actions",
+			"email", "user_birthday", "user_location", "user_photos",
+			"user_friends", "read_stream" };
 	private static final String[] AuthPerms = new String[] { "email",
 			"user_birthday", "user_location" };
 

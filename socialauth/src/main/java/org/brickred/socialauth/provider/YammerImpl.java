@@ -178,11 +178,6 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 		String url = String.format(ACCESS_TOKEN_URL, config.get_consumerKey(),
 				config.get_consumerSecret(), code);
 		LOG.debug("Verification Code : " + code);
-		StringBuilder strb = new StringBuilder();
-		strb.append("code=").append(code);
-		strb.append("&client_secret=").append(config.get_consumerSecret());
-
-		LOG.debug("Parameters for access token : " + strb.toString());
 		Response response;
 		try {
 			response = HttpUtil.doHttpRequest(url, MethodType.GET.toString(),
@@ -199,9 +194,18 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 			}
 		}
 		if (result == null || result.length() == 0) {
-			throw new SocialAuthConfigurationException(
-					"Problem in getting Access Token. Application key or Secret key may be wrong."
-							+ "The server running the application should be same that was registered to get the keys.");
+			String errorMessage = null;
+			try {
+				errorMessage = response
+						.getErrorStreamAsString(Constants.ENCODING);
+			} catch (Exception e) {
+				// do nothing
+			}
+			if (errorMessage == null) {
+				errorMessage = "Problem in getting Access Token. Application key or Secret key may be wrong."
+						+ "The server running the application should be same that was registered to get the keys.";
+			}
+			throw new SocialAuthConfigurationException(errorMessage);
 		}
 
 		JSONObject resp = new JSONObject(result);

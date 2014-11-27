@@ -49,9 +49,9 @@ import org.json.JSONObject;
 public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 
 	private static final long serialVersionUID = 5350785649768508189L;
-	private static final String ALBUMS_URL = "https://graph.facebook.com/me/albums";
-	private static final String ALBUM_PHOTOS_URL = "https://graph.facebook.com/%1$s/photos";
-	private static final String ALBUM_COVER_URL = "https://graph.facebook.com/%1$s/picture?access_token=%2$s";
+	private static final String ALBUMS_URL = "https://graph.facebook.com/v2.2/me/albums";
+	private static final String ALBUM_PHOTOS_URL = "https://graph.facebook.com/v2.2/%1$s/photos";
+	private static final String ALBUM_COVER_URL = "https://graph.facebook.com/v2.2/%1$s/picture?access_token=%2$s";
 	private final Log LOG = LogFactory.getLog(this.getClass());
 
 	private ProviderSupport providerSupport;

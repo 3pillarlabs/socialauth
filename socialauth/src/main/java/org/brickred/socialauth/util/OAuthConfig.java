@@ -26,6 +26,7 @@ package org.brickred.socialauth.util;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * It contains the configuration of application like consumer key and consumer
@@ -50,6 +51,7 @@ public class OAuthConfig implements Serializable {
 	private String[] registeredPlugins;
 	private List<String> pluginsScopes;
 	private boolean saveRawResponse;
+	private Map<String, String> customProperties;
 
 	/**
 	 * 
@@ -296,6 +298,26 @@ public class OAuthConfig implements Serializable {
 		this.saveRawResponse = saveRawResponse;
 	}
 
+	/**
+	 * Returns custom properties for the provider
+	 * 
+	 * @return map which contains custom properties
+	 */
+	public Map<String, String> getCustomProperties() {
+		return customProperties;
+	}
+
+	/**
+	 * Updates the custom properties
+	 * 
+	 * @param customProperties
+	 *            map which store the custom properties required for the
+	 *            provider except conumer key, secret and scopes
+	 */
+	public void setCustomProperties(Map<String, String> customProperties) {
+		this.customProperties = customProperties;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
@@ -314,6 +336,12 @@ public class OAuthConfig implements Serializable {
 		result.append(" registeredPlugins: " + registeredPlugins + NEW_LINE);
 		result.append(" pluginsScopes: " + pluginsScopes + NEW_LINE);
 		result.append(" saveRawResponse: " + saveRawResponse + NEW_LINE);
+		if (customProperties != null) {
+			result.append(" customProperties: " + customProperties.toString()
+					+ NEW_LINE);
+		} else {
+			result.append(" customProperties: null" + NEW_LINE);
+		}
 		result.append("}");
 		return result.toString();
 	}

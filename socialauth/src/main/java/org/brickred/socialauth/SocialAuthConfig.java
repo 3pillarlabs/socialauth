@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -120,6 +121,8 @@ public class SocialAuthConfig implements Serializable {
 				org.brickred.socialauth.provider.LinkedInOAuth2Impl.class);
 		providersImplMap.put(Constants.AMAZON,
 				org.brickred.socialauth.provider.AmazonImpl.class);
+		providersImplMap.put(Constants.STACK_EXCHANGE,
+				org.brickred.socialauth.provider.StackExchangeImpl.class);
 
 		domainMap = new HashMap<String, String>();
 		domainMap.put(Constants.GOOGLE, "www.google.com");
@@ -141,6 +144,7 @@ public class SocialAuthConfig implements Serializable {
 		domainMap.put(Constants.NIMBLE, "api.nimble.com");
 		domainMap.put(Constants.LINKEDINOAUTH2, "api.linkedin.com");
 		domainMap.put(Constants.AMAZON, "amazon.com");
+		domainMap.put(Constants.STACK_EXCHANGE, "stackapps.com");
 
 		providersConfig = new HashMap<String, OAuthConfig>();
 
@@ -318,6 +322,8 @@ public class SocialAuthConfig implements Serializable {
 	}
 
 	private void loadProvidersConfig() {
+		Set<String> appPropertiesKeys = applicationProperties
+				.stringPropertyNames();
 		for (Map.Entry<String, String> entry : domainMap.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
@@ -389,6 +395,19 @@ public class SocialAuthConfig implements Serializable {
 								conf.setPluginsScopes(pluginScopes);
 							}
 						}
+					}
+				}
+				for (String propertyKey : appPropertiesKeys) {
+					if (propertyKey.startsWith(value + ".custom.")) {
+						Map<String, String> map = conf.getCustomProperties();
+						if (map == null) {
+							map = new HashMap<String, String>();
+						}
+						String ckey = propertyKey.substring(propertyKey
+								.lastIndexOf(".") + 1);
+						map.put(ckey,
+								applicationProperties.getProperty(propertyKey));
+						conf.setCustomProperties(map);
 					}
 				}
 				providersConfig.put(key, conf);
