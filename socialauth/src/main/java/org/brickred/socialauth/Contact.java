@@ -259,7 +259,7 @@ public class Contact implements Serializable {
 	/**
 	 * Retrieves the raw response xml/json in string which is returned by the
 	 * provider for this object call. Set
-	 * {@link SocailAuthConfig#setRawResponse(boolean)} to true to save the
+	 * {@link SocialAuthConfig#setRawResponse(boolean)} to true to save the
 	 * response in object.
 	 * 
 	 * @return raw response xml/json in string
@@ -270,7 +270,7 @@ public class Contact implements Serializable {
 
 	/**
 	 * Updates raw response xml/json returned by the provider for this object
-	 * call. Set {@link SocailAuthConfig#setRawResponse(boolean)} to true to
+	 * call. Set {@link SocialAuthConfig#setRawResponse(boolean)} to true to
 	 * save the response in object.
 	 * 
 	 * @param rawResponse
