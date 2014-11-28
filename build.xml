@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <project name="socialauthSDK" default="init">
-	<property name="basedir" value="." />
 	<property file="${basedir}/env.properties" />
 	<property name="sdk.name" value="socialauth-java-sdk-${sdk.version}" />
 	<property name="distDir" value="${basedir}/${sdk.name}" />
@@ -58,23 +57,23 @@
 		<echo message="Copying main jar in dist directory" />
 		<copy todir="${dist}">
 			<fileset dir="${projects.path}/${project.socialauth}/target">
-				<filename name="/socialauth-${socialauth.core.version}.jar" />
+				<filename name="socialauth-${socialauth.core.version}.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${projects.path}/${project.seam.demo}/WebContent/WEB-INF/lib">
 			<fileset dir=".">
-				<filename name="/socialauth-${socialauth.core.version}.jar" />
+				<filename name="socialauth-${socialauth.core.version}.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${projects.path}/${project.grails.demo}/socialauthdemo/lib">
 			<fileset dir=".">
-				<filename name="/socialauth-${socialauth.core.version}.jar" />
+				<filename name="socialauth-${socialauth.core.version}.jar" />
 			</fileset>
 		</copy>
 
 		<copy todir="${dist}">
 			<fileset dir="${projects.path}/${project.filter}/target">
-				<filename name="/${project.filter}-${socialauth.filter.version}.jar" />
+				<filename name="${project.filter}-${socialauth.filter.version}.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${projects.path}/${project.grails.demo}/socialauthdemo/lib">
@@ -85,13 +84,13 @@
 
 		<copy todir="${dist}">
 			<fileset dir="${projects.path}/${project.spring}/target">
-				<filename name="/${project.spring}-${socialauth.spring.version}.jar" />
+				<filename name="${project.spring}-${socialauth.spring.version}.jar" />
 			</fileset>
 		</copy>
 
 		<copy todir="${dist}">
 			<fileset dir="${projects.path}/${project.seam}/target">
-				<filename name="/${project.seam}-${socialauth.seam.version}.jar" />
+				<filename name="${project.seam}-${socialauth.seam.version}.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${projects.path}/${project.seam.demo}/WebContent/WEB-INF/lib">
@@ -102,14 +101,14 @@
 
 		<copy todir="${dist}">
 			<fileset dir="${projects.path}/${project.cdi}/target">
-				<filename name="/${project.cdi}-${socialauth.cdi.version}.jar" />
+				<filename name="${project.cdi}-${socialauth.cdi.version}.jar" />
 			</fileset>
 		</copy>
 
 		<copy todir="${dist}">
 			<fileset dir="${projects.path}/${project.cmd.utility}/target">
 				<filename
-					name="/${project.cmd.utility}-${socialauth.cmd.utility.version}.jar" />
+					name="${project.cmd.utility}-${socialauth.cmd.utility.version}.jar" />
 			</fileset>
 		</copy>
 	</target>
@@ -195,13 +194,13 @@
 		<copy todir="${dist}">
 			<fileset
 				dir="${projects.path}/${project.struts.filter.demo}/src/main/java">
-				<filename name="/oauth_consumer.properties" />
+				<filename name="oauth_consumer.properties" />
 			</fileset>
 		</copy>
 		<copy todir="${dist}">
 			<fileset
 				dir="${projects.path}/${project.struts.filter.demo}/src/main/java">
-				<filename name="/socialauth_filter.properties" />
+				<filename name="socialauth_filter.properties" />
 			</fileset>
 		</copy>
 	</target>
@@ -210,7 +209,7 @@
 		<echo message="Copying ReadMe file" />
 		<copy todir="${distDir}">
 			<fileset dir=".">
-				<filename name="/ReadMe.txt" />
+				<filename name="ReadMe.txt" />
 			</fileset>
 		</copy>
 	</target>
