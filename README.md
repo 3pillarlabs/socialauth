@@ -11,9 +11,17 @@ SocialAuth is a Java library ([.NET port](http://code.google.com/p/socialauth-ne
 
 See our [SoicalAuth demo in action](http://labs.3pillarglobal.com/socialauthdemo) !
 
-Download [socialauth-java-sdk-4.6.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
+Download [socialauth-java-sdk-4.7.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
 
 ![Build Status](http://labs.3pillarglobal.com/jenkins/job/socialauth-core/badge/icon)
+
+Whats new in Version 4.7?
+=========================
+* Amazon Provider
+* Stackexhange Provider
+* Facebook API v2.2 updated
+* Option to save raw response for Profile and Contact
+* Option to add custom properties for a provider
 
 Whats new in Version 4.6?
 =========================
