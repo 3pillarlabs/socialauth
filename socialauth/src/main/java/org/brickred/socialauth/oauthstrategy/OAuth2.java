@@ -208,9 +208,12 @@ public class OAuth2 implements OAuthStrategyBase {
 					accessToken = jObj.getString("access_token");
 				}
 				if (jObj.has("expires_in")) {
-					String str = jObj.getString("expires_in");
-					if (str != null && str.length() > 0) {
-						expires = Integer.valueOf(str);
+					Object expiresInValue = jObj.get("expires_in");
+					if (expiresInValue != null) {
+						String str = expiresInValue.toString();
+						if (str.length() > 0) {
+							expires = Integer.valueOf(str);
+						}
 					}
 				}
 				if (accessToken != null) {
