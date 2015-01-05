@@ -105,9 +105,6 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 			throws Exception {
 		config = providerConfig;
 		state = "SocialAuth" + System.currentTimeMillis();
-		String authURL = ENDPOINTS.get(Constants.OAUTH_AUTHORIZATION_URL) + "?"
-				+ Constants.STATE + "=" + state;
-		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL, authURL);
 		// Need to pass scope while fetching RequestToken from LinkedIn for new
 		// keys
 		if (config.getCustomPermissions() != null) {
@@ -159,7 +156,9 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 
 	@Override
 	public String getLoginRedirectURL(final String successUrl) throws Exception {
-		return authenticationStrategy.getLoginRedirectURL(successUrl);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(Constants.STATE, state);
+		return authenticationStrategy.getLoginRedirectURL(successUrl, map);
 	}
 
 	/**

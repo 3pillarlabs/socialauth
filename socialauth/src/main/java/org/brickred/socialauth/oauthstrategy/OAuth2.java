@@ -72,6 +72,12 @@ public class OAuth2 implements OAuthStrategyBase {
 
 	@Override
 	public String getLoginRedirectURL(final String successUrl) throws Exception {
+		return getLoginRedirectURL(successUrl, null);
+	}
+
+	@Override
+	public String getLoginRedirectURL(String successUrl,
+			Map<String, String> requestParams) throws Exception {
 		LOG.info("Determining URL for redirection");
 		providerState = true;
 		try {
@@ -89,6 +95,12 @@ public class OAuth2 implements OAuthStrategyBase {
 		sb.append("&redirect_uri=").append(this.successUrl);
 		if (scope != null) {
 			sb.append("&scope=").append(scope);
+		}
+		if (requestParams != null && !requestParams.isEmpty()) {
+			for (String key : requestParams.keySet()) {
+				sb.append("&");
+				sb.append(key).append("=").append(requestParams.get(key));
+			}
 		}
 		String url = sb.toString();
 
@@ -376,4 +388,5 @@ public class OAuth2 implements OAuthStrategyBase {
 	public AccessGrant getAccessGrant() {
 		return accessGrant;
 	}
+
 }

@@ -46,6 +46,20 @@ public interface OAuthStrategyBase extends Serializable {
 	 * @throws Exception
 	 */
 	public String getLoginRedirectURL(String successUrl) throws Exception;
+	
+	/**
+	 * It provides the URL which will be used for authentication with the
+	 * provider
+	 * 
+	 * @param successUrl
+	 *            the call back url on which user will be redirected after
+	 *            authentication
+	 * @param requestParams 
+	 * 			 parameters need to pass in request          
+	 * @return the authentication url
+	 * @throws Exception
+	 */
+	public String getLoginRedirectURL(String successUrl,Map<String, String> requestParams) throws Exception;
 
 	/**
 	 * Verifies the user and get access token

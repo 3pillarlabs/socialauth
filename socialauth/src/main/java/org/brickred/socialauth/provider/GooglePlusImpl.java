@@ -111,9 +111,6 @@ public class GooglePlusImpl extends AbstractProvider {
 	public GooglePlusImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
 		state = "SocialAuth" + System.currentTimeMillis();
-		String authURL = ENDPOINTS.get(Constants.OAUTH_AUTHORIZATION_URL) + "?"
-				+ Constants.STATE + "=" + state;
-		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL, authURL);
 
 		if (config.getCustomPermissions() != null) {
 			scope = Permission.CUSTOM;
@@ -162,7 +159,9 @@ public class GooglePlusImpl extends AbstractProvider {
 	 */
 	@Override
 	public String getLoginRedirectURL(final String successUrl) throws Exception {
-		return authenticationStrategy.getLoginRedirectURL(successUrl);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(Constants.STATE, state);
+		return authenticationStrategy.getLoginRedirectURL(successUrl, map);
 	}
 
 	/**
@@ -356,7 +355,8 @@ public class GooglePlusImpl extends AbstractProvider {
 					p.setOtherEmails(emailArr);
 					p.setId(id);
 					if (config.isSaveRawResponse()) {
-						p.setRawResponse(XMLParseUtil.getStringFromElement(contact));
+						p.setRawResponse(XMLParseUtil
+								.getStringFromElement(contact));
 					}
 					plist.add(p);
 				}

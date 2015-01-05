@@ -63,6 +63,12 @@ public class OAuth1 implements OAuthStrategyBase {
 
 	@Override
 	public String getLoginRedirectURL(final String successUrl) throws Exception {
+		return getLoginRedirectURL(successUrl, null);
+	}
+
+	@Override
+	public String getLoginRedirectURL(final String successUrl,
+			Map<String, String> requestParams) throws Exception {
 		LOG.info("Determining URL for redirection");
 		providerState = true;
 		LOG.debug("Call to fetch Request Token");
@@ -78,6 +84,13 @@ public class OAuth1 implements OAuthStrategyBase {
 		}
 		StringBuilder urlBuffer = oauth.buildAuthUrl(authUrl, requestToken,
 				successUrl);
+		if (requestParams != null && !requestParams.isEmpty()) {
+			for (String key : requestParams.keySet()) {
+				urlBuffer.append("&");
+				urlBuffer.append(key).append("=")
+						.append(requestParams.get(key));
+			}
+		}
 		LOG.info("Redirection to following URL should happen : "
 				+ urlBuffer.toString());
 		return urlBuffer.toString();

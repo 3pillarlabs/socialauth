@@ -110,6 +110,13 @@ public class Hybrid implements OAuthStrategyBase {
 	}
 
 	@Override
+	public String getLoginRedirectURL(final String successUrl,
+			Map<String, String> requestParams) throws Exception {
+		throw new SocialAuthException(
+				"This method is not implemented for Hybrid Strategy");
+	}
+
+	@Override
 	public AccessGrant verifyResponse(final Map<String, String> requestParams)
 			throws Exception {
 		return verifyResponse(requestParams, MethodType.GET.toString());

@@ -91,9 +91,6 @@ public class AmazonImpl extends AbstractProvider {
 	public AmazonImpl(final OAuthConfig providerConfig) throws Exception {
 		config = providerConfig;
 		state = "SocialAuth" + System.currentTimeMillis();
-		String authURL = ENDPOINTS.get(Constants.OAUTH_AUTHORIZATION_URL) + "?"
-				+ Constants.STATE + "=" + state;
-		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL, authURL);
 		// Need to pass scope while fetching RequestToken from LinkedIn for new
 		// keys
 		if (config.getCustomPermissions() != null) {
@@ -143,7 +140,9 @@ public class AmazonImpl extends AbstractProvider {
 	 */
 	@Override
 	public String getLoginRedirectURL(String successUrl) throws Exception {
-		return authenticationStrategy.getLoginRedirectURL(successUrl);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(Constants.STATE, state);
+		return authenticationStrategy.getLoginRedirectURL(successUrl, map);
 	}
 
 	/**
