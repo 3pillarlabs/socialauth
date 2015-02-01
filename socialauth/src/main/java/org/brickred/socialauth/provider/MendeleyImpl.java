@@ -191,20 +191,14 @@ public class MendeleyImpl extends AbstractProvider {
 		try {
 			JSONObject pRes = new JSONObject(result);
 			JSONObject pObj = pRes.getJSONObject("main");
-			if (pObj.has("profile_id")) {
-				profile.setValidatedId(pObj.getString("profile_id"));
+			profile.setValidatedId(pObj.optString("profile_id", null));
+			String name = pObj.optString("name", null);
+			if (name != null && name.trim().length() > 0) {
+				profile.setFirstName(name);
 			}
-			if (pObj.has("name")) {
-				String name = pObj.getString("name");
-				if (name != null && name.trim().length() > 0) {
-					profile.setFirstName(pObj.getString("name"));
-				}
-			}
-			if (pObj.has("photo")) {
-				String photo = pObj.getString("photo");
-				if (photo != null && photo.trim().length() > 0) {
-					profile.setProfileImageURL(pObj.getString("photo"));
-				}
+			String photo = pObj.optString("photo", null);
+			if (photo != null && photo.trim().length() > 0) {
+				profile.setProfileImageURL(photo);
 			}
 			profile.setProviderId(getProviderId());
 			if (config.isSaveRawResponse()) {

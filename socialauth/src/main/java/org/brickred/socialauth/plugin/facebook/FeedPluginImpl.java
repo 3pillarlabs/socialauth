@@ -76,30 +76,26 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 				JSONObject obj = data.getJSONObject(i);
 				if (obj.has("from")) {
 					JSONObject fobj = obj.getJSONObject("from");
-					if (fobj.has("name")) {
-						feed.setFrom(fobj.getString("name"));
-					}
-					if (fobj.has("id")) {
-						feed.setId(fobj.getString("id"));
-					}
+					feed.setFrom(fobj.optString("name", null));
+					feed.setId(fobj.optString("id", null));
 				}
 				if (obj.has("message")) {
-					feed.setMessage(obj.getString("message"));
+					feed.setMessage(obj.optString("message", null));
 				} else if (obj.has("story")) {
-					feed.setMessage(obj.getString("story"));
+					feed.setMessage(obj.optString("story", null));
 				} else if (obj.has("name")) {
-					feed.setMessage(obj.getString("name"));
+					feed.setMessage(obj.optString("name", null));
 				} else if (obj.has("caption")) {
-					feed.setMessage(obj.getString("caption"));
+					feed.setMessage(obj.optString("caption", null));
 				} else if (obj.has("description")) {
 					feed.setMessage(obj.getString("description"));
 				} else if (obj.has("picture")) {
-					feed.setMessage(obj.getString("picture"));
+					feed.setMessage(obj.optString("picture", null));
 				}
 
-				if (obj.has("created_time")) {
-					feed.setCreatedAt(dateFormat.parse(obj
-							.getString("created_time")));
+				String createdTime = obj.optString("created_time", null);
+				if (createdTime != null) {
+					feed.setCreatedAt(dateFormat.parse(createdTime));
 				}
 				list.add(feed);
 			}

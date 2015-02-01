@@ -269,19 +269,13 @@ public class SalesForceImpl extends AbstractProvider implements AuthProvider,
 		}
 		try {
 			JSONObject resp = new JSONObject(result);
-			if (resp.has("user_id")) {
-				p.setValidatedId(resp.getString("user_id"));
-			}
-			if (resp.has("first_name")) {
-				p.setFirstName(resp.getString("first_name"));
-			}
-			if (resp.has("last_name")) {
-				p.setLastName(resp.getString("last_name"));
-			}
-			p.setDisplayName(resp.getString("display_name"));
+			p.setValidatedId(resp.optString("user_id", null));
+			p.setFirstName(resp.optString("first_name", null));
+			p.setLastName(resp.optString("last_name", null));
+			p.setDisplayName(resp.optString("display_name", null));
 
-			p.setEmail(resp.getString("email"));
-			String locale = resp.getString("locale");
+			p.setEmail(resp.optString("email", null));
+			String locale = resp.optString("locale", null);
 			if (locale != null) {
 				String a[] = locale.split("_");
 				p.setLanguage(a[0]);
@@ -292,7 +286,8 @@ public class SalesForceImpl extends AbstractProvider implements AuthProvider,
 
 				if (p.getProfileImageURL() == null
 						|| p.getProfileImageURL().length() <= 0) {
-					p.setProfileImageURL(photosResp.getString("thumbnail"));
+					p.setProfileImageURL(photosResp
+							.optString("thumbnail", null));
 				}
 			}
 			serviceResponse.close();

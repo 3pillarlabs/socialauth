@@ -205,19 +205,11 @@ public class StackExchangeImpl extends AbstractProvider {
 				JSONArray items = jsonResp.getJSONArray("items");
 				if (items.length() > 0) {
 					JSONObject resp = items.getJSONObject(0);
-					if (resp.has("display_name")) {
-						p.setDisplayName(resp.getString("display_name"));
-						p.setFullName(resp.getString("display_name"));
-					}
-					if (resp.has("profile_image")) {
-						p.setProfileImageURL(resp.getString("profile_image"));
-					}
-					if (resp.has("user_id")) {
-						p.setValidatedId(resp.getString("user_id"));
-					}
-					if (resp.has("location")) {
-						p.setLocation(resp.getString("location"));
-					}
+					p.setDisplayName(resp.optString("display_name", null));
+					p.setFullName(resp.optString("display_name", null));
+					p.setProfileImageURL(resp.optString("profile_image", null));
+					p.setValidatedId(resp.optString("user_id", null));
+					p.setLocation(resp.optString("location", null));
 					if (config.isSaveRawResponse()) {
 						p.setRawResponse(presp);
 					}

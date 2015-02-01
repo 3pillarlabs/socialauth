@@ -221,28 +221,13 @@ public class GooglePlusImpl extends AbstractProvider {
 			LOG.debug("User Profile : " + presp);
 			JSONObject resp = new JSONObject(presp);
 			Profile p = new Profile();
-			p.setValidatedId(resp.getString("id"));
-			if (resp.has("name")) {
-				p.setFullName(resp.getString("name"));
-			}
-			if (resp.has("given_name")) {
-				p.setFirstName(resp.getString("given_name"));
-			}
-			if (resp.has("family_name")) {
-				p.setLastName(resp.getString("family_name"));
-			}
-			if (resp.has("email")) {
-				p.setEmail(resp.getString("email"));
-			}
-			if (resp.has("gender")) {
-				p.setGender(resp.getString("gender"));
-			}
-			if (resp.has("picture")) {
-				p.setProfileImageURL(resp.getString("picture"));
-			}
-			if (resp.has("id")) {
-				p.setValidatedId(resp.getString("id"));
-			}
+			p.setValidatedId(resp.optString("id", null));
+			p.setFullName(resp.optString("name", null));
+			p.setFirstName(resp.optString("given_name", null));
+			p.setLastName(resp.optString("family_name", null));
+			p.setEmail(resp.optString("email", null));
+			p.setGender(resp.optString("gender", null));
+			p.setProfileImageURL(resp.optString("picture", null));
 			if (config.isSaveRawResponse()) {
 				p.setRawResponse(presp);
 			}

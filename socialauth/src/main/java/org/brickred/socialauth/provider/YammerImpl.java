@@ -278,10 +278,10 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 						.getJSONArray("email_addresses");
 				JSONObject eobj = emailArr.getJSONObject(0);
 				if (eobj.has("address")) {
-					p.setEmail(eobj.getString("address"));
+					p.setEmail(eobj.optString("address", null));
 				}
-				p.setId(obj.getString("id"));
-				p.setProfileUrl(obj.getString("web_url"));
+				p.setId(obj.optString("id", null));
+				p.setProfileUrl(obj.optString("web_url", null));
 				if (config.isSaveRawResponse()) {
 					p.setRawResponse(obj.toString());
 				}
@@ -381,15 +381,9 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 		}
 		try {
 			JSONObject resp = new JSONObject(result);
-			if (resp.has("full_name")) {
-				p.setFullName(resp.getString("full_name"));
-			}
-			if (resp.has("location")) {
-				p.setLocation(resp.getString("location"));
-			}
-			if (resp.has("mugshot_url")) {
-				p.setProfileImageURL(resp.getString("mugshot_url"));
-			}
+			p.setFullName(resp.optString("full_name", null));
+			p.setLocation(resp.optString("location", null));
+			p.setProfileImageURL(resp.optString("mugshot_url", null));
 			if (resp.has("birth_date")) {
 				String dstr = resp.getString("birth_date");
 				if (dstr != null) {
@@ -417,7 +411,7 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 
 			JSONObject eobj = emailArr.getJSONObject(0);
 			if (eobj.has("address")) {
-				p.setEmail(eobj.getString("address"));
+				p.setEmail(eobj.optString("address", null));
 			}
 
 			p.setProviderId(getProviderId());

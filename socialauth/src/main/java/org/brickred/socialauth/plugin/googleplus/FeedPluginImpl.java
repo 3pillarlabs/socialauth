@@ -89,23 +89,17 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 			for (int i = 0; i < items.length(); i++) {
 				Feed feed = new Feed();
 				JSONObject obj = items.getJSONObject(i);
-				if (obj.has("title")) {
-					feed.setMessage(obj.getString("title"));
-				}
-				if (obj.has("id")) {
-					feed.setId(obj.getString("id"));
-				}
+				feed.setMessage(obj.optString("title", null));
+				feed.setId(obj.optString("id", null));
 				if (obj.has("actor")) {
 					JSONObject actor = obj.getJSONObject("actor");
-					if (actor.has("displayName")) {
-						feed.setFrom(actor.getString("displayName"));
-					}
+					feed.setFrom(actor.optString("displayName", null));
 				}
-				if (obj.has("published")) {
-					Date date = dateFormat.parse(obj.getString("published"));
+				String pubDate = obj.optString("published", null);
+				if (pubDate != null) {
+					Date date = dateFormat.parse(pubDate);
 					feed.setCreatedAt(date);
 				}
-				System.out.println(feed);
 				list.add(feed);
 			}
 

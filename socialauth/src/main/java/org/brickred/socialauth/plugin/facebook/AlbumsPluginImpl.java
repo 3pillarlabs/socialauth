@@ -73,23 +73,17 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 		for (int i = 0; i < data.length(); i++) {
 			Album album = new Album();
 			JSONObject obj = data.getJSONObject(i);
-			String albumId = obj.getString("id");
+			String albumId = obj.optString("id", null);
 			album.setId(albumId);
-			if (obj.has("name")) {
-				album.setName(obj.getString("name"));
-			}
+			album.setName(obj.optString("name", null));
 
-			if (obj.has("link")) {
-				album.setLink(obj.getString("link"));
+			album.setLink(obj.optString("link", null));
+			album.setCoverPhoto(obj.optString("cover_photo", null));
+			album.setPhotosCount(obj.optInt("count"));
+			if (albumId != null) {
+				album.setCoverPhoto(String.format(ALBUM_COVER_URL, albumId,
+						providerSupport.getAccessGrant().getKey()));
 			}
-			if (obj.has("cover_photo")) {
-				album.setCoverPhoto(obj.getString("cover_photo"));
-			}
-			if (obj.has("count")) {
-				album.setPhotosCount(obj.getInt("count"));
-			}
-			album.setCoverPhoto(String.format(ALBUM_COVER_URL, albumId,
-					providerSupport.getAccessGrant().getKey()));
 			List<Photo> photos = getAlbumPhotos(albumId);
 			album.setPhotos(photos);
 			albums.add(album);
@@ -110,33 +104,27 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 		for (int i = 0; i < data.length(); i++) {
 			Photo photo = new Photo();
 			JSONObject obj = data.getJSONObject(i);
-			photo.setId(obj.getString("id"));
-			if (obj.has("name")) {
-				photo.setTitle(obj.getString("name"));
-			}
-			if (obj.has("link")) {
-				photo.setLink(obj.getString("link"));
-			}
-			if (obj.has("picture")) {
-				photo.setThumbImage(obj.getString("picture"));
-			}
+			photo.setId(obj.optString("id", null));
+			photo.setTitle(obj.optString("name", null));
+			photo.setLink(obj.optString("link", null));
+			photo.setThumbImage(obj.optString("picture", null));
 			JSONArray images = obj.getJSONArray("images");
 			for (int k = 0; k < images.length(); k++) {
 				JSONObject img = images.getJSONObject(k);
 				int ht = 0;
 				int wt = 0;
 				if (img.has("height")) {
-					ht = img.getInt("height");
+					ht = img.optInt("height");
 				}
 				if (img.has("width")) {
-					wt = img.getInt("width");
+					wt = img.optInt("width");
 				}
 				if (ht == 600 || wt == 600) {
-					photo.setLargeImage(img.getString("source"));
+					photo.setLargeImage(img.optString("source"));
 				} else if (ht == 480 || wt == 480) {
-					photo.setMediumImage(img.getString("source"));
+					photo.setMediumImage(img.optString("source"));
 				} else if (ht == 320 || wt == 320) {
-					photo.setSmallImage(img.getString("source"));
+					photo.setSmallImage(img.optString("source"));
 				}
 			}
 			photos.add(photo);

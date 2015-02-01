@@ -220,55 +220,39 @@ public class YahooImpl extends AbstractProvider implements AuthProvider,
 			JSONObject jobj = new JSONObject(result);
 			if (jobj.has("profile")) {
 				JSONObject pObj = jobj.getJSONObject("profile");
-				if (pObj.has("guid")) {
-					profile.setValidatedId(pObj.getString("guid"));
-				}
-				if (pObj.has("familyName")) {
-					profile.setLastName(pObj.getString("familyName"));
-				}
-				if (pObj.has("gender")) {
-					profile.setGender(pObj.getString("gender"));
-				}
-				if (pObj.has("givenName")) {
-					profile.setFirstName(pObj.getString("givenName"));
-				}
-				if (pObj.has("location")) {
-					profile.setLocation(pObj.getString("location"));
-				}
-				if (pObj.has("nickname")) {
-					profile.setDisplayName(pObj.getString("nickname"));
-				}
-				if (pObj.has("lang")) {
-					profile.setLanguage(pObj.getString("lang"));
-				}
-				if (pObj.has("birthdate")) {
-					String dstr = pObj.getString("birthdate");
-					if (dstr != null) {
-						String arr[] = dstr.split("/");
-						BirthDate bd = new BirthDate();
-						if (arr.length > 0) {
-							bd.setMonth(Integer.parseInt(arr[0]));
-						}
-						if (arr.length > 1) {
-							bd.setDay(Integer.parseInt(arr[1]));
-						}
-						profile.setDob(bd);
+				profile.setValidatedId(pObj.optString("guid", null));
+				profile.setLastName(pObj.optString("familyName", null));
+				profile.setGender(pObj.optString("gender", null));
+				profile.setFirstName(pObj.optString("givenName", null));
+				profile.setLocation(pObj.optString("location", null));
+				profile.setDisplayName(pObj.optString("nickname", null));
+				profile.setLanguage(pObj.optString("lang", null));
+				String dstr = pObj.optString("birthdate", null);
+				if (dstr != null) {
+					String arr[] = dstr.split("/");
+					BirthDate bd = new BirthDate();
+					if (arr.length > 0) {
+						bd.setMonth(Integer.parseInt(arr[0]));
 					}
+					if (arr.length > 1) {
+						bd.setDay(Integer.parseInt(arr[1]));
+					}
+					profile.setDob(bd);
 				}
 				if (pObj.has("image")) {
 					JSONObject imgObj = pObj.getJSONObject("image");
-					if (imgObj.has("imageUrl")) {
-						profile.setProfileImageURL(imgObj.getString("imageUrl"));
-					}
+					profile.setProfileImageURL(imgObj.optString("imageUrl",
+							null));
 				}
 				if (pObj.has("emails")) {
 					JSONArray earr = pObj.getJSONArray("emails");
 					for (int i = 0; i < earr.length(); i++) {
 						JSONObject eobj = earr.getJSONObject(i);
 						if (eobj.has("primary")
-								&& "true".equals(eobj.getString("primary"))) {
+								&& "true".equals(eobj
+										.optString("primary", null))) {
 							if (eobj.has("handle")) {
-								profile.setEmail(eobj.getString("handle"));
+								profile.setEmail(eobj.optString("handle", null));
 							}
 							break;
 						}

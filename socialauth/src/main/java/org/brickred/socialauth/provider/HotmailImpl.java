@@ -245,18 +245,10 @@ public class HotmailImpl extends AbstractProvider {
 						p.setEmailHash(emailArr.getString(0));
 					}
 				}
-				if (obj.has("name")) {
-					p.setDisplayName(obj.getString("name"));
-				}
-				if (obj.has("first_name")) {
-					p.setFirstName(obj.getString("first_name"));
-				}
-				if (obj.has("last_name")) {
-					p.setLastName(obj.getString("last_name"));
-				}
-				if (obj.has("id")) {
-					p.setId(obj.getString("id"));
-				}
+				p.setDisplayName(obj.optString("name", null));
+				p.setFirstName(obj.optString("first_name", null));
+				p.setLastName(obj.optString("last_name", null));
+				p.setId(obj.optString("id", null));
 				if (config.isSaveRawResponse()) {
 					p.setRawResponse(obj.toString());
 				}
@@ -332,26 +324,14 @@ public class HotmailImpl extends AbstractProvider {
 		try {
 			JSONObject resp = new JSONObject(result);
 			if (resp.has("id")) {
-				p.setValidatedId(resp.getString("id"));
+				p.setValidatedId(resp.get("id").toString());
 			}
-			if (resp.has("name")) {
-				p.setFullName(resp.getString("name"));
-			}
-			if (resp.has("first_name")) {
-				p.setFirstName(resp.getString("first_name"));
-			}
-			if (resp.has("last_name")) {
-				p.setLastName(resp.getString("last_name"));
-			}
-			if (resp.has("Location")) {
-				p.setLocation(resp.getString("Location"));
-			}
-			if (resp.has("gender")) {
-				p.setGender(resp.getString("gender"));
-			}
-			if (resp.has("ThumbnailImageLink")) {
-				p.setProfileImageURL(resp.getString("ThumbnailImageLink"));
-			}
+			p.setFullName(resp.optString("name", null));
+			p.setFirstName(resp.optString("first_name", null));
+			p.setLastName(resp.optString("last_name", null));
+			p.setLocation(resp.optString("Location", null));
+			p.setGender(resp.optString("gender", null));
+			p.setProfileImageURL(resp.optString("ThumbnailImageLink", null));
 
 			if (resp.has("birth_day") && !resp.isNull("birth_day")) {
 				BirthDate bd = new BirthDate();
@@ -381,7 +361,7 @@ public class HotmailImpl extends AbstractProvider {
 
 			}
 			if (resp.has("locale")) {
-				p.setLanguage(resp.getString("locale"));
+				p.setLanguage(resp.optString("locale", null));
 			}
 			serviceResponse.close();
 			p.setProviderId(getProviderId());

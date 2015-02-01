@@ -190,18 +190,10 @@ public class AmazonImpl extends AbstractProvider {
 			LOG.debug("User Profile : " + presp);
 			JSONObject resp = new JSONObject(presp);
 			Profile p = new Profile();
-			if (resp.has("name")) {
-				p.setFullName(resp.getString("name"));
-			}
-			if (resp.has("email")) {
-				p.setEmail(resp.getString("email"));
-			}
-			if (resp.has("user_id")) {
-				p.setValidatedId(resp.getString("user_id"));
-			}
-			if (resp.has("postal_code")) {
-				p.setLocation(resp.getString("postal_code"));
-			}
+			p.setFullName(resp.optString("name", null));
+			p.setEmail(resp.optString("email", null));
+			p.setValidatedId(resp.optString("user_id", null));
+			p.setLocation(resp.optString("postal_code", null));
 			if (config.isSaveRawResponse()) {
 				p.setRawResponse(presp);
 			}

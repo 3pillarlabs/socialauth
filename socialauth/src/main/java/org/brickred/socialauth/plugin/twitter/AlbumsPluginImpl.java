@@ -85,19 +85,21 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 						JSONObject mediaObj = entitiesObj.getJSONArray("media")
 								.getJSONObject(0);
 						if (mediaObj.has("type")
-								&& mediaObj.getString("type").equalsIgnoreCase(
+								&& mediaObj.optString("type").equalsIgnoreCase(
 										"photo")) {
-							if (userObj.has("name")
-									&& mediaObj.has("media_url")) {
+							if (userObj.optString("name",null)!=null
+									&& mediaObj.optString("media_url",null)!=null) {
 								List<Photo> photos = photo_data.get(userObj
-										.getString("name"));
+										.optString("name"));
 								if (photos == null) {
 									photos = new ArrayList<Photo>();
-									photo_data.put(userObj.getString("name"),
+									photo_data.put(
+											userObj.optString("name", null),
 											photos);
 
-									album.setName(userObj.getString("name"));
-									album.setCoverPhoto(userObj.getString(
+									album.setName(userObj.optString("name",
+											null));
+									album.setCoverPhoto(userObj.optString(
 											"profile_image_url").replaceAll(
 											"_normal", "_reasonably_small"));
 									albums.add(album);
@@ -109,21 +111,15 @@ public class AlbumsPluginImpl implements AlbumsPlugin, Serializable {
 								photo.setSmallImage(photoURL + ":small");
 								photo.setMediumImage(photoURL);
 								photo.setLargeImage(photoURL + ":large");
-								if (jobj.has("text")) {
-									photo.setTitle(jobj.getString("text"));
-								}
-								if (mediaObj.has("id_str")) {
-									photo.setId(mediaObj.getString("id_str"));
-								}
-								if (mediaObj.has("expanded_url")) {
-									photo.setLink(mediaObj
-											.getString("expanded_url"));
-								}
+								photo.setTitle(jobj.optString("text", null));
+								photo.setId(mediaObj.optString("id_str", null));
+								photo.setLink(mediaObj.optString(
+										"expanded_url", null));
 								if (jobj.has("retweet_count")) {
 									Map<String, String> map = new HashMap<String, String>();
 									map.put("retweet_count", String
 											.valueOf(jobj
-													.getInt("retweet_count")));
+													.optInt("retweet_count")));
 									photo.setMetaData(map);
 								}
 								photos.add(photo);

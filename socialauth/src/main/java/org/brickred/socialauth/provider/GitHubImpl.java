@@ -161,25 +161,12 @@ public class GitHubImpl extends AbstractProvider {
 			LOG.debug("User Profile : " + presp);
 			JSONObject resp = new JSONObject(presp);
 			Profile p = new Profile();
-			p.setValidatedId(resp.getString("id"));
-			if (resp.has("name")) {
-				p.setFullName(resp.getString("name"));
-			}
-			if (resp.has("email")) {
-				String email = resp.getString("email");
-				if (!"null".equals(email)) {
-					p.setEmail(resp.getString("email"));
-				}
-			}
-			if (resp.has("location")) {
-				p.setLocation(resp.getString("location"));
-			}
-			if (resp.has("avatar_url")) {
-				p.setProfileImageURL(resp.getString("avatar_url"));
-			}
-			if (resp.has("login")) {
-				p.setDisplayName(resp.getString("login"));
-			}
+			p.setValidatedId(resp.optString("id", null));
+			p.setFullName(resp.optString("name", null));
+			p.setEmail(resp.optString("email", null));
+			p.setLocation(resp.optString("location", null));
+			p.setProfileImageURL(resp.optString("avatar_url", null));
+			p.setDisplayName(resp.optString("login", null));
 			p.setProviderId(getProviderId());
 			if (config.isSaveRawResponse()) {
 				p.setRawResponse(presp);

@@ -227,25 +227,15 @@ public class MySpaceImpl extends AbstractProvider {
 			if (fObj.has("person")) {
 				Contact contact = new Contact();
 				JSONObject pObj = fObj.getJSONObject("person");
-				if (pObj.has("displayName")) {
-					contact.setDisplayName(pObj.getString("displayName"));
-				}
+				contact.setDisplayName(pObj.optString("displayName", null));
 				if (pObj.has("name")) {
 					JSONObject nobj = pObj.getJSONObject("name");
-					if (nobj.has("familyName")) {
-						contact.setLastName(nobj.getString("familyName"));
-					}
-					if (nobj.has("givenName")) {
-						contact.setFirstName(nobj.getString("givenName"));
-					}
+					contact.setLastName(nobj.optString("familyName", null));
+					contact.setFirstName(nobj.optString("givenName", null));
 				}
 
-				if (pObj.has("profileUrl")) {
-					contact.setProfileUrl(pObj.getString("profileUrl"));
-				}
-				if (pObj.has("id")) {
-					contact.setId(pObj.getString("id"));
-				}
+				contact.setProfileUrl(pObj.optString("profileUrl", null));
+				contact.setId(pObj.optString("id", null));
 				if (config.isSaveRawResponse()) {
 					contact.setRawResponse(pObj.toString());
 				}
@@ -341,33 +331,17 @@ public class MySpaceImpl extends AbstractProvider {
 			throw new ServerDataException(
 					"Failed to parse the user profile json : " + result);
 		}
-		if (pObj.has("displayName")) {
-			profile.setDisplayName(pObj.getString("displayName"));
-		}
-		if (pObj.has("id")) {
-			profile.setValidatedId(pObj.getString("id"));
-		}
+		profile.setDisplayName(pObj.optString("displayName", null));
+		profile.setValidatedId(pObj.optString("id", null));
 		if (pObj.has("name")) {
 			JSONObject nobj = pObj.getJSONObject("name");
-			if (nobj.has("familyName")) {
-				profile.setLastName(nobj.getString("familyName"));
-			}
-			if (nobj.has("givenName")) {
-				profile.setFirstName(nobj.getString("givenName"));
-			}
+			profile.setLastName(nobj.optString("familyName", null));
+			profile.setFirstName(nobj.optString("givenName", null));
 		}
-		if (pObj.has("location")) {
-			profile.setLocation(pObj.getString("location"));
-		}
-		if (pObj.has("nickname")) {
-			profile.setDisplayName(pObj.getString("nickname"));
-		}
-		if (pObj.has("lang")) {
-			profile.setLanguage(pObj.getString("lang"));
-		}
-		if (pObj.has("thumbnailUrl")) {
-			profile.setProfileImageURL(pObj.getString("thumbnailUrl"));
-		}
+		profile.setLocation(pObj.optString("location", null));
+		profile.setDisplayName(pObj.optString("nickname", null));
+		profile.setLanguage(pObj.optString("lang", null));
+		profile.setProfileImageURL(pObj.optString("thumbnailUrl", null));
 		profile.setProviderId(getProviderId());
 		if (config.isSaveRawResponse()) {
 			profile.setRawResponse(result);

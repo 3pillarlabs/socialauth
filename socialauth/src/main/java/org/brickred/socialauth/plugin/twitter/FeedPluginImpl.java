@@ -82,24 +82,16 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 			for (int i = 0; i < jarr.length(); i++) {
 				JSONObject jobj = jarr.getJSONObject(i);
 				Feed feed = new Feed();
-				if (jobj.has("created_at")) {
-					String dateStr = jobj.getString("created_at");
+				String dateStr = jobj.optString("created_at", null);
+				if (dateStr != null) {
 					feed.setCreatedAt(dateFormat.parse(dateStr));
 				}
-				if (jobj.has("text")) {
-					feed.setMessage(jobj.getString("text"));
-				}
+				feed.setMessage(jobj.optString("text", null));
 				if (jobj.has("user")) {
 					JSONObject userObj = jobj.getJSONObject("user");
-					if (userObj.has("id_str")) {
-						feed.setId(userObj.getString("id_str"));
-					}
-					if (userObj.has("name")) {
-						feed.setFrom(userObj.getString("name"));
-					}
-					if (userObj.has("screen_name")) {
-						feed.setScreenName(userObj.getString("screen_name"));
-					}
+					feed.setId(userObj.optString("id_str", null));
+					feed.setFrom(userObj.optString("name", null));
+					feed.setScreenName(userObj.optString("screen_name", null));
 				}
 				list.add(feed);
 			}

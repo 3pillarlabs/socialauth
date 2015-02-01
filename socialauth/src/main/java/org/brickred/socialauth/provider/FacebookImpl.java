@@ -210,24 +210,17 @@ public class FacebookImpl extends AbstractProvider {
 			LOG.debug("User Profile : " + presp);
 			JSONObject resp = new JSONObject(presp);
 			Profile p = new Profile();
-			p.setValidatedId(resp.getString("id"));
-			if (resp.has("name")) {
-				p.setFullName(resp.getString("name"));
-			}
-			if (resp.has("first_name")) {
-				p.setFirstName(resp.getString("first_name"));
-			}
-			if (resp.has("last_name")) {
-				p.setLastName(resp.getString("last_name"));
-			}
-			if (resp.has("email")) {
-				p.setEmail(resp.getString("email"));
-			}
+			p.setValidatedId(resp.optString("id", null));
+			p.setFullName(resp.optString("name", null));
+			p.setFirstName(resp.optString("first_name", null));
+			p.setLastName(resp.optString("last_name", null));
+			p.setEmail(resp.optString("email", null));
 			if (resp.has("location")) {
-				p.setLocation(resp.getJSONObject("location").getString("name"));
+				p.setLocation(resp.getJSONObject("location").optString("name",
+						null));
 			}
 			if (resp.has("birthday")) {
-				String bstr = resp.getString("birthday");
+				String bstr = resp.optString("birthday");
 				String[] arr = bstr.split("/");
 				BirthDate bd = new BirthDate();
 				if (arr.length > 0) {
@@ -241,12 +234,10 @@ public class FacebookImpl extends AbstractProvider {
 				}
 				p.setDob(bd);
 			}
-			if (resp.has("gender")) {
-				p.setGender(resp.getString("gender"));
-			}
+			p.setGender(resp.optString("gender", null));
 			p.setProfileImageURL(String.format(PROFILE_IMAGE_URL,
 					resp.getString("id")));
-			String locale = resp.getString("locale");
+			String locale = resp.optString("locale", null);
 			if (locale != null) {
 				String a[] = locale.split("_");
 				p.setLanguage(a[0]);
@@ -330,21 +321,24 @@ public class FacebookImpl extends AbstractProvider {
 			for (int i = 0; i < data.length(); i++) {
 				JSONObject obj = data.getJSONObject(i);
 				Contact p = new Contact();
-				String name = obj.getString("name");
+				String name = obj.optString("name", null);
 				if (name != null) {
 					String nameArr[] = name.split(" ");
 					if (nameArr.length > 1) {
 						p.setFirstName(nameArr[0]);
 						p.setLastName(nameArr[1]);
 					} else {
-						p.setFirstName(obj.getString("name"));
+						p.setFirstName(obj.optString("name"));
 					}
 					p.setDisplayName(name);
 				}
-				p.setId(obj.getString("id"));
-				p.setProfileUrl(PUBLIC_PROFILE_URL + obj.getString("id"));
-				p.setProfileImageURL(String.format(PROFILE_IMAGE_URL,
-						obj.getString("id")));
+				String id = obj.optString("id", null);
+				p.setId(id);
+				if (id != null) {
+					p.setProfileUrl(PUBLIC_PROFILE_URL + id);
+					p.setProfileImageURL(String.format(PROFILE_IMAGE_URL, id));
+				}
+
 				if (config.isSaveRawResponse()) {
 					p.setRawResponse(obj.toString());
 				}

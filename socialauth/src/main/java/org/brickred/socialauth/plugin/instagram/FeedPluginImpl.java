@@ -86,19 +86,13 @@ public class FeedPluginImpl implements FeedPlugin, Serializable {
 				}
 				if (obj.has("user")) {
 					JSONObject iobj = obj.getJSONObject("user");
-					if (iobj.has("full_name")) {
-						feed.setFrom(iobj.getString("full_name"));
-					}
-					if (iobj.has("id")) {
-						feed.setId(iobj.getString("id"));
-					}
-					if (iobj.has("username")) {
-						feed.setScreenName(iobj.getString("username"));
-					}
+					feed.setFrom(iobj.optString("full_name", null));
+					feed.setId(iobj.optString("id", null));
+					feed.setScreenName(iobj.optString("username", null));
 				}
-				if (obj.has("created_time")) {
-					feed.setCreatedAt(new Date(Integer.parseInt(obj
-							.getString("created_time"))));
+				String createdTime = obj.optString("created_time", null);
+				if (createdTime != null) {
+					feed.setCreatedAt(new Date(Integer.parseInt(createdTime)));
 				}
 				list.add(feed);
 			}

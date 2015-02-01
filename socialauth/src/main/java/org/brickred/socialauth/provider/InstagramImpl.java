@@ -174,9 +174,9 @@ public class InstagramImpl extends AbstractProvider {
 			for (int i = 0; i < data.length(); i++) {
 				JSONObject obj = data.getJSONObject(i);
 				Contact p = new Contact();
-				String id = obj.optString("id");
+				String id = obj.optString("id", null);
 				p.setId(id);
-				String full_name = obj.optString("full_name");
+				String full_name = obj.optString("full_name", null);
 				p.setDisplayName(full_name);
 				if (full_name != null) {
 					String[] names = full_name.split(" ");
@@ -187,7 +187,7 @@ public class InstagramImpl extends AbstractProvider {
 						p.setFirstName(full_name);
 					}
 				}
-				String username = obj.optString("username");
+				String username = obj.optString("username", null);
 				p.setProfileUrl(VIEW_PROFILE_URL + username);
 				p.setProfileImageURL(obj.optString("profile_picture"));
 				if (config.isSaveRawResponse()) {
@@ -237,8 +237,8 @@ public class InstagramImpl extends AbstractProvider {
 			JSONObject obj = new JSONObject(respStr);
 			JSONObject data = obj.getJSONObject("data");
 			Profile p = new Profile();
-			p.setValidatedId(data.optString("id"));
-			String full_name = data.optString("full_name");
+			p.setValidatedId(data.optString("id", null));
+			String full_name = data.optString("full_name", null);
 			p.setDisplayName(full_name);
 			if (full_name != null) {
 				String[] names = full_name.split(" ");
@@ -249,7 +249,7 @@ public class InstagramImpl extends AbstractProvider {
 					p.setFirstName(full_name);
 				}
 			}
-			p.setProfileImageURL(data.optString("profile_picture"));
+			p.setProfileImageURL(data.optString("profile_picture", null));
 			p.setProviderId(getProviderId());
 			if (config.isSaveRawResponse()) {
 				p.setRawResponse(respStr);

@@ -211,28 +211,16 @@ public class FourSquareImpl extends AbstractProvider {
 			throw new SocialAuthException(
 					"Failed to parse the user profile json : " + res);
 		}
-		if (uObj.has("id")) {
-			profile.setValidatedId(uObj.getString("id"));
-		}
-		if (uObj.has("firstName")) {
-			profile.setFirstName(uObj.getString("firstName"));
-		}
-		if (uObj.has("lastName")) {
-			profile.setLastName(uObj.getString("lastName"));
-		}
-		if (uObj.has("photo")) {
-			profile.setProfileImageURL(uObj.getString("photo"));
-		}
-		if (uObj.has("gender")) {
-			profile.setGender(uObj.getString("gender"));
-		}
-		if (uObj.has("homeCity")) {
-			profile.setLocation(uObj.getString("homeCity"));
-		}
+		profile.setValidatedId(uObj.optString("id", null));
+		profile.setFirstName(uObj.optString("firstName", null));
+		profile.setLastName(uObj.optString("lastName", null));
+		profile.setProfileImageURL(uObj.optString("photo", null));
+		profile.setGender(uObj.optString("gender", null));
+		profile.setLocation(uObj.optString("homeCity", null));
 		if (uObj.has("contact")) {
 			JSONObject cobj = uObj.getJSONObject("contact");
 			if (cobj.has("email")) {
-				profile.setEmail(cobj.getString("email"));
+				profile.setEmail(cobj.optString("email", null));
 			}
 		}
 		profile.setProviderId(getProviderId());
@@ -296,15 +284,11 @@ public class FourSquareImpl extends AbstractProvider {
 		for (int i = 0; i < items.length(); i++) {
 			JSONObject obj = items.getJSONObject(i);
 			Contact c = new Contact();
-			if (obj.has("firstName")) {
-				c.setFirstName(obj.getString("firstName"));
-			}
-			if (obj.has("lastName")) {
-				c.setLastName(obj.getString("lastName"));
-			}
+			c.setFirstName(obj.optString("firstName", null));
+			c.setLastName(obj.optString("lastName", null));
 			if (obj.has("id")) {
-				c.setProfileUrl(VIEW_PROFILE_URL + obj.getString("id"));
-				c.setId(obj.getString("id"));
+				c.setProfileUrl(VIEW_PROFILE_URL + obj.get("id").toString());
+				c.setId(obj.get("id").toString());
 			}
 			if (obj.has("photo")) {
 				String photo = obj.getString("photo");

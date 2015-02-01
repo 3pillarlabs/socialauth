@@ -215,24 +215,13 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		}
 		try {
 			JSONObject pObj = new JSONObject(result);
-			if (pObj.has("id_str")) {
-				profile.setValidatedId(pObj.getString("id_str"));
-			}
-			if (pObj.has("name")) {
-				profile.setFullName(pObj.getString("name"));
-			}
-			if (pObj.has("location")) {
-				profile.setLocation(pObj.getString("location"));
-			}
-			if (pObj.has("screen_name")) {
-				profile.setDisplayName(pObj.getString("screen_name"));
-			}
-			if (pObj.has("lang")) {
-				profile.setLanguage(pObj.getString("lang"));
-			}
-			if (pObj.has("profile_image_url")) {
-				profile.setProfileImageURL(pObj.getString("profile_image_url"));
-			}
+			profile.setValidatedId(pObj.optString("id_str", null));
+			profile.setFullName(pObj.optString("name", null));
+			profile.setLocation(pObj.optString("location", null));
+			profile.setDisplayName(pObj.optString("screen_name", null));
+			profile.setLanguage(pObj.optString("lang", null));
+			profile.setProfileImageURL(pObj
+					.optString("profile_image_url", null));
 			profile.setProviderId(getProviderId());
 			if (config.isSaveRawResponse()) {
 				profile.setRawResponse(result);
@@ -396,18 +385,16 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 			for (int i = 0; i < jarr.length(); i++) {
 				JSONObject jobj = jarr.getJSONObject(i);
 				Contact cont = new Contact();
-				if (jobj.has("name")) {
-					cont.setFirstName(jobj.getString("name"));
-				}
-				if (jobj.has("screen_name")) {
-					cont.setDisplayName(jobj.getString("screen_name"));
+				cont.setFirstName(jobj.optString("name", null));
+				String sname = jobj.optString("screen_name", null);
+				if (sname != null) {
+					cont.setDisplayName(sname);
 					cont.setProfileUrl("https://" + PROPERTY_DOMAIN + "/"
-							+ jobj.getString("screen_name"));
+							+ sname);
 				}
-				cont.setProfileImageURL(jobj.optString("profile_image_url"));
-				if (jobj.has("id_str")) {
-					cont.setId(jobj.getString("id_str"));
-				}
+				cont.setProfileImageURL(jobj.optString("profile_image_url",
+						null));
+				cont.setId(jobj.optString("id_str", null));
 				if (config.isSaveRawResponse()) {
 					cont.setRawResponse(jobj.toString());
 				}

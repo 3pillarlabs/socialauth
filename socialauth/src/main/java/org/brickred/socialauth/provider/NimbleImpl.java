@@ -217,17 +217,15 @@ public class NimbleImpl extends AbstractProvider {
 							JSONArray arr = fields.getJSONArray("company name");
 							JSONObject jobj = arr.getJSONObject(0);
 							if (jobj.has("value")) {
-								p.setFirstName(jobj.getString("value"));
+								p.setFirstName(jobj.optString("value"));
 							}
 						}
-						if (obj.has("avatar_url")) {
-							p.setProfileImageURL(obj.getString("avatar_url"));
-						}
+						p.setProfileImageURL(obj.optString("avatar_url", null));
 						if (fields.has("URL")) {
 							JSONArray arr = fields.getJSONArray("URL");
 							JSONObject jobj = arr.getJSONObject(0);
 							if (jobj.has("value")) {
-								p.setProfileUrl(jobj.getString("value"));
+								p.setProfileUrl(jobj.optString("value", null));
 							}
 						}
 					} else if ("person".equals(obj.getString("record_type"))) {
@@ -236,25 +234,27 @@ public class NimbleImpl extends AbstractProvider {
 							JSONArray arr = fields.getJSONArray("last name");
 							JSONObject jobj = arr.getJSONObject(0);
 							if (jobj.has("value")) {
-								p.setLastName(jobj.getString("value"));
+								p.setLastName(jobj.optString("value", null));
 							}
 						}
 						if (fields.has("first name")) {
 							JSONArray arr = fields.getJSONArray("first name");
 							JSONObject jobj = arr.getJSONObject(0);
 							if (jobj.has("value")) {
-								p.setFirstName(jobj.getString("value"));
+								p.setFirstName(jobj.optString("value", null));
 							}
 						}
 						if (obj.has("avatar_url")) {
-							p.setProfileImageURL(obj.getString("avatar_url"));
+							p.setProfileImageURL(obj.optString("avatar_url",
+									null));
 						}
 						if (fields.has("URL")) {
 							JSONArray arr = fields.getJSONArray("URL");
 							if (arr.length() == 1) {
 								JSONObject jobj = arr.getJSONObject(0);
 								if (jobj.has("value")) {
-									p.setProfileUrl(jobj.getString("value"));
+									p.setProfileUrl(jobj.optString("value",
+											null));
 								}
 							} else {
 								String url = null;
