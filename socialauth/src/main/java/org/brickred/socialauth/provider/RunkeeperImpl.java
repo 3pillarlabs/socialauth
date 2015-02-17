@@ -376,4 +376,9 @@ public class RunkeeperImpl extends AbstractProvider {
 		return authenticationStrategy;
 	}
 
+    @Override
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+        throw new SocialAuthException("This method has not been implemented yet.");
+    }
+
 }

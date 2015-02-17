@@ -571,4 +571,10 @@ public class FacebookImpl extends AbstractProvider {
 		accessGrant = ag;
 		authenticationStrategy.setAccessGrant(ag);
 	}
+	
+    @Override
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+        throw new SocialAuthException("This method has not been implemented yet.");
+    }
+
 }

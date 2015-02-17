@@ -308,4 +308,9 @@ public class GitHubImpl extends AbstractProvider {
 		return result.toString();
 	}
 
+    @Override
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+        throw new SocialAuthException("This method has not been implemented yet.");
+    }
+
 }

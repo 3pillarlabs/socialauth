@@ -362,4 +362,10 @@ public class OpenIdImpl extends AbstractProvider implements AuthProvider,
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+    @Override
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+        throw new SocialAuthException("This method has not been implemented yet.");
+    }
+
 }

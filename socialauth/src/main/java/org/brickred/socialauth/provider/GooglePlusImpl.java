@@ -68,7 +68,7 @@ public class GooglePlusImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = 8644510564735754296L;
 	private static final String PROFILE_URL = "https://www.googleapis.com/oauth2/v1/userinfo";
-	private static final String CONTACTS_FEED_URL = "https://www.google.com/m8/feeds/contacts/default/full/?max-results=1000";
+	private static final String CONTACTS_FEED_URL_TEMPLATE = "https://www.google.com/m8/feeds/contacts/default/full/?start-index=%s&max-results=%s";
 	private static final String CONTACT_NAMESPACE = "http://schemas.google.com/g/2005";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(GooglePlusImpl.class);
@@ -276,7 +276,14 @@ public class GooglePlusImpl extends AbstractProvider {
 
 	@Override
 	public List<Contact> getContactList() throws Exception {
-		LOG.info("Fetching contacts from " + CONTACTS_FEED_URL);
+	    return getContactList(1, 1000);
+	}
+	
+    @Override
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+		final String contactsFeedUrl = String.format(CONTACTS_FEED_URL_TEMPLATE, startIndex, pageSize);
+        
+        LOG.info("Fetching contacts from " + contactsFeedUrl);
 		if (Permission.AUTHENTICATE_ONLY.equals(this.scope)) {
 			throw new SocialAuthException(
 					"You have not set Permission to get contacts.");
@@ -286,10 +293,10 @@ public class GooglePlusImpl extends AbstractProvider {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("Authorization", "Bearer " + getAccessGrant().getKey());
 			serviceResponse = authenticationStrategy.executeFeed(
-					CONTACTS_FEED_URL, null, null, map, null);
+					contactsFeedUrl, null, null, map, null);
 		} catch (Exception ie) {
 			throw new SocialAuthException(
-					"Failed to retrieve the contacts from " + CONTACTS_FEED_URL,
+					"Failed to retrieve the contacts from " + contactsFeedUrl,
 					ie);
 		}
 		List<Contact> plist = new ArrayList<Contact>();
@@ -301,7 +308,7 @@ public class GooglePlusImpl extends AbstractProvider {
 		} catch (Exception e) {
 			throw new ServerDataException(
 					"Failed to parse the contacts from response."
-							+ CONTACTS_FEED_URL, e);
+							+ contactsFeedUrl, e);
 		}
 		NodeList contactsList = root.getElementsByTagName("entry");
 		if (contactsList != null && contactsList.getLength() > 0) {
@@ -363,7 +370,7 @@ public class GooglePlusImpl extends AbstractProvider {
 			}
 		} else {
 			LOG.debug("No contacts were obtained from the feed : "
-					+ CONTACTS_FEED_URL);
+					+ contactsFeedUrl);
 		}
 		return plist;
 	}

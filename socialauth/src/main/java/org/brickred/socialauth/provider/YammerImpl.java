@@ -550,5 +550,10 @@ public class YammerImpl extends AbstractProvider implements AuthProvider,
 	protected OAuthStrategyBase getOauthStrategy() {
 		return null;
 	}
+	
+    @Override
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+        throw new SocialAuthException("This method has not been implemented yet.");
+    }
 
 }
