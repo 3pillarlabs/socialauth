@@ -323,6 +323,15 @@ public class GooglePlusImpl extends AbstractProvider {
                         }
                     }
                 }
+
+                List<String> phoneNumbers = new ArrayList<String>();
+                NodeList phoneNumberNodes = contact.getElementsByTagNameNS(CONTACT_NAMESPACE, "phoneNumber");
+                if (phoneNumberNodes != null && phoneNumberNodes.getLength() > 0) {
+                    for (int j = 0; j < phoneNumberNodes.getLength(); j++) {
+                        phoneNumbers.add(phoneNumberNodes.item(j).getTextContent());
+                    }
+                }
+                
                 String id = XMLParseUtil.getElementData(contact, "id");
 
                 if (address != null && address.length() > 0) {
@@ -332,6 +341,7 @@ public class GooglePlusImpl extends AbstractProvider {
                     p.setEmail(address);
                     p.setDisplayName(dispName);
                     p.setOtherEmails(emailArr);
+                    p.setPhoneNumbers(phoneNumbers.toArray(new String[phoneNumbers.size()]));
                     p.setId(id);
                     if (config.isSaveRawResponse()) {
                         p.setRawResponse(XMLParseUtil.getStringFromElement(contact));
