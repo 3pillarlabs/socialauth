@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.brickred.socialauth.AbstractProvider;
@@ -336,11 +339,31 @@ public class GooglePlusImpl extends AbstractProvider {
                 }
 
                 String profileUrl = "";
+                String imageUrl = "";
                 NodeList profileUrlNodes = contact.getElementsByTagNameNS(CONTACT_NAMESPACE, "website");
                 if (profileUrlNodes != null && profileUrlNodes.getLength() > 0) {                    
                     Node profileUrlHref = profileUrlNodes.item(0).getAttributes().getNamedItem("href");
                     if(profileUrlHref != null) {
                         profileUrl = profileUrlHref.getTextContent();
+                        
+                        // We can get the profile picture from Picasa with the G+ profile ID (does not count in API rate limits)
+                        try {
+                            String[] profileUrlParts = profileUrl.split("/");
+                            String profileId = profileUrlParts[profileUrlParts.length - 1];
+                            String imageJsonUrl = String.format("http://picasaweb.google.com/data/entry/api/user/%s?alt=json", profileId);
+                            LOG.debug("Getting profile image JSON from: " + imageJsonUrl);
+                            
+                            HttpMethod getImageJsonMethod = new GetMethod(imageJsonUrl);
+                            HttpClient client = new HttpClient();
+                            client.executeMethod(getImageJsonMethod);
+                            String imageJson = getImageJsonMethod.getResponseBodyAsString();
+                            LOG.debug("Got profile image JSON: " + imageJson);
+                            
+                            imageUrl = new JSONObject(imageJson).getJSONObject("entry").getJSONObject("gphoto$thumbnail").getString("$t");
+                            LOG.debug("Profile image URL: " + imageUrl);
+                        } catch(Exception ignore) {
+                            LOG.debug("Could not retrieve profile image URL", ignore);
+                        }
                     }
                 }
                 
@@ -355,6 +378,7 @@ public class GooglePlusImpl extends AbstractProvider {
                     p.setOtherEmails(emailArr);
                     p.setPhoneNumbers(phoneNumbers.toArray(new String[phoneNumbers.size()]));
                     p.setProfileUrl(profileUrl);
+                    p.setProfileImageURL(imageUrl);
                     p.setId(id);
                     if (config.isSaveRawResponse()) {
                         p.setRawResponse(XMLParseUtil.getStringFromElement(contact));
