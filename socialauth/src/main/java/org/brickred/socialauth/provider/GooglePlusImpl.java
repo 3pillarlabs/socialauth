@@ -52,6 +52,7 @@ import org.brickred.socialauth.util.Response;
 import org.brickred.socialauth.util.XMLParseUtil;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -69,7 +70,8 @@ public class GooglePlusImpl extends AbstractProvider {
     private static final long serialVersionUID = 8644510564735754296L;
     private static final String PROFILE_URL = "https://www.googleapis.com/oauth2/v1/userinfo";
     private static final String CONTACTS_FEED_URL_TEMPLATE = "https://www.google.com/m8/feeds/contacts/default/full/?start-index=%s&max-results=%s";
-    private static final String CONTACT_NAMESPACE = "http://schemas.google.com/g/2005";
+    private static final String GDATA_NAMESPACE = "http://schemas.google.com/g/2005";
+    private static final String CONTACT_NAMESPACE = "http://schemas.google.com/contact/2008";
     private static final Map<String, String> ENDPOINTS;
     private static final String state = "SocialAuth" + System.currentTimeMillis();
 
@@ -270,6 +272,7 @@ public class GooglePlusImpl extends AbstractProvider {
         try {
             Map<String, String> map = new HashMap<String, String>();
             map.put("Authorization", "Bearer " + getAccessGrant().getKey());
+            map.put("GData-Version", "3.0");
             serviceResponse = authenticationStrategy.executeFeed(contactsFeedUrl, null, null, map, null);
         } catch (Exception ie) {
             throw new SocialAuthException("Failed to retrieve the contacts from " + contactsFeedUrl, ie);
@@ -288,7 +291,7 @@ public class GooglePlusImpl extends AbstractProvider {
             for (int i = 0; i < contactsList.getLength(); i++) {
                 Element contact = (Element) contactsList.item(i);
                 String fname = "";
-                NodeList l = contact.getElementsByTagNameNS(CONTACT_NAMESPACE, "email");
+                NodeList l = contact.getElementsByTagNameNS(GDATA_NAMESPACE, "email");
                 String address = null;
                 String emailArr[] = null;
                 if (l != null && l.getLength() > 0) {
@@ -325,10 +328,19 @@ public class GooglePlusImpl extends AbstractProvider {
                 }
 
                 List<String> phoneNumbers = new ArrayList<String>();
-                NodeList phoneNumberNodes = contact.getElementsByTagNameNS(CONTACT_NAMESPACE, "phoneNumber");
+                NodeList phoneNumberNodes = contact.getElementsByTagNameNS(GDATA_NAMESPACE, "phoneNumber");
                 if (phoneNumberNodes != null && phoneNumberNodes.getLength() > 0) {
                     for (int j = 0; j < phoneNumberNodes.getLength(); j++) {
                         phoneNumbers.add(phoneNumberNodes.item(j).getTextContent());
+                    }
+                }
+
+                String profileUrl = "";
+                NodeList profileUrlNodes = contact.getElementsByTagNameNS(CONTACT_NAMESPACE, "website");
+                if (profileUrlNodes != null && profileUrlNodes.getLength() > 0) {                    
+                    Node profileUrlHref = profileUrlNodes.item(0).getAttributes().getNamedItem("href");
+                    if(profileUrlHref != null) {
+                        profileUrl = profileUrlHref.getTextContent();
                     }
                 }
                 
@@ -342,6 +354,7 @@ public class GooglePlusImpl extends AbstractProvider {
                     p.setDisplayName(dispName);
                     p.setOtherEmails(emailArr);
                     p.setPhoneNumbers(phoneNumbers.toArray(new String[phoneNumbers.size()]));
+                    p.setProfileUrl(profileUrl);
                     p.setId(id);
                     if (config.isSaveRawResponse()) {
                         p.setRawResponse(XMLParseUtil.getStringFromElement(contact));
