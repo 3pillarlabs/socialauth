@@ -25,6 +25,7 @@
 package org.brickred.socialauth;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Data bean for contact information.
@@ -60,6 +61,8 @@ public class Contact implements Serializable {
 	 */
 	String otherEmails[];
 
+	String[] phoneNumbers;
+	
 	/**
 	 * Profile URL
 	 */
@@ -309,9 +312,20 @@ public class Contact implements Serializable {
 			}
 			result.append(estr.toString());
 		}
+		
+		result.append(NEW_LINE);
+		result.append(" phoneNumbers: " + Arrays.asList(phoneNumbers));
 		result.append(NEW_LINE);
 		result.append("}");
 		return result.toString();
 	}
+
+    public String[] getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
+    public void setPhoneNumbers(String[] phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+    }
 
 }

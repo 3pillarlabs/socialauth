@@ -65,7 +65,7 @@ import org.w3c.dom.NodeList;
 public class LinkedInImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = -6141448721085510813L;
-	private static final String CONNECTION_URL = "http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)";
+	private static final String CONNECTION_URL_TEMPLATE = "http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)?start=%s&count=%s";
 	private static final String UPDATE_STATUS_URL = "http://api.linkedin.com/v1/people/~/shares";
 	private static final String PROFILE_URL = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name),phone-numbers,main-address)";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
@@ -206,23 +206,29 @@ public class LinkedInImpl extends AbstractProvider {
 		return getProfile();
 	}
 
+	   @Override
+	    public List<Contact> getContactList() throws Exception {
+	        return getContactList(1, 1000);
+	    }
+
 	/**
 	 * Gets the list of contacts of the user and their email.
 	 * 
 	 * @return List of profile objects representing Contacts. Only name and
 	 *         email will be available
 	 */
-
 	@Override
-	public List<Contact> getContactList() throws Exception {
-		LOG.info("Fetching contacts from " + CONNECTION_URL);
+	public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+		final String connectionUrl = String.format(CONNECTION_URL_TEMPLATE, startIndex, pageSize);
+	    
+	    LOG.info("Fetching contacts from " + connectionUrl);
 		Response serviceResponse = null;
 		try {
 			serviceResponse = authenticationStrategy
-					.executeFeed(CONNECTION_URL);
+					.executeFeed(connectionUrl);
 		} catch (Exception ie) {
 			throw new SocialAuthException(
-					"Failed to retrieve the contacts from " + CONNECTION_URL,
+					"Failed to retrieve the contacts from " + connectionUrl,
 					ie);
 		}
 		Element root;
@@ -232,7 +238,7 @@ public class LinkedInImpl extends AbstractProvider {
 		} catch (Exception e) {
 			throw new ServerDataException(
 					"Failed to parse the contacts from response."
-							+ CONNECTION_URL, e);
+							+ connectionUrl, e);
 		}
 		List<Contact> contactList = new ArrayList<Contact>();
 		if (root != null) {
@@ -272,7 +278,7 @@ public class LinkedInImpl extends AbstractProvider {
 				}
 			} else {
 				LOG.debug("No connections were obtained from : "
-						+ CONNECTION_URL);
+						+ connectionUrl);
 			}
 		}
 		return contactList;
@@ -531,5 +537,6 @@ public class LinkedInImpl extends AbstractProvider {
 			result.append(" ").append(scopesStr);
 		}
 		return result.toString();
-	}
+	}	
+
 }

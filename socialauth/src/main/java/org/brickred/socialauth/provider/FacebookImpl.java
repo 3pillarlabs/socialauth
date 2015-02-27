@@ -66,7 +66,7 @@ public class FacebookImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = 8644510564735754296L;
 	private static final String PROFILE_URL = "https://graph.facebook.com/v2.2/me";
-	private static final String CONTACTS_URL = "https://graph.facebook.com/v2.2/me/friends";
+	private static final String CONTACTS_URL_TEMPLATE = "https://graph.facebook.com/v2.2/me/friends?offset=%s&limit=%s";
 	private static final String UPDATE_STATUS_URL = "https://graph.facebook.com/v2.2/me/feed";
 	private static final String PROFILE_IMAGE_URL = "http://graph.facebook.com/%1$s/picture";
 	private static final String PUBLIC_PROFILE_URL = "http://www.facebook.com/profile.php?id=";
@@ -301,6 +301,11 @@ public class FacebookImpl extends AbstractProvider {
 
 	}
 
+    @Override
+    public List<Contact> getContactList() throws Exception {
+        return getContactList(1, 1000);
+    }
+
 	/**
 	 * Gets the list of contacts of the user. this may not be available for all
 	 * providers.
@@ -308,19 +313,20 @@ public class FacebookImpl extends AbstractProvider {
 	 * @return List of contact objects representing Contacts. Only name will be
 	 *         available
 	 */
-
 	@Override
-	public List<Contact> getContactList() throws Exception {
-		List<Contact> plist = new ArrayList<Contact>();
-		LOG.info("Fetching contacts from " + CONTACTS_URL);
+	public List<Contact> getContactList(int startIndex, int pageSize) throws Exception {
+		final String contactsUrl = String.format(CONTACTS_URL_TEMPLATE, startIndex - 1, pageSize);
+	    
+	    List<Contact> plist = new ArrayList<Contact>();
+		LOG.info("Fetching contacts from " + contactsUrl);
 		String respStr;
 		try {
 			Response response = authenticationStrategy
-					.executeFeed(CONTACTS_URL);
+					.executeFeed(contactsUrl);
 			respStr = response.getResponseBodyAsString(Constants.ENCODING);
 		} catch (Exception e) {
 			throw new SocialAuthException("Error while getting contacts from "
-					+ CONTACTS_URL, e);
+					+ contactsUrl, e);
 		}
 		try {
 			LOG.debug("User Contacts list in json : " + respStr);
@@ -571,4 +577,5 @@ public class FacebookImpl extends AbstractProvider {
 		accessGrant = ag;
 		authenticationStrategy.setAccessGrant(ag);
 	}
+	
 }

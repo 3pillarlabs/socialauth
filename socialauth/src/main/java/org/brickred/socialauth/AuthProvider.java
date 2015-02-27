@@ -105,6 +105,19 @@ public interface AuthProvider {
 	 */
 	public List<Contact> getContactList() throws Exception;
 
+    /**
+     * Gets a paged list of contacts of the user and their email. this may
+     * not be available for all providers.
+     * 
+     * @param startIndex
+     *            The 1-based start index of the contacts page.
+     * @param pageSize
+     *            The size of the contacts page.
+     * @return List of profile objects representing Contacts. Only name and
+     *         email will be available
+     */
+    public List<Contact> getContactList(int startIndex, int pageSize) throws Exception;
+
 	/**
 	 * Retrieves the user profile.
 	 * 
