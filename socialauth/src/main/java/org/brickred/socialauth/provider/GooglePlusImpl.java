@@ -338,8 +338,8 @@ public class GooglePlusImpl extends AbstractProvider {
                     }
                 }
 
-                String profileUrl = "";
-                String imageUrl = "";
+                String profileUrl = null;
+                String imageUrl = null;
                 NodeList profileUrlNodes = contact.getElementsByTagNameNS(CONTACT_NAMESPACE, "website");
                 if (profileUrlNodes != null && profileUrlNodes.getLength() > 0) {
                     for (int j = 0; j < profileUrlNodes.getLength(); j++) {
@@ -356,7 +356,7 @@ public class GooglePlusImpl extends AbstractProvider {
                         }
                     }
                     
-                    if(profileUrl.length() > 0) {
+                    if(profileUrl != null) {
                         
                         // We can get the profile picture from Picasa with the G+ profile ID (does not count in API rate limits)
                         try {
