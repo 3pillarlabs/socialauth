@@ -22,7 +22,7 @@
  ===========================================================================
 
  */
-package org.brickred.socialauth.plugin.linkedinAuth2;
+package org.brickred.socialauth.plugin.linkedin.oauth2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,15 +48,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Feed Plugin implementation for Linkedin
+ * Feed Plugin implementation for LinkedIn OAuth2 Provider
  * 
  * @author tarun.nagpal
  * 
  */
 public class FeedPluginImpl implements FeedPlugin, Serializable {
 
-	private static final long serialVersionUID = 497690659988355485L;
-	private static final String FEED_URL = "https://api.linkedin.com/v1/people/~/network/updates?oauth2_access_token";
+	private static final long serialVersionUID = -5703250073492118123L;
+	private static final String FEED_URL = "https://api.linkedin.com/v1/people/~/network/updates?oauth2_access_token=";
 	private static final Map<String, String> UPDATE_TYPES;
 	private final Log LOG = LogFactory.getLog(this.getClass());
 
