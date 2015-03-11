@@ -490,15 +490,15 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 		}
 		result.append(arr[0]);
 		for (int i = 1; i < arr.length; i++) {
-			result.append(" ").append(arr[i]);
+			result.append("+").append(arr[i]);
 		}
 		List<String> scopes = config.getPluginsScopes();
 		if (scopes != null && !scopes.isEmpty()) {
 			String scopesStr = scopes.get(0);
 			for (int i = 1; i < scopes.size(); i++) {
-				scopesStr += " " + scopes.get(i);
+				scopesStr += "+" + scopes.get(i);
 			}
-			result.append(" ").append(scopesStr);
+			result.append("+").append(scopesStr);
 		}
 		return result.toString();
 	}
