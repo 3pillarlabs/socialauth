@@ -316,7 +316,8 @@ public class OAuth2 implements OAuthStrategyBase {
 					if (headerParams != null
 							&& headerParams.containsKey("Content-Type")) {
 						String val = headerParams.get("Content-Type");
-						if (!"application/json".equals(val)) {
+						if (!"application/json".equals(val)
+								&& val.indexOf("text/xml") == -1) {
 							bodyStr += "&";
 							bodyStr += sb.toString();
 						}
