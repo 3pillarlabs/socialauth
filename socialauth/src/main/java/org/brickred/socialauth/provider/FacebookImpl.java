@@ -80,8 +80,8 @@ public class FacebookImpl extends AbstractProvider {
 	private OAuthStrategyBase authenticationStrategy;
 
 	// set this to the list of extended permissions you want
-	private static final String[] AllPerms = new String[] { "publish_stream",
-			"email", "user_birthday", "user_location", "user_photos" };
+	private static final String[] AllPerms = new String[] { "email",
+			"user_birthday", "user_location", "user_photos" };
 	private static final String[] AuthPerms = new String[] { "email",
 			"user_birthday", "user_location" };
 
