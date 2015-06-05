@@ -78,9 +78,9 @@ public class LinkedInImpl extends AbstractProvider {
 	private Profile userProfile;
 	private OAuthStrategyBase authenticationStrategy;
 
-	private static final String[] AllPerms = new String[] { "r_fullprofile",
-			"r_emailaddress", "r_network", "r_contactinfo", "rw_nus" };
-	private static final String[] AuthPerms = new String[] { "r_fullprofile",
+	private static final String[] AllPerms = new String[] { "r_basicprofile",
+			"r_emailaddress", "w_share" };
+	private static final String[] AuthPerms = new String[] { "r_basicprofile",
 			"r_emailaddress" };
 
 	static {

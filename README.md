@@ -11,9 +11,20 @@ SocialAuth is a Java library ([.NET port](http://code.google.com/p/socialauth-ne
 
 See our [SoicalAuth demo in action](http://labs.3pillarglobal.com/socialauthdemo) !
 
-Download [socialauth-java-sdk-4.7.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
+Download [socialauth-java-sdk-4.9.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
 
 ![Build Status](http://labs.3pillarglobal.com/jenkins/job/socialauth-core/badge/icon)
+
+Whats new in Version 4.9?
+=========================
+* Accommodating changes to LinkedIn developer program
+
+Whats new in Version 4.8?
+=========================
+* Fixed google plus expiration handling
+* Handle "expires_in" parameter defensively in Oauth2
+* Fixed issue with authURL growing indefinitely because of state parameter
+* Bug Fixes and code improvements
 
 Whats new in Version 4.7?
 =========================
