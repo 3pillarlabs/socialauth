@@ -23,13 +23,6 @@
 	<property name="project.cdi.demo" value="socialauth-cdi-demo" />
 	<property name="project.socialauth.demo" value="socialauthdemo" />
 
-	<path id="libraries">
-
-		<fileset dir="${tomcat.home}/lib">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-
 	<target name="clean">
 		<delete dir="${distDir}" failonerror="true" />
 		<delete file="${basedir}/{sdk.name}" />
@@ -247,7 +240,7 @@
 	<target name="doc" depends="filterDoc">
 		<javadoc destdir="${javadoc}/${project.socialauth}"
 			sourcepath="${projects.path}/${project.socialauth}/src/main/java"
-			packagenames="*" windowtitle="SocialAuth" classpathref="libraries" />
+			packagenames="*" windowtitle="SocialAuth" />
 	</target>
 	<target name="filterDoc" depends="springDoc">
 		<javadoc destdir="${javadoc}/${project.filter}"
