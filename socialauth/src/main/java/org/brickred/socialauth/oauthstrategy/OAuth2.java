@@ -289,8 +289,11 @@ public class OAuth2 implements OAuthStrategyBase {
 		String reqURL = url;
 		String bodyStr = body;
 		StringBuffer sb = new StringBuffer();
-		sb.append(accessTokenParameterName).append("=")
-				.append(accessGrant.getKey());
+		// Do not add access_token if authorization already present
+		if (headerParams.get("Authorization") == null) {
+			LOG.debug("Adding " + accessTokenParameterName + " request parameter as Authorization is missing");
+			sb.append(accessTokenParameterName).append("=").append(accessGrant.getKey());
+		}
 		if (params != null && params.size() > 0) {
 			for (String key : params.keySet()) {
 				if (sb.length() > 0) {
