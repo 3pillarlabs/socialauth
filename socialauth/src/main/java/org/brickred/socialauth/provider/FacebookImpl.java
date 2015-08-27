@@ -83,7 +83,7 @@ public class FacebookImpl extends AbstractProvider {
 	// set this to the list of extended permissions you want
 	private static final String[] AllPerms = new String[] { "publish_actions",
 			"public_profile", "email", "user_birthday", "user_location",
-			"user_photos", "user_friends", "read_stream" };
+			"user_photos", "user_friends", "user_posts" };
 	private static final String[] AuthPerms = new String[] { "email",
 			"user_birthday", "user_location", "public_profile" };
 
