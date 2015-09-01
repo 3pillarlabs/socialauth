@@ -25,6 +25,8 @@
 package org.brickred.socialauth.util;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Stores the BirthDate
@@ -102,30 +104,13 @@ public class DateComponents implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		if (month > 0) {
-			if (month < 10) {
-				sb.append("0");
-			}
-			sb.append(month);
-		} else {
-			sb.append("00");
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+			Date date = formatter.parse(month + "/" + day + "/" + year);
+
+			return formatter.format(date);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		sb.append("/");
-		if (day > 0) {
-			if (day < 10) {
-				sb.append("0");
-			}
-			sb.append(day);
-		} else {
-			sb.append("00");
-		}
-		sb.append("/");
-		if (year > 0) {
-			sb.append(year);
-		} else {
-			sb.append("0000");
-		}
-		return sb.toString();
 	}
 }
