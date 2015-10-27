@@ -209,7 +209,14 @@
 
 	<target name="copyJavadocs">
 		<echo message="Copying Javadocs" />
-
+		<mkdir dir="${projects.path}/${project.socialauth}/target/site/apidocs" />
+		<mkdir dir="${projects.path}/${project.filter}/target/site/apidocs" />
+		<mkdir dir="${projects.path}/${project.spring}/target/site/apidocs" />
+		<mkdir dir="${projects.path}/${project.seam}/target/site/apidocs" />
+		<mkdir dir="${projects.path}/${project.cdi}/target/site/apidocs" />
+		<mkdir dir="${projects.path}/${project.cmd.utility}/target/site/apidocs" />
+		
+		
 		<copy todir="${javadoc}/${project.socialauth}">
 			<fileset dir="${projects.path}/${project.socialauth}/target/site/apidocs" />
 		</copy>
