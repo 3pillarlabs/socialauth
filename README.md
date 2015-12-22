@@ -15,7 +15,7 @@ Download [socialauth-java-sdk-4.10.zip](https://sourceforge.net/projects/sociala
 
 ![Build Status](http://labs.3pillarglobal.com/jenkins/job/socialauth-core/badge/icon)
 
-Whats new in Version 4.9?
+Whats new in Version 4.10?
 =========================
 * Facebook implementation updated for Facebook API 2.4
 
