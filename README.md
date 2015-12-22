@@ -9,11 +9,15 @@ SocialAuth is a Java library ([.NET port](http://code.google.com/p/socialauth-ne
 * Easy user registration. All you need to do is create a page where users can click on buttons for the above providers or other supported providers. Just call SocialAuth and you can get all their profile details.
 * Importing contacts from networking sites.
 
-See our [SoicalAuth demo in action](http://labs.3pillarglobal.com/socialauthdemo) !
+See our [SocialAuth demo in action](http://labs.3pillarglobal.com/socialauthdemo) !
 
-Download [socialauth-java-sdk-4.9.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
+Download [socialauth-java-sdk-4.10.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
 
 ![Build Status](http://labs.3pillarglobal.com/jenkins/job/socialauth-core/badge/icon)
+
+Whats new in Version 4.9?
+=========================
+* Facebook implementation updated for Facebook API 2.4
 
 Whats new in Version 4.9?
 =========================
