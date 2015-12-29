@@ -17,9 +17,6 @@
 						<a href="socialauth.do?id=twitter"><img src="images/twitter_icon.png" alt="Twitter" title="Twitter" border="0"></img></a>
 					</td>
 					<td>
-						<a href="socialauth.do?id=google"><img src="images/gmail-icon.jpg" alt="Gmail" title="Gmail" border="0"></img></a>
-					</td>
-					<td>
 						<a href="socialauth.do?id=yahoo"><img src="images/yahoomail_icon.jpg" alt="YahooMail" title="YahooMail" border="0"></img></a>
 					</td>
 					<td>
@@ -50,7 +47,7 @@
 						<a href="socialauth.do?id=flickr"><img src="images/flickr_icon.jpg" alt="Flickr" title="Flickr" border="0"></img></a>
 					</td>
 				</tr>
-				
+
 			</table>
            	<br />
 	        <br />
