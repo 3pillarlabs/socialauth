@@ -65,12 +65,17 @@ import org.json.JSONObject;
 public class FacebookImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = 8644510564735754296L;
-	private static final String PROFILE_URL = "https://graph.facebook.com/v2.2/me";
-	private static final String CONTACTS_URL = "https://graph.facebook.com/v2.2/me/friends";
-	private static final String UPDATE_STATUS_URL = "https://graph.facebook.com/v2.2/me/feed";
+	/* Added by tanmoy-git
+	 * Profile fields are necessary for v2.4 API and above as by default it just gives the id and name
+	 *Removing the version, as from fb API docs, it should take the oldest compatible API version
+	*/
+	private static final String PROFILE_FIELDS = "?fields=id,name,picture,age_range,birthday,email,first_name,last_name,gender,location,locale";
+	private static final String PROFILE_URL = "https://graph.facebook.com/me" + PROFILE_FIELDS;
+	private static final String CONTACTS_URL = "https://graph.facebook.com/me/friends";
+	private static final String UPDATE_STATUS_URL = "https://graph.facebook.com/me/feed";
 	private static final String PROFILE_IMAGE_URL = "http://graph.facebook.com/%1$s/picture";
 	private static final String PUBLIC_PROFILE_URL = "http://www.facebook.com/profile.php?id=";
-	private static final String IMAGE_UPLOAD_URL = "https://graph.facebook.com/v2.2/me/photos";
+	private static final String IMAGE_UPLOAD_URL = "https://graph.facebook.com/me/photos";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(FacebookImpl.class);
 
@@ -83,7 +88,7 @@ public class FacebookImpl extends AbstractProvider {
 	// set this to the list of extended permissions you want
 	private static final String[] AllPerms = new String[] { "publish_actions",
 			"public_profile", "email", "user_birthday", "user_location",
-			"user_photos", "user_friends", "read_stream" };
+			"user_photos", "user_friends", "user_posts" };
 	private static final String[] AuthPerms = new String[] { "email",
 			"user_birthday", "user_location", "public_profile" };
 
