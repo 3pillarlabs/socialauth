@@ -316,7 +316,7 @@ public class InstagramImpl extends AbstractProvider {
 				MethodType.POST.toString());
 		if (accessGrant != null) {
 			LOG.debug("Obtaining user profile");
-			getProfile();
+			getUserProfile();
 			return this.userProfile;
 		} else {
 			throw new SocialAuthException("Access token not found");
