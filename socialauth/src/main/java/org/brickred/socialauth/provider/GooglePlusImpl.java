@@ -231,6 +231,16 @@ public class GooglePlusImpl extends AbstractProvider {
 			if (config.isSaveRawResponse()) {
 				p.setRawResponse(presp);
 			}
+			String locale = resp.optString("locale", (String)null);
+			if(locale != null) {
+				if (locale.contains("_")) {
+					String[] a = locale.split("_");
+					p.setLanguage(a[0]);
+					p.setCountry(a[1]);
+				} else {
+					p.setLanguage(locale);
+				}
+			}
 
 			p.setProviderId(getProviderId());
 			userProfile = p;
