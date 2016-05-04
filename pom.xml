@@ -1,13 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.brickred</groupId>
-	<artifactId>socialauth-java-sdk</artifactId>
-	<name>socialauth-java-sdk</name>
-	<version>4.3</version>
-	<packaging>pom</packaging>
-	<description>SocialAuth library</description>
-	<url>http://code.google.com/p/socialauth/</url>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	<groupId>com.flozano</groupId>
+	<artifactId>socialauth</artifactId>
+	<name>socialauth</name>
+	<version>5.0-SNAPSHOT</version>
+	<description>SocialAuth library forked</description>
+	<url>http://github.com/jolivares/socialauth</url>
 	<licenses>
 		<license>
 			<name>The MIT License</name>
@@ -21,20 +25,33 @@
 	</scm>
 	<developers>
 		<developer>
-			<id>3pillar labs</id>
-			<name>3pillar Labs</name>
-			<email>labs@3pillarglobal.com</email>
+			<id>tsg</id>
+			<name>TSG BrickRed</name>
+			<email>tsg@brickred.com</email>
 		</developer>
 	</developers>
-
-	<modules>
-		<module>socialauth</module>
-		<module>socialauth-filter</module>
-		<module>socialauth-spring</module>
-		<module>socialauth-seam</module>
-		<module>socialauth-cdi</module>
-		<module>socialauth-cmd-utility</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20160212</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openid4java</groupId>
+			<artifactId>openid4java</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.2</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -47,74 +64,17 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
+				<artifactId>maven-source-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-javadoc</id>
+						<id>source-execution</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>copy-installed</id>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<phase>generate-sources</phase>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.json</groupId>
-									<artifactId>json</artifactId>
-									<version>20090211</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.openid4java</groupId>
-									<artifactId>openid4java-consumer</artifactId>
-									<version>0.9.5</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>commons-logging</groupId>
-									<artifactId>commons-logging</artifactId>
-									<version>1.1</version>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>./libs</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<configuration>
-							<tasks>
-								<ant antfile="build.xml" target="init" />
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			
 		</plugins>
 	</build>
 

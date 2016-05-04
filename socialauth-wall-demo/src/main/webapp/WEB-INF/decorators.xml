@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<decorators defaultdir="/decorators">
-    <decorator name="basic-theme" page="basic-theme.jsp">
-        <pattern>/*.do</pattern>
-        <pattern>*.jsp</pattern>
-    </decorator>
-</decorators>
