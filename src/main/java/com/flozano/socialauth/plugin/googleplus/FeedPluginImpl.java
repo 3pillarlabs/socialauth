@@ -34,11 +34,11 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.flozano.socialauth.Feed;
 import com.flozano.socialauth.exception.SocialAuthException;
+import com.flozano.socialauth.org.json.JSONArray;
+import com.flozano.socialauth.org.json.JSONObject;
 import com.flozano.socialauth.plugin.FeedPlugin;
 import com.flozano.socialauth.util.Constants;
 import com.flozano.socialauth.util.ProviderSupport;

@@ -35,8 +35,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -50,6 +48,8 @@ import com.flozano.socialauth.exception.ServerDataException;
 import com.flozano.socialauth.exception.SocialAuthException;
 import com.flozano.socialauth.oauthstrategy.OAuth1;
 import com.flozano.socialauth.oauthstrategy.OAuthStrategyBase;
+import com.flozano.socialauth.org.json.JSONArray;
+import com.flozano.socialauth.org.json.JSONObject;
 import com.flozano.socialauth.util.AccessGrant;
 import com.flozano.socialauth.util.BirthDate;
 import com.flozano.socialauth.util.Constants;

@@ -30,11 +30,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.flozano.socialauth.Album;
 import com.flozano.socialauth.Photo;
+import com.flozano.socialauth.org.json.JSONArray;
+import com.flozano.socialauth.org.json.JSONObject;
 import com.flozano.socialauth.plugin.AlbumsPlugin;
 import com.flozano.socialauth.util.Constants;
 import com.flozano.socialauth.util.MethodType;

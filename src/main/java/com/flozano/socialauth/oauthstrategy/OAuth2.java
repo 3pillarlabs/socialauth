@@ -35,12 +35,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.flozano.socialauth.Permission;
 import com.flozano.socialauth.exception.ProviderStateException;
 import com.flozano.socialauth.exception.SocialAuthException;
+import com.flozano.socialauth.org.json.JSONException;
+import com.flozano.socialauth.org.json.JSONObject;
 import com.flozano.socialauth.util.AccessGrant;
 import com.flozano.socialauth.util.Constants;
 import com.flozano.socialauth.util.HttpUtil;

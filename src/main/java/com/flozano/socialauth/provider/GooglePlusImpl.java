@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -48,6 +47,7 @@ import com.flozano.socialauth.exception.SocialAuthException;
 import com.flozano.socialauth.exception.UserDeniedPermissionException;
 import com.flozano.socialauth.oauthstrategy.OAuth2;
 import com.flozano.socialauth.oauthstrategy.OAuthStrategyBase;
+import com.flozano.socialauth.org.json.JSONObject;
 import com.flozano.socialauth.util.AccessGrant;
 import com.flozano.socialauth.util.Constants;
 import com.flozano.socialauth.util.MethodType;
