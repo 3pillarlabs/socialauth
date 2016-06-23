@@ -8,6 +8,7 @@
 	<version>4.12</version>
 	<description>SocialAuth library</description>
 	<url>http://code.google.com/p/socialauth/</url>
+	<packaging>bundle</packaging>
 	<licenses>
 		<license>
 			<name>The MIT License</name>
@@ -61,8 +62,18 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>3.0.1</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Import-Package>!org.brickred.socialauth.*,*</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
 
 </project>
