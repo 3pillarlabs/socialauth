@@ -63,19 +63,16 @@ import org.json.JSONObject;
  * 
  */
 public class FacebookImpl extends AbstractProvider {
-
 	private static final long serialVersionUID = 8644510564735754296L;
-	/* Added by tanmoy-git
-	 * Profile fields are necessary for v2.4 API and above as by default it just gives the id and name
-	 *Removing the version, as from fb API docs, it should take the oldest compatible API version
-	*/
-	private static final String PROFILE_FIELDS = "?fields=id,name,picture,age_range,birthday,email,first_name,last_name,gender,location,locale";
-	private static final String PROFILE_URL = "https://graph.facebook.com/me" + PROFILE_FIELDS;
-	private static final String CONTACTS_URL = "https://graph.facebook.com/me/friends";
-	private static final String UPDATE_STATUS_URL = "https://graph.facebook.com/me/feed";
-	private static final String PROFILE_IMAGE_URL = "http://graph.facebook.com/%1$s/picture";
+
+	public static final String FB_API_VERSION = "v2.7";
+	public static final String FB_API_URL = "https://graph.facebook.com/" + FB_API_VERSION;
+	private static final String PROFILE_URL = FB_API_URL + "/me?fields=id,name,picture,age_range,birthday,email,first_name,last_name,gender,location,locale";
+	private static final String CONTACTS_URL = FB_API_URL + "/me/friends";
+	private static final String UPDATE_STATUS_URL = FB_API_URL + "/me/feed";
+	private static final String PROFILE_IMAGE_URL = FB_API_URL + "/%1$s/picture";
 	private static final String PUBLIC_PROFILE_URL = "http://www.facebook.com/profile.php?id=";
-	private static final String IMAGE_UPLOAD_URL = "https://graph.facebook.com/me/photos";
+	private static final String IMAGE_UPLOAD_URL = FB_API_URL + "/me/photos";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(FacebookImpl.class);
 
@@ -95,9 +92,9 @@ public class FacebookImpl extends AbstractProvider {
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://graph.facebook.com/oauth/authorize");
+				FB_API_URL + "/oauth/authorize");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"https://graph.facebook.com/oauth/access_token");
+				FB_API_URL + "/oauth/access_token");
 	}
 
 	/**

@@ -41,6 +41,8 @@ import org.brickred.socialauth.util.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static org.brickred.socialauth.provider.FacebookImpl.FB_API_URL;
+
 /**
  * Feed Plugin implementation for Facebook
  * 
@@ -50,7 +52,7 @@ import org.json.JSONObject;
 public class FeedPluginImpl implements FeedPlugin, Serializable {
 
 	private static final long serialVersionUID = 2108503235436046045L;
-	private static final String FEED_URL = "https://graph.facebook.com/v2.2/me/feed";
+	private static final String FEED_URL = FB_API_URL + "/me/feed?fields=from,message,story,name,caption,description,picture,created_time";
 	private static final DateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'hh:mm:ssz");
 	private final Log LOG = LogFactory.getLog(FeedPluginImpl.class);
