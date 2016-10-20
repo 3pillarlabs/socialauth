@@ -113,6 +113,11 @@ public interface Constants {
 	public static final String REFRESH_TOKEN_URL = "refreshTokenURL";
 
 	/**
+	 * API URl (used for GitHub enterprise connection)
+	 */
+	public static final String API_URL = "apiURL";
+
+	/**
 	 * token expires string
 	 */
 	public static final String EXPIRES = "expires";
