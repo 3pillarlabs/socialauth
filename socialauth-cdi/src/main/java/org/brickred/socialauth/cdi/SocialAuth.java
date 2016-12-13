@@ -161,7 +161,7 @@ public class SocialAuth implements Serializable {
 	 * @throws Exception
 	 */
 	public void login() throws Exception {
-		provider = this.getManager().getProvider(id);
+		provider = this.manager.getProvider(id);
 		String returnToUrl = returnToUrl();
 		String url = manager.getAuthenticationUrl(id, returnToUrl);
 		log.info("Redirecting to:" + url);
