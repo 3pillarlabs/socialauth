@@ -77,82 +77,6 @@ public class HttpUtil {
 	private static final Log LOG = LogFactory.getLog(HttpUtil.class);
 	private static Proxy proxyObj = null;
 	private static int timeoutValue = 0;
-	static {
-
-		boolean isAndroidFroyo = false;
-
-		// Checking if working with android then get the android version
-		try {
-			Class clazz = Class.forName("android.os.Build$VERSION");
-			Field field = clazz.getField("SDK_INT");
-			if (field.getInt(null) < 10) {
-				isAndroidFroyo = true;
-			}
-		} catch (Exception exception) {
-
-		}
-
-		SSLContext ctx;
-
-		// if android version 2.2 or less then add this configuration
-		if (isAndroidFroyo) {
-			try {
-				ctx = SSLContext.getInstance("TLS");
-				ctx.init(null, new TrustManager[] { new X509TrustManager() {
-					@Override
-					public void checkClientTrusted(
-							final X509Certificate[] chain, final String authType) {
-					}
-
-					@Override
-					public void checkServerTrusted(
-							final X509Certificate[] chain, final String authType) {
-					}
-
-					@Override
-					public X509Certificate[] getAcceptedIssuers() {
-						return new X509Certificate[] {};
-					}
-				} }, null);
-				HttpsURLConnection.setDefaultSSLSocketFactory(ctx
-						.getSocketFactory());
-				HttpsURLConnection
-						.setDefaultHostnameVerifier(new HostnameVerifier() {
-
-							@Override
-							public boolean verify(final String arg0,
-									final SSLSession arg1) {
-								return true;
-							}
-
-						});
-			} catch (Exception e) {
-				LOG.warn("SSLContext is not supported by your android application."
-						+ e.getMessage());
-			}
-		} else {
-			// if java application or android version greater than 2.2 then add
-			// this configuration
-			try {
-				ctx = SSLContext.getInstance("TLS");
-				ctx.init(new KeyManager[0],
-						new TrustManager[] { new DefaultTrustManager() },
-						new SecureRandom());
-				SSLContext.setDefault(ctx);
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			} catch (KeyManagementException e) {
-				e.printStackTrace();
-			} catch (NoClassDefFoundError e) {
-				LOG.warn("SSLContext is not supported by your applicaiton server."
-						+ e.getMessage());
-				e.printStackTrace();
-			} catch (Exception e) {
-				LOG.warn("Error while createing SSLContext");
-				e.printStackTrace();
-			}
-		}
-	}
 
 	/**
 	 * Makes HTTP request using java.net.HTTPURLConnection
@@ -476,23 +400,6 @@ public class HttpUtil {
 			}
 		}
 		return buffer.toString();
-	}
-
-	private static class DefaultTrustManager implements X509TrustManager {
-		@Override
-		public void checkClientTrusted(final X509Certificate[] arg0,
-				final String arg1) throws CertificateException {
-		}
-
-		@Override
-		public void checkServerTrusted(final X509Certificate[] arg0,
-				final String arg1) throws CertificateException {
-		}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return null;
-		}
 	}
 
 	/**
