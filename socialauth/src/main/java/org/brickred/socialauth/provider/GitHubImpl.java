@@ -60,7 +60,6 @@ import org.json.JSONObject;
 public class GitHubImpl extends AbstractProvider {
 
 	private static final long serialVersionUID = -3529658778980357392L;
-	private static final String PROFILE_URL = "https://api.github.com/user";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(this.getClass());
 
@@ -81,6 +80,8 @@ public class GitHubImpl extends AbstractProvider {
 				"https://github.com/login/oauth/authorize");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
 				"https://github.com/login/oauth/access_token");
+		ENDPOINTS.put(Constants.API_URL,
+				"https://api.github.com");
 	}
 
 	/**
@@ -111,6 +112,17 @@ public class GitHubImpl extends AbstractProvider {
 		} else {
 			config.setAccessTokenUrl(ENDPOINTS
 					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		}
+		// Get GitHub API_URL from custom properties
+		if (config.getCustomProperties() != null) {
+			Map<String, String> properties = config.getCustomProperties();
+			if (properties.get(Constants.API_URL) != null) {
+				ENDPOINTS.put(Constants.API_URL,
+						config.getCustomProperties().get(Constants.API_URL));
+			} else {
+				properties.put(Constants.API_URL, ENDPOINTS.get(Constants.API_URL));
+				config.setCustomProperties(properties);
+			}
 		}
 
 		authenticationStrategy = new OAuth2(config, ENDPOINTS);
@@ -151,11 +163,11 @@ public class GitHubImpl extends AbstractProvider {
 		String presp;
 
 		try {
-			Response response = authenticationStrategy.executeFeed(PROFILE_URL);
+			Response response = authenticationStrategy.executeFeed(ENDPOINTS.get(Constants.API_URL) + "/user");
 			presp = response.getResponseBodyAsString(Constants.ENCODING);
 		} catch (Exception e) {
 			throw new SocialAuthException("Error while getting profile from "
-					+ PROFILE_URL, e);
+					+ ENDPOINTS.get(Constants.API_URL) + "/user", e);
 		}
 		try {
 			LOG.debug("User Profile : " + presp);
