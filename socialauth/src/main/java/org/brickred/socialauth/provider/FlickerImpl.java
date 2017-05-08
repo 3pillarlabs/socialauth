@@ -84,11 +84,11 @@ public class FlickerImpl extends AbstractProvider implements AuthProvider,
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-				"http://www.flickr.com/services/oauth/request_token");
+				"https://www.flickr.com/services/oauth/request_token");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"http://www.flickr.com/services/oauth/authorize");
+				"https://www.flickr.com/services/oauth/authorize");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"http://www.flickr.com/services/oauth/access_token");
+				"https://www.flickr.com/services/oauth/access_token");
 	}
 
 	/**
