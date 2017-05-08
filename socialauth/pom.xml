@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20090211</version>
+			<version>20160810</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openid4java</groupId>
