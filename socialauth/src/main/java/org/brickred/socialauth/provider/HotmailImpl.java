@@ -25,13 +25,6 @@
 
 package org.brickred.socialauth.provider;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.brickred.socialauth.AbstractProvider;
@@ -44,14 +37,12 @@ import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.exception.UserDeniedPermissionException;
 import org.brickred.socialauth.oauthstrategy.OAuth2;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
-import org.brickred.socialauth.util.AccessGrant;
-import org.brickred.socialauth.util.BirthDate;
-import org.brickred.socialauth.util.Constants;
-import org.brickred.socialauth.util.MethodType;
-import org.brickred.socialauth.util.OAuthConfig;
-import org.brickred.socialauth.util.Response;
+import org.brickred.socialauth.util.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Implementation of Hotmail provider. This implementation is based on the
@@ -88,10 +79,14 @@ public class HotmailImpl extends AbstractProvider {
 
 	static {
 		ENDPOINTS = new HashMap<String, String>();
+//		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
+//				"https://oauth.live.com/authorize");
+//		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
+//				"https://oauth.live.com/token");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://oauth.live.com/authorize");
+				"https://login.live.com/oauth20_authorize.srf");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"https://oauth.live.com/token");
+				"https://login.live.com/oauth20_token.srf");
 	}
 
 	/**
@@ -122,9 +117,15 @@ public class HotmailImpl extends AbstractProvider {
 			config.setAccessTokenUrl(ENDPOINTS
 					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 		}
+		//Hotmail / live needs two properties for access grant
+		Map<String, String> props = new HashMap<String, String>();
+		props.put("response_type", "token");
+		props.put("scope", getScope());
+		config.setCustomProperties(props);
 		authenticationStrategy = new OAuth2(config, ENDPOINTS);
 		authenticationStrategy.setPermission(scope);
 		authenticationStrategy.setScope(getScope());
+
 	}
 
 	/**

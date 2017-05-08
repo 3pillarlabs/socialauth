@@ -25,6 +25,15 @@
 
 package org.brickred.socialauth.oauthstrategy;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.brickred.socialauth.Permission;
+import org.brickred.socialauth.exception.ProviderStateException;
+import org.brickred.socialauth.exception.SocialAuthException;
+import org.brickred.socialauth.util.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -32,21 +41,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.brickred.socialauth.Permission;
-import org.brickred.socialauth.exception.ProviderStateException;
-import org.brickred.socialauth.exception.SocialAuthException;
-import org.brickred.socialauth.util.AccessGrant;
-import org.brickred.socialauth.util.Constants;
-import org.brickred.socialauth.util.HttpUtil;
-import org.brickred.socialauth.util.MethodType;
-import org.brickred.socialauth.util.OAuthConfig;
-import org.brickred.socialauth.util.OAuthConsumer;
-import org.brickred.socialauth.util.Response;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class OAuth2 implements OAuthStrategyBase {
 
@@ -61,6 +55,7 @@ public class OAuth2 implements OAuthStrategyBase {
 	private String providerId;
 	private String successUrl;
 	private String accessTokenParameterName;
+	private Map<String,String> customProperties;
 
 	public OAuth2(final OAuthConfig config, final Map<String, String> endpoints) {
 		oauth = new OAuthConsumer(config);
@@ -68,6 +63,7 @@ public class OAuth2 implements OAuthStrategyBase {
 		permission = Permission.DEFAULT;
 		providerId = config.getId();
 		accessTokenParameterName = Constants.ACCESS_TOKEN_PARAMETER_NAME;
+		customProperties = config.getCustomProperties();
 	}
 
 	@Override
@@ -168,7 +164,15 @@ public class OAuth2 implements OAuthStrategyBase {
 				oauth.getConfig().get_consumerSecret());
 		sb.append("&code=").append(acode);
 		sb.append("&grant_type=authorization_code");
-
+		if(customProperties != null){
+			for(String key: customProperties.keySet()){
+				sb.append("&");
+				sb.append(key);
+				sb.append("=");
+				sb.append(customProperties.get(key));
+			}
+		}
+		LOG.debug("Access token request url:"+ sb.toString());
 		Response response;
 		String authURL = null;
 		try {
