@@ -11,12 +11,8 @@ SocialAuth is a Java library ([.NET port](http://code.google.com/p/socialauth-ne
 
 See our [SocialAuth demo in action](http://atg.3pillarglobal.com/socialauthdemo) !
 
-Download [socialauth-java-sdk-4.10.zip](https://sourceforge.net/projects/socialauth/files/latest/download)
-
-![Build Status](http://atg.3pillarglobal.com/jenkins/job/socialauth-core/badge/icon)
+Download [latest sdk zip](https://sourceforge.net/projects/socialauth/files/latest/download)
 
 # About this project
-
-![3Pillar Global] (http://www.3pillarglobal.com/wp-content/themes/base/library/images/logo_3pg.png)
 
 **SocialAuth** is developed and maintained by [3Pillar Global](http://www.3pillarglobal.com/).
