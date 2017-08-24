@@ -28,3 +28,7 @@ SocialAuth provides value to end users, application developers, and site owners.
 ### TECHNOLOGY
 
 There are two different versions of SocialAuth available. The original SocialAuth is written in Java for web applications. SocialAuth for Android is an Android version of the original Java library.
+
+### SOURCE
+
+[SocialAuth - https://github.com/3pillarlabs/socialauth](https://github.com/3pillarlabs/socialauth)
