@@ -1,0 +1,8 @@
+---
+layout: post
+title:  "Travis CI Integration"
+date:   2017-08-24 10:30:01 +0530
+categories: update
+---
+
+SocialAuth is now integrated with Travis CI. For now it is a simple build, but tests and more integrations to come soon.
