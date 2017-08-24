@@ -17,8 +17,8 @@ title: SocialAuth
 email: labs@3pillarglobal.com
 description: > # this means to ignore newlines until "baseurl:"
   SocialAuth is a popular social (OAuth 1 / OAuth 2 / Hybrid) authentication library for Java and Android.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/socialauth" # the subpath of your site, e.g. /blog
+url: "http://3pillarlabs.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: 3PillarGlobal
 
 # Build settings
