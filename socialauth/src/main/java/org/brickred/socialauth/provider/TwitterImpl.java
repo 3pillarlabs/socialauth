@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		Serializable {
 
 	private static final long serialVersionUID = 1908393649053616794L;
-	private static final String PROFILE_URL = "https://api.twitter.com/1.1/users/show.json?screen_name=";
+	private static final String PROFILE_URL = "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=%1$s&include_entities=%2$s&skip_status=%3$s";
 	private static final String CONTACTS_URL = "https://api.twitter.com/1.1/friends/ids.json?screen_name=%1$s&cursor=-1";
 	private static final String LOOKUP_URL = "https://api.twitter.com/1.1/users/lookup.json?user_id=";
 	private static final String UPDATE_STATUS_URL = "https://api.twitter.com/1.1/statuses/update.json?status=";
@@ -130,6 +131,11 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 			config.setAccessTokenUrl(ENDPOINTS
 					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 		}
+
+		if (config.getCustomProperties() == null) {
+			config.setCustomProperties(Collections.<String, String>emptyMap());
+		}
+
 		authenticationStrategy = new OAuth1(config, ENDPOINTS);
 	}
 
@@ -187,10 +193,12 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 		isVerify = true;
 		return getProfile();
 	}
-
+	
 	private Profile getProfile() throws Exception {
 		Profile profile = new Profile();
-		String url = PROFILE_URL + accessToken.getAttribute("screen_name");
+		String url = String.format(PROFILE_URL, config.getCustomProperties().getOrDefault("include_email", "true"),
+				config.getCustomProperties().getOrDefault("include_entities", "true"),
+				config.getCustomProperties().getOrDefault("skip_status", "false"));
 		LOG.debug("Obtaining user profile. Profile URL : " + url);
 		Response serviceResponse = null;
 		try {
@@ -220,6 +228,7 @@ public class TwitterImpl extends AbstractProvider implements AuthProvider,
 			profile.setLocation(pObj.optString("location", null));
 			profile.setDisplayName(pObj.optString("screen_name", null));
 			profile.setLanguage(pObj.optString("lang", null));
+			profile.setEmail(pObj.optString("email", null));
 			profile.setProfileImageURL(pObj
 					.optString("profile_image_url", null));
 			profile.setProviderId(getProviderId());
