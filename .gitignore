@@ -1,7 +1,19 @@
-target/
-*.class
-classes/
+# Eclipse
 .classpath
-.settings/
 .project
-bin/
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# Node modules
+node_modules/

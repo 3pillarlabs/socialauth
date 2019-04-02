@@ -57,15 +57,15 @@ import org.json.JSONObject;
 
 /**
  * Provider implementation for Facebook
- * 
+ *
  * @author Abhinav Maheshwari
  * @author Tarun Nagpal
- * 
+ *
  */
 public class FacebookImpl extends AbstractProvider {
 	private static final long serialVersionUID = 8644510564735754296L;
 
-	public static final String FB_API_VERSION = "v2.10";
+	public static final String FB_API_VERSION = "v3.2";
 	public static final String FB_API_URL = "https://graph.facebook.com/" + FB_API_VERSION;
 	private static final String PROFILE_URL = FB_API_URL + "/me?fields=id,name,picture,age_range,birthday,email,first_name,last_name,gender,location,locale";
 	private static final String CONTACTS_URL = FB_API_URL + "/me/friends";
@@ -99,7 +99,7 @@ public class FacebookImpl extends AbstractProvider {
 
 	/**
 	 * Stores configuration for the provider
-	 * 
+	 *
 	 * @param providerConfig
 	 *            It contains the configuration of application like consumer key
 	 *            and consumer secret
@@ -133,7 +133,7 @@ public class FacebookImpl extends AbstractProvider {
 
 	/**
 	 * Stores access grant for the provider
-	 * 
+	 *
 	 * @param accessGrant
 	 *            It contains the access token and other information
 	 * @throws Exception
@@ -158,7 +158,7 @@ public class FacebookImpl extends AbstractProvider {
 	 * This is the most important action. It redirects the browser to an
 	 * appropriate URL which will be used for authentication with the provider
 	 * that has been set using setId()
-	 * 
+	 *
 	 */
 	@Override
 	public String getLoginRedirectURL(final String successUrl) throws Exception {
@@ -168,8 +168,8 @@ public class FacebookImpl extends AbstractProvider {
 	/**
 	 * Verifies the user when the external provider redirects back to our
 	 * application.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param requestParams
 	 *            request parameters, received from the provider
 	 * @return Profile object containing the profile information
@@ -261,7 +261,7 @@ public class FacebookImpl extends AbstractProvider {
 	/**
 	 * Updates the status on the chosen provider if available. This may not be
 	 * implemented for all providers.
-	 * 
+	 *
 	 * @param msg
 	 *            Message to be shown as user's status
 	 * @throws Exception
@@ -297,7 +297,7 @@ public class FacebookImpl extends AbstractProvider {
 	/**
 	 * Gets the list of contacts of the user. this may not be available for all
 	 * providers.
-	 * 
+	 *
 	 * @return List of contact objects representing Contacts. Only name will be
 	 *         available
 	 */
@@ -363,7 +363,7 @@ public class FacebookImpl extends AbstractProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 *            Permission object which can be Permission.AUHTHENTICATE_ONLY,
 	 *            Permission.ALL, Permission.DEFAULT
@@ -378,7 +378,7 @@ public class FacebookImpl extends AbstractProvider {
 
 	/**
 	 * Makes HTTP request to a given URL.It attaches access token in URL.
-	 * 
+	 *
 	 * @param url
 	 *            URL to make HTTP request.
 	 * @param methodType
@@ -411,7 +411,7 @@ public class FacebookImpl extends AbstractProvider {
 
 	/**
 	 * Retrieves the user profile.
-	 * 
+	 *
 	 * @return Profile object containing the profile information.
 	 */
 	@Override
