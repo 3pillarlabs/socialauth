@@ -41,15 +41,18 @@ import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.exception.AccessTokenExpireException;
 import org.brickred.socialauth.exception.ServerDataException;
 import org.brickred.socialauth.exception.SocialAuthException;
-import org.brickred.socialauth.oauthstrategy.OAuth1;
+import org.brickred.socialauth.oauthstrategy.OAuth2;
 import org.brickred.socialauth.oauthstrategy.OAuthStrategyBase;
 import org.brickred.socialauth.util.AccessGrant;
 import org.brickred.socialauth.util.BirthDate;
 import org.brickred.socialauth.util.Constants;
+import org.brickred.socialauth.util.HttpUtil;
 import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
 import org.brickred.socialauth.util.XMLParseUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -67,7 +70,8 @@ public class LinkedInImpl extends AbstractProvider {
 	private static final long serialVersionUID = -6141448721085510813L;
 	private static final String CONNECTION_URL = "http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)";
 	private static final String UPDATE_STATUS_URL = "http://api.linkedin.com/v1/people/~/shares";
-	private static final String PROFILE_URL = "http://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name),phone-numbers,main-address)";
+	private static final String PROFILE_URL = "https://api.linkedin.com/v2/me";
+        private static final String EMAIL_URL = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(LinkedInImpl.class);
@@ -78,19 +82,17 @@ public class LinkedInImpl extends AbstractProvider {
 	private Profile userProfile;
 	private OAuthStrategyBase authenticationStrategy;
 
-	private static final String[] AllPerms = new String[] { "r_basicprofile",
-			"r_emailaddress", "w_share" };
-	private static final String[] AuthPerms = new String[] { "r_basicprofile",
+	private static final String[] AllPerms = new String[] { "r_liteprofile",
+			"r_basicprofile", "r_fullprofile" };
+	private static final String[] AuthPerms = new String[] { "r_liteprofile",
 			"r_emailaddress" };
 
 	static {
 		ENDPOINTS = new HashMap<String, String>();
-		ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-				"https://api.linkedin.com/uas/oauth/requestToken");
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://api.linkedin.com/uas/oauth/authenticate");
+				"https://www.linkedin.com/oauth/v2/authorization");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"https://api.linkedin.com/uas/oauth/accessToken");
+				"https://www.linkedin.com/oauth/v2/accessToken");
 	}
 
 	/**
@@ -109,14 +111,6 @@ public class LinkedInImpl extends AbstractProvider {
 			scope = Permission.CUSTOM;
 		}
 
-		if (config.getRequestTokenUrl() != null) {
-			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL,
-					config.getRequestTokenUrl());
-		} else {
-			config.setRequestTokenUrl(ENDPOINTS
-					.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		}
-
 		if (config.getAuthenticationUrl() != null) {
 			ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
 					config.getAuthenticationUrl());
@@ -132,27 +126,9 @@ public class LinkedInImpl extends AbstractProvider {
 			config.setAccessTokenUrl(ENDPOINTS
 					.get(Constants.OAUTH_ACCESS_TOKEN_URL));
 		}
-
-		String perms = getScope();
-		if (perms != null) {
-			String rURL = ENDPOINTS.get(Constants.OAUTH_REQUEST_TOKEN_URL);
-			if (!rURL.contains("scope=")) {
-				rURL += "?scope=" + perms;
-			} else {
-				rURL = rURL.substring(0, rURL.indexOf('?'));
-				rURL += "?scope=" + perms;
-			}
-			ENDPOINTS.put(Constants.OAUTH_REQUEST_TOKEN_URL, rURL);
-			config.setRequestTokenUrl(rURL);
-
-		}
-		authenticationStrategy = new OAuth1(config, ENDPOINTS);
-		config.setRequestTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_REQUEST_TOKEN_URL));
-		config.setAuthenticationUrl(ENDPOINTS
-				.get(Constants.OAUTH_AUTHORIZATION_URL));
-		config.setAccessTokenUrl(ENDPOINTS
-				.get(Constants.OAUTH_ACCESS_TOKEN_URL));
+		authenticationStrategy = new OAuth2(config, ENDPOINTS);
+                authenticationStrategy.setPermission(scope);
+		authenticationStrategy.setScope(getScope());
 	}
 
 	/**
@@ -320,101 +296,93 @@ public class LinkedInImpl extends AbstractProvider {
 
 	private Profile getProfile() throws Exception {
 		LOG.debug("Obtaining user profile");
+                Map<String, String> headerParam = new HashMap<String, String>();
+                headerParam.put("Authorization", "Bearer " + accessToken.getKey());
+                headerParam.put("Content-type", "application/json");
 		Profile profile = new Profile();
 		Response serviceResponse = null;
 		try {
-			serviceResponse = authenticationStrategy.executeFeed(PROFILE_URL);
+                    serviceResponse = HttpUtil.doHttpRequest(PROFILE_URL, MethodType.GET.toString(), null, headerParam);
 		} catch (Exception e) {
 			throw new SocialAuthException(
 					"Failed to retrieve the user profile from  " + PROFILE_URL,
 					e);
 		}
-		if (serviceResponse.getStatus() != 200) {
-			throw new SocialAuthException(
-					"Failed to retrieve the user profile from  " + PROFILE_URL
-							+ ". Staus :" + serviceResponse.getStatus());
-		}
-
-		Element root;
+		String result;
 		try {
-			root = XMLParseUtil.loadXmlResource(serviceResponse
-					.getInputStream());
+			result = serviceResponse.getResponseBodyAsString(Constants.ENCODING);
+			LOG.debug("User Profile :" + result);
 		} catch (Exception e) {
-			throw new ServerDataException(
-					"Failed to parse the profile from response." + PROFILE_URL,
-					e);
+			throw new SocialAuthException("Failed to read response from  "
+					+ PROFILE_URL, e);
 		}
-
-		if (root != null) {
-			String fname = XMLParseUtil.getElementData(root, "first-name");
-			String lname = XMLParseUtil.getElementData(root, "last-name");
-			NodeList dob = root.getElementsByTagName("date-of-birth");
-			if (dob != null && dob.getLength() > 0) {
-				Element dobel = (Element) dob.item(0);
-				if (dobel != null) {
-					String y = XMLParseUtil.getElementData(dobel, "year");
-					String m = XMLParseUtil.getElementData(dobel, "month");
-					String d = XMLParseUtil.getElementData(dobel, "day");
-					BirthDate bd = new BirthDate();
-					if (m != null) {
-						bd.setMonth(Integer.parseInt(m));
-					}
-					if (d != null) {
-						bd.setDay(Integer.parseInt(d));
-					}
-					if (y != null) {
-						bd.setYear(Integer.parseInt(y));
-					}
-					profile.setDob(bd);
-				}
-			}
-			String picUrl = XMLParseUtil.getElementData(root, "picture-url");
-			String id = XMLParseUtil.getElementData(root, "id");
-			if (picUrl != null) {
-				profile.setProfileImageURL(picUrl);
-			}
-			String email = XMLParseUtil.getElementData(root, "email-address");
-			if (email != null) {
-				profile.setEmail(email);
-			}
-			NodeList location = root.getElementsByTagName("location");
-			if (location != null && location.getLength() > 0) {
-				Element locationEl = (Element) location.item(0);
-				String loc = XMLParseUtil.getElementData(locationEl, "name");
-				if (loc != null) {
-					profile.setLocation(loc);
-				}
-			}
-			Map<String, String> map = new HashMap<String, String>();
-			NodeList phoneNodes = root.getElementsByTagName("phone-number");
-			if (phoneNodes != null && phoneNodes.getLength() > 0) {
-				Element phoneEl = (Element) phoneNodes.item(0);
-				String type = XMLParseUtil
-						.getElementData(phoneEl, "phone-type");
-				String phone = XMLParseUtil.getElementData(phoneEl,
-						"phone-number");
-				if (type != null && type.length() > 0 && phone != null) {
-					map.put(type, phone);
-				}
-			}
-			String mainAddress = XMLParseUtil.getElementData(root,
-					"main-address");
-			if (mainAddress != null) {
-				map.put("mainAddress", mainAddress);
-			}
-			if (map != null && !map.isEmpty()) {
-				profile.setContactInfo(map);
-			}
-			profile.setFirstName(fname);
-			profile.setLastName(lname);
-			profile.setValidatedId(id);
-			profile.setProviderId(getProviderId());
-			if (config.isSaveRawResponse()) {
-				profile.setRawResponse(XMLParseUtil.getStringFromElement(root));
-			}
-			LOG.debug("User Profile :" + profile.toString());
-			userProfile = profile;
-		}
+                
+                JSONObject resp = new JSONObject(result);
+                String fname = resp.optString("localizedFirstName", null);
+                String lname = resp.optString("localizedLastName", null);
+                JSONObject dob = resp.optJSONObject("birthDate");
+                if (dob != null) {
+                    String y = dob.getString("year");
+                    String m = dob.getString("month");
+                    String d = dob.getString("day");
+                    BirthDate bd = new BirthDate();
+                    if (m != null) {
+                            bd.setMonth(Integer.parseInt(m));
+                    }
+                    if (d != null) {
+                            bd.setDay(Integer.parseInt(d));
+                    }
+                    if (y != null) {
+                            bd.setYear(Integer.parseInt(y));
+                    }
+                    profile.setDob(bd);
+                }
+                JSONObject pic = resp.optJSONObject("profilePicture");
+                String picUrl = pic.optString("displayImage", null);
+                String id = resp.optString("id", null);
+                if (picUrl != null) {
+                    profile.setProfileImageURL(picUrl);
+                }
+                if (getScope().contains("r_emailaddress")) {
+                    try {
+                        Response response = HttpUtil.doHttpRequest(EMAIL_URL, MethodType.GET.toString(), null, headerParam);
+                        JSONObject emailObj = new JSONObject(response.getResponseBodyAsString(Constants.ENCODING));
+                        JSONArray elem = emailObj.getJSONArray("elements");
+                        if (elem != null) {
+                            emailObj = elem.getJSONObject(0);
+                            if (emailObj != null) {
+                                emailObj = emailObj.getJSONObject("handle~");
+                                if (emailObj != null)
+                                    profile.setEmail(emailObj.optString("emailAddress", null));
+                            }
+                                
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("failed to retrieve email address", e);
+                    }
+                    
+                }
+                
+                Map<String, String> map = new HashMap<String, String>();
+                JSONArray phoneNodes = resp.optJSONArray("phoneNumbers");
+                if (phoneNodes != null) {
+                        JSONObject phoneEl = phoneNodes.getJSONObject(0);
+                        String type = phoneEl.getString("type");
+                        String phone = phoneEl.getString("number");
+                        if (type != null && type.length() > 0 && phone != null) {
+                                map.put(type, phone);
+                        }
+                }
+                profile.setFirstName(fname);
+                profile.setLastName(lname);
+                profile.setValidatedId(id);
+                profile.setProviderId(getProviderId());
+                
+                if (config.isSaveRawResponse()) {
+                    profile.setRawResponse(result);
+                }
+                LOG.debug("User Profile :" + profile.toString());
+                userProfile = profile;
 		return profile;
 	}
 
