@@ -25,6 +25,7 @@
 
 package org.brickred.socialauth.provider;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,26 +51,28 @@ import org.brickred.socialauth.util.MethodType;
 import org.brickred.socialauth.util.OAuthConfig;
 import org.brickred.socialauth.util.Response;
 import org.brickred.socialauth.util.XMLParseUtil;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
  * Implementation of LinkedIn OAuth2 provider. This uses the OAuth2 API provided
  * by LinkedIn
- * 
- * 
+ *
+ *
  * @author vineet.aggarwal@3pillarglobal.com
  * @author tarun.nagpal
- * 
+ *
  */
 
 public class LinkedInOAuth2Impl extends AbstractProvider {
 
 	private static final long serialVersionUID = 3389564715902769183L;
-	private static final String CONNECTION_URL = "https://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)?oauth2_access_token=";
-	private static final String UPDATE_STATUS_URL = "https://api.linkedin.com/v1/people/~/shares?oauth2_access_token=";
-	private static final String PROFILE_URL = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,languages,date-of-birth,picture-url,email-address,location:(name),phone-numbers,main-address)?oauth2_access_token=";
+	private static final String CONNECTION_URL = "https://api.linkedin.com/v2/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)?oauth2_access_token=";
+	private static final String UPDATE_STATUS_URL = "https://api.linkedin.com/v2/people/~/shares?oauth2_access_token=";
+	private static final String PROFILE_URL = "https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture)";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
+	private static final String ACCESS_TOKEN_PARAMETER = "oauth2_access_token";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(LinkedInOAuth2Impl.class);
 
@@ -80,22 +83,21 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	private OAuthStrategyBase authenticationStrategy;
 	private String state;
 
-	private static final String[] AllPerms = new String[] { "r_fullprofile",
-			"r_emailaddress", "r_network", "r_contactinfo", "rw_nus" };
+	private static final String[] AllPerms = new String[] { "r_liteprofile"};
 	private static final String[] AuthPerms = new String[] { "r_fullprofile",
 			"r_emailaddress" };
 
 	static {
 		ENDPOINTS = new HashMap<String, String>();
 		ENDPOINTS.put(Constants.OAUTH_AUTHORIZATION_URL,
-				"https://www.linkedin.com/uas/oauth2/authorization");
+				"https://www.linkedin.com/oauth/v2/authorization");
 		ENDPOINTS.put(Constants.OAUTH_ACCESS_TOKEN_URL,
-				"https://www.linkedin.com/uas/oauth2/accessToken");
+				"https://www.linkedin.com/oauth/v2/accessToken");
 	}
 
 	/**
 	 * Stores configuration for the provider
-	 * 
+	 *
 	 * @param providerConfig
 	 *            It contains the configuration of application like consumer key
 	 *            and consumer secret
@@ -134,7 +136,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 
 	/**
 	 * Stores access grant for the provider
-	 * 
+	 *
 	 * @param accessGrant
 	 *            It contains the access token and other information
 	 * @throws AccessTokenExpireException
@@ -150,7 +152,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	 * This is the most important action. It redirects the browser to an
 	 * appropriate URL which will be used for authentication with the provider
 	 * that has been set using setId()
-	 * 
+	 *
 	 * @throws Exception
 	 */
 
@@ -164,8 +166,8 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	/**
 	 * Verifies the user when the external provider redirects back to our
 	 * application.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param requestParams
 	 *            request parameters, received from the provider
 	 * @return Profile object containing the profile information
@@ -194,7 +196,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 
 	/**
 	 * Gets the list of contacts of the user and their email.
-	 * 
+	 *
 	 * @return List of profile objects representing Contacts. Only name and
 	 *         email will be available
 	 */
@@ -310,104 +312,48 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 		Profile profile = new Profile();
 		Response serviceResponse = null;
 		try {
-			serviceResponse = authenticationStrategy.executeFeed(PROFILE_URL
-					+ authenticationStrategy.getAccessGrant().getKey());
+			authenticationStrategy.setAccessTokenParameterName(this.ACCESS_TOKEN_PARAMETER);
+			serviceResponse = authenticationStrategy.executeFeed(PROFILE_URL);
 		} catch (Exception e) {
 			throw new SocialAuthException(
 					"Failed to retrieve the user profile from  " + PROFILE_URL,
 					e);
 		}
 		if (serviceResponse.getStatus() != 200) {
+			LOG.info("response from provider error: " +serviceResponse.getErrorStreamAsString("UTF-8"));
+			LOG.info("response from provider response: " +serviceResponse.getErrorStreamAsString("UTF-8"));
+
 			throw new SocialAuthException(
 					"Failed to retrieve the user profile from  " + PROFILE_URL
 							+ ". Staus :" + serviceResponse.getStatus());
+
 		}
 
-		Element root;
+		String result;
 		try {
-			root = XMLParseUtil.loadXmlResource(serviceResponse
-					.getInputStream());
-		} catch (Exception e) {
-			throw new ServerDataException(
-					"Failed to parse the profile from response." + PROFILE_URL,
-					e);
+			result = serviceResponse.getResponseBodyAsString(Constants.ENCODING);
+			JSONObject jObj = new JSONObject(result);
+			if (jObj.has("id")) {
+				profile.setFirstName(jObj.getJSONObject("firstName").getJSONObject("localized").getString("en_US"));
+				profile.setLastName(jObj.getJSONObject("lastName").getJSONObject("localized").getString("en_US"));
+				profile.setValidatedId(jObj.getString("id"));
+				profile.setProviderId(getProviderId());
+
+				if (config.isSaveRawResponse()) {
+					profile.setRawResponse(result);
+				}
+				LOG.debug("User Profile :" + profile.toString());
+				userProfile = profile;
+			}
+		} catch (IOException io) {
+			throw new SocialAuthException(io);
 		}
 
-		if (root != null) {
-			String fname = XMLParseUtil.getElementData(root, "first-name");
-			String lname = XMLParseUtil.getElementData(root, "last-name");
-			NodeList dob = root.getElementsByTagName("date-of-birth");
-			if (dob != null && dob.getLength() > 0) {
-				Element dobel = (Element) dob.item(0);
-				if (dobel != null) {
-					String y = XMLParseUtil.getElementData(dobel, "year");
-					String m = XMLParseUtil.getElementData(dobel, "month");
-					String d = XMLParseUtil.getElementData(dobel, "day");
-					BirthDate bd = new BirthDate();
-					if (m != null) {
-						bd.setMonth(Integer.parseInt(m));
-					}
-					if (d != null) {
-						bd.setDay(Integer.parseInt(d));
-					}
-					if (y != null) {
-						bd.setYear(Integer.parseInt(y));
-					}
-					profile.setDob(bd);
-				}
-			}
-			String picUrl = XMLParseUtil.getElementData(root, "picture-url");
-			String id = XMLParseUtil.getElementData(root, "id");
-			if (picUrl != null) {
-				profile.setProfileImageURL(picUrl);
-			}
-			String email = XMLParseUtil.getElementData(root, "email-address");
-			if (email != null) {
-				profile.setEmail(email);
-			}
-			NodeList location = root.getElementsByTagName("location");
-			if (location != null && location.getLength() > 0) {
-				Element locationEl = (Element) location.item(0);
-				String loc = XMLParseUtil.getElementData(locationEl, "name");
-				if (loc != null) {
-					profile.setLocation(loc);
-				}
-			}
-			Map<String, String> map = new HashMap<String, String>();
-			NodeList phoneNodes = root.getElementsByTagName("phone-number");
-			if (phoneNodes != null && phoneNodes.getLength() > 0) {
-				Element phoneEl = (Element) phoneNodes.item(0);
-				String type = XMLParseUtil
-						.getElementData(phoneEl, "phone-type");
-				String phone = XMLParseUtil.getElementData(phoneEl,
-						"phone-number");
-				if (type != null && type.length() > 0 && phone != null) {
-					map.put(type, phone);
-				}
-			}
-			String mainAddress = XMLParseUtil.getElementData(root,
-					"main-address");
-			if (mainAddress != null) {
-				map.put("mainAddress", mainAddress);
-			}
-			if (map != null && !map.isEmpty()) {
-				profile.setContactInfo(map);
-			}
-			profile.setFirstName(fname);
-			profile.setLastName(lname);
-			profile.setValidatedId(id);
-			profile.setProviderId(getProviderId());
-			if (config.isSaveRawResponse()) {
-				profile.setRawResponse(XMLParseUtil.getStringFromElement(root));
-			}
-			LOG.debug("User Profile :" + profile.toString());
-			userProfile = profile;
-		}
 		return profile;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 *            Permission object which can be Permission.AUHTHENTICATE_ONLY,
 	 *            Permission.ALL, Permission.DEFAULT
@@ -422,7 +368,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	/**
 	 * Makes OAuth signed HTTP request to a given URL. It attaches Authorization
 	 * header with HTTP request.
-	 * 
+	 *
 	 * @param url
 	 *            URL to make HTTP request.
 	 * @param methodType
@@ -439,8 +385,8 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	 */
 	@Override
 	public Response api(final String url, final String methodType,
-			final Map<String, String> params,
-			final Map<String, String> headerParams, final String body)
+						final Map<String, String> params,
+						final Map<String, String> headerParams, final String body)
 			throws Exception {
 		LOG.debug("Calling URL : " + url);
 		return authenticationStrategy.executeFeed(url, methodType, params,
@@ -449,7 +395,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 
 	/**
 	 * Retrieves the user profile.
-	 * 
+	 *
 	 * @return Profile object containing the profile information.
 	 */
 	@Override
@@ -472,7 +418,7 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 
 	@Override
 	public Response uploadImage(final String message, final String fileName,
-			final InputStream inputStream) throws Exception {
+								final InputStream inputStream) throws Exception {
 		LOG.warn("WARNING: Not implemented for LinkedIn");
 		throw new SocialAuthException(
 				"Update Image is not implemented for LinkedIn");
@@ -521,3 +467,4 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 		return result.toString();
 	}
 }
+
