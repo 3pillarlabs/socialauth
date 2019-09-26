@@ -70,8 +70,9 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 	private static final long serialVersionUID = 3389564715902769183L;
 	private static final String CONNECTION_URL = "https://api.linkedin.com/v2/people/~/connections:(id,first-name,last-name,public-profile-url,picture-url)?oauth2_access_token=";
 	private static final String UPDATE_STATUS_URL = "https://api.linkedin.com/v2/people/~/shares?oauth2_access_token=";
-	private static final String PROFILE_URL = "https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture)&oauth2_access_token=";
+	private static final String PROFILE_URL = "https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture)";
 	private static final String STATUS_BODY = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><share><comment>%1$s</comment><visibility><code>anyone</code></visibility></share>";
+	private static final String ACCESS_TOKEN_PARAMETER = "oauth2_access_token";
 	private static final Map<String, String> ENDPOINTS;
 	private final Log LOG = LogFactory.getLog(LinkedInOAuth2Impl.class);
 
@@ -311,8 +312,8 @@ public class LinkedInOAuth2Impl extends AbstractProvider {
 		Profile profile = new Profile();
 		Response serviceResponse = null;
 		try {
-			serviceResponse = authenticationStrategy.executeFeed(PROFILE_URL
-					+ authenticationStrategy.getAccessGrant().getKey());
+			authenticationStrategy.setAccessTokenParameterName(this.ACCESS_TOKEN_PARAMETER);
+			serviceResponse = authenticationStrategy.executeFeed(PROFILE_URL);
 		} catch (Exception e) {
 			throw new SocialAuthException(
 					"Failed to retrieve the user profile from  " + PROFILE_URL,
