@@ -65,7 +65,7 @@ import org.json.JSONObject;
 public class FacebookImpl extends AbstractProvider {
 	private static final long serialVersionUID = 8644510564735754296L;
 
-	public static final String FB_API_VERSION = "v3.2";
+	public static final String FB_API_VERSION = "v11.0";
 	public static final String FB_API_URL = "https://graph.facebook.com/" + FB_API_VERSION;
 	private static final String PROFILE_URL = FB_API_URL + "/me?fields=id,name,picture,age_range,birthday,email,first_name,last_name,gender,location,locale";
 	private static final String CONTACTS_URL = FB_API_URL + "/me/friends";

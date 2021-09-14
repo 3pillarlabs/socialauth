@@ -5,7 +5,7 @@
 	<groupId>org.brickred</groupId>
 	<artifactId>socialauth</artifactId>
 	<name>socialauth</name>
-	<version>4.16</version>
+	<version>4.17</version>
 	<description>SocialAuth library</description>
 	<url>http://code.google.com/p/socialauth/</url>
 	<licenses>
@@ -19,6 +19,20 @@
 		<connection>scm:svn:http://socialauth.googlecode.com/svn/trunk/</connection>
 		<url>http://socialauth.googlecode.com/svn/trunk/</url>
 	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>192.168.3.15</id>
+			<name>192.168.3.15-releases</name>
+			<url>http://192.168.3.15:8081/artifactory/netmechanics-local</url>
+		</repository>
+		<snapshotRepository>
+			<id>192.168.3.15</id>
+			<name>192.168.3.15-snapshots</name>
+			<url>http://192.168.3.15:8081/artifactory/netmechanics-local</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<developers>
 		<developer>
 			<id>tsg</id>
