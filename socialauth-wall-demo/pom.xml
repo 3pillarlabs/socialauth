@@ -10,7 +10,7 @@
 	<name>socialauth-wall-demo</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<org.springframework.version>3.1.2.RELEASE</org.springframework.version>
+		<org.springframework.version>3.2.5.RELEASE</org.springframework.version>
 	</properties>
 	<dependencies>
 		<dependency>
