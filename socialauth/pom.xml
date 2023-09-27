@@ -22,15 +22,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>192.168.3.15</id>
-			<name>192.168.3.15-releases</name>
-			<url>http://192.168.3.15:8081/artifactory/netmechanics-local</url>
+			<id>nmplatform</id>
+			<url>https://nexus.nmlabs.gr/repository/nmplatform/</url>
 		</repository>
-		<snapshotRepository>
-			<id>192.168.3.15</id>
-			<name>192.168.3.15-snapshots</name>
-			<url>http://192.168.3.15:8081/artifactory/netmechanics-local</url>
-		</snapshotRepository>
 	</distributionManagement>
 
 	<developers>
