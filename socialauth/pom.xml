@@ -5,7 +5,7 @@
 	<groupId>org.brickred</groupId>
 	<artifactId>socialauth</artifactId>
 	<name>socialauth</name>
-	<version>4.16</version>
+	<version>4.18</version>
 	<description>SocialAuth library</description>
 	<url>http://code.google.com/p/socialauth/</url>
 	<licenses>
@@ -19,6 +19,14 @@
 		<connection>scm:svn:http://socialauth.googlecode.com/svn/trunk/</connection>
 		<url>http://socialauth.googlecode.com/svn/trunk/</url>
 	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>nmplatform</id>
+			<url>https://nexus.nmlabs.gr/repository/nmplatform/</url>
+		</repository>
+	</distributionManagement>
+
 	<developers>
 		<developer>
 			<id>tsg</id>
